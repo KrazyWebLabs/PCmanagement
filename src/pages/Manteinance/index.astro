@@ -1,0 +1,39 @@
+---
+import ARRoomsIcon from "../../components/ui/icons/ARRoomsIcon.astro"
+import VRAIcon from "../../components/ui/icons/VRAIcon.astro"
+import Layout from "../../layouts/Layout.astro"
+---
+
+<Layout title="Manteinance Menu">
+  <main class="flex flex-col items-center">
+    <!-- Título grande centrado -->
+    <h3 class="text-2xl font-bold text-center text-gray-800 dark:text-gray-200">
+      Bienvenido
+    </h3>
+
+    <!-- Íconos de Accesorio Realidad Virtual y Sala de Realidad Virtual -->
+    <div class="flex items-center justify-center mt-24 space-x-64">
+      <div class="flex flex-col items-center text-center dark:text-white text-LegacyBlue">
+        <a href="/Manteinance/VRA">
+            <VRAIcon alt="Accesorio Realidad Virtual" class="w-64 h-64" />
+        </a>
+        <a href="/Manteinance/VRA">
+            <p class="mt-4 text-lg text-gray-700 dark:text-gray-300">
+                Accesorio Realidad Virtual
+            </p>
+        </a>
+      </div>
+
+      <div class="flex flex-col items-center text-center dark:text-white  text-LegacyBlue">
+        <a href="/Manteinance/Rooms">
+            <ARRoomsIcon alt="Sala de Realidad Virtual" class="w-64 h-64" />
+        </a>
+        <a href="/Manteinance/Rooms">
+            <p  class="mt-4 text-lg text-gray-700 dark:text-gray-300">
+                Sala de Realidad Virtual
+            </p>
+        </a>
+      </div>
+    </div>
+  </main>
+</Layout>
