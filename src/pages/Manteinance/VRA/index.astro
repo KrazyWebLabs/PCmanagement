@@ -1,0 +1,100 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import TrashIcon from "../../../components/ui/icons/TrashIcon.astro"
+import EditIcon from "../../../components/ui/icons/EditIcon.astro"
+import EditRecord from "../../../components/ui/Tables/EditRecord.astro";
+import ItemStatus from "../../../components/ui/Tables/ItemStatus.astro";
+import AddRegisterBtn from "../../../components/ui/Buttons/AddRegisterBtn.astro";
+
+//Array de maintenanceRecords para funcion tabla
+const maintenanceVRARecords = [
+    {
+        maintenancedate: "2024-10-22",
+        maintenancetime: "08:00",
+        employeeid: "EMP563",
+        name: "Jean",
+        firstsurname : "LEfontain",
+        secondlastname: "Juaréz",
+        serialnum: "MRE124FRE",
+        vra: "VR Set 1",
+        vrastatus: "vigente",
+        issue: "Ninguno",
+        lvlurgency: "Bajo",
+        details: "Mantenimiento rutinario",
+    },
+    {
+        maintenancedate: "2024-11-21",
+        maintenancetime: "12:30",
+        employeeid: "EMP789",
+        name: "Mike",
+        firstsurname: "Arellano",
+        secondlastname: "Juarez",
+        serialnum: "MRE124RRR",
+        vra: "Bracelete Set 1",
+        vrastatus: "en tramite",
+        issue: "Ninguno",
+        lvlurgency: "Bajo",
+        details: "Mantenimiento rutinario",
+    },
+];
+---
+
+
+<Layout title="VRAs Maintenance">
+    <div class="max-w-screen-xl mx-auto px-4 md:px-8">
+        <div class="items-start justify-between md:flex">
+            <div class="max-w-lg">
+                <h3 class="text-gray-800 text-xl font-bold sm:text-2xl dark:text-white">
+                  VRAs Maintenance
+                </h3>
+            </div>
+            <div class="mt-3 md:mt-0">
+                <AddRegisterBtn/>
+            </div>
+        </div>
+        <div class="mt-6 shadow-sm border rounded-lg overflow-x-auto">
+            <table class="w-full table-auto text-sm text-left">
+                <thead class="dark:bg-gray-400/20 dark:text-white bg-gray-50 text-gray-600 font-medium border-b">
+                    <tr>
+                        <th class="py-3 px-6">Maintenance Date</th>
+                        <th class="py-3 px-6">Serial Number</th>
+                        <th class="py-3 px-6">VRA</th>
+                        <th class="py-3 px-6">Employee ID</th>
+                        <th class="py-3 px-6">Name</th>
+                        <th class="py-3 px-6">VRA Status</th>
+                        <th class="py-3 px-6">Details</th>
+                        <th class="py-3 px-6"></th> <!-- Columna vacía para los íconos de editar y borrar -->
+                    </tr>
+                </thead>
+                <tbody class="text-gray-600 divide-y">
+                    {
+                        maintenanceVRARecords.map((item) => (
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.maintenancedate}</td>
+                                <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.serialnum}</td>
+                                <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.vra}</td>
+                                <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.employeeid}</td>
+                                <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.name}</td>
+                                <td class="px-6 py-4 whitespace-nowrap dark:text-white capitalize">
+                                    <ItemStatus status={item.vrastatus} />
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.details}</td>
+                                <td class="flex items-center justify-center gap-4 m-2 text-right px-6 whitespace-nowrap">
+                                    <EditRecord href={`/maintenance/${item.maintenancedate}`}>
+                                        <EditIcon/>
+                                    </EditRecord>
+                                    <a
+                                        href="prueba"
+                                        class="py-2 px-3 inline-block text-white duration-150 font-medium bg-red-600 rounded-lg hover:bg-red-500 active:bg-red-700 md:text-sm"
+                                    >
+                                        <TrashIcon/>
+                                    </a>
+                                </td>
+                            </tr>
+                        ))
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</Layout>
