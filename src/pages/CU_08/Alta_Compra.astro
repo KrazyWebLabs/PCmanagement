@@ -1,0 +1,192 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Card from '../../components/Card.astro';
+---
+
+<Layout title="Alta de Compra">
+	<div class="form-container">
+	  <h1 class="form-title">Alta de Compra</h1>
+  
+	  <form class="form-grid-wide">
+		<!-- Primera fila -->
+		<div class="form-group">
+		  <label>Compra *</label>
+		  <select>
+			<option>Dropdown text</option>
+		  </select>
+		</div>
+		<div class="form-group">
+		  <label>Número *</label>
+		  <input type="text" placeholder="int (10)" />
+		</div>
+		<div class="form-group">
+		  <label>Fecha *</label>
+		  <input type="date" placeholder="MM/DD/YYYY" />
+		</div>
+		<div class="form-group">
+		  <label>Proveedor *</label>
+		  <input type="text" placeholder="int (2)" />
+		</div>
+  
+		<!-- Segunda fila -->
+		<div class="form-group">
+		  <label>RFC *</label>
+		  <input type="text" placeholder="s (50)" />
+		</div>
+		<div class="form-group">
+		  <label>Nombre *</label>
+		  <input type="text" placeholder="s (100)" />
+		</div>
+		<div class="form-group">
+		  <label>Calle *</label>
+		  <input type="text" placeholder="s (50)" />
+		</div>
+		<div class="form-group">
+		  <label>Almacén *</label>
+		  <input type="text" placeholder="int (2)" />
+		</div>
+  
+		<!-- Tercera fila -->
+		<div class="form-group">
+		  <label>Número ext. *</label>
+		  <input type="text" placeholder="s (50)" />
+		</div>
+		<div class="form-group">
+		  <label>Descuento *</label>
+		  <input type="text" placeholder="double (2)" />
+		</div>
+		<div class="form-group">
+		  <label>Número int. *</label>
+		  <input type="text" placeholder="s (50)" />
+		</div>
+		<div class="form-group">
+		  <label>Descuento final *</label>
+		  <input type="text" placeholder="double (2)" />
+		</div>
+  
+		<!-- Cuarta fila -->
+		<div class="form-group">
+		  <label>Colonia *</label>
+		  <input type="text" placeholder="s (100)" />
+		</div>
+		<div class="form-group">
+		  <label>Gastos ind. *</label>
+		  <input type="text" placeholder="double (2)" />
+		</div>
+		<div class="form-group">
+		  <label>Código postal *</label>
+		  <input type="text" placeholder="s (10)" />
+		</div>
+		<div class="form-group">
+		  <label>Población *</label>
+		  <input type="text" placeholder="s (50)" />
+		</div>
+  
+		<!-- Quinta fila -->
+		<div class="form-group">
+		  <label>País *</label>
+		  <input type="text" placeholder="s (50)" />
+		</div>
+		<div class="form-group">
+		  <label>Fecha de recepción *</label>
+		  <input type="date" placeholder="MM/DD/YYYY" />
+		</div>
+		<div class="form-group">
+		  <label>Entregar a: *</label>
+		  <input type="text" placeholder="s (100)" />
+		</div>
+		<div class="form-group">
+		  <label>Moneda *</label>
+		  <select>
+			<option>Dropdown text</option>
+		  </select>
+		</div>
+  
+		<!-- Sexta fila -->
+		<div class="form-group">
+		  <label>T. cambio *</label>
+		  <input type="text" placeholder="double (2)" />
+		</div>
+		<div class="form-group">
+		  <label>Descripción *</label>
+		  <input type="text" placeholder="s (300)" />
+		</div>
+	  </form>
+  
+	  <!-- Botones -->
+	  <div class="form-actions">
+		<button class="btn-primary">Agregar</button>
+		<button class="btn-secondary">Cancelar</button>
+	  </div>
+	</div>
+  </Layout>
+  
+  <style>
+	.form-container {
+	  width: 100%;
+	  padding: 20px;
+	}
+  
+	.form-title {
+	  font-size: 2rem;
+	  margin-bottom: 20px;
+	}
+  
+	.form-grid-wide {
+	  display: grid;
+	  grid-template-columns: repeat(4, 1fr);
+	  gap: 20px;
+	  width: 100%;
+	}
+  
+	.form-group {
+	  display: flex;
+	  flex-direction: column;
+	}
+  
+	.form-group label {
+	  font-weight: bold;
+	  margin-bottom: 8px;
+	}
+  
+	.form-group input,
+	.form-group select {
+	  padding: 10px;
+	  border: 1px solid #ccc;
+	  border-radius: 4px;
+	  width: 100%;
+	}
+  
+	.form-actions {
+	  display: flex;
+	  justify-content: flex-start; /* Alineación a la izquierda */
+	  margin-top: 20px;
+	  gap: 10px; /* Espacio entre los botones */
+	}
+  
+	.btn-primary {
+	  padding: 10px 20px;
+	  background-color: #6c757d;
+	  color: white;
+	  border: none;
+	  border-radius: 4px;
+	  cursor: pointer;
+	}
+  
+	.btn-primary:hover {
+	  background-color: #5a6268;
+	}
+  
+	.btn-secondary {
+	  padding: 10px 20px;
+	  background-color: #6c757d;
+	  color: white;
+	  border: none;
+	  border-radius: 4px;
+	  cursor: pointer;
+	}
+  
+	.btn-secondary:hover {
+	  background-color: #5a6268;
+	}
+  </style>
