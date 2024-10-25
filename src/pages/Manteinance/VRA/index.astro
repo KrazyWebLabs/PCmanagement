@@ -9,6 +9,7 @@ import AddRegisterBtn from "../../../components/ui/Buttons/AddRegisterBtn.astro"
 //Array de maintenanceRecords para funcion tabla
 const maintenanceVRARecords = [
     {
+        mvraid:"511",
         maintenancedate: "2024-10-22",
         maintenancetime: "08:00",
         employeeid: "EMP563",
@@ -23,6 +24,7 @@ const maintenanceVRARecords = [
         details: "Mantenimiento rutinario",
     },
     {
+        mvraid:"9491",
         maintenancedate: "2024-11-21",
         maintenancetime: "12:30",
         employeeid: "EMP789",
@@ -56,6 +58,7 @@ const maintenanceVRARecords = [
             <table class="w-full table-auto text-sm text-left">
                 <thead class="dark:bg-gray-400/20 dark:text-white bg-gray-50 text-gray-600 font-medium border-b">
                     <tr>
+                        <th class="py-3 px-6">Maintenance ID</th>
                         <th class="py-3 px-6">Maintenance Date</th>
                         <th class="py-3 px-6">Serial Number</th>
                         <th class="py-3 px-6">VRA</th>
@@ -70,6 +73,7 @@ const maintenanceVRARecords = [
                     {
                         maintenanceVRARecords.map((item) => (
                             <tr>
+                                <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.mvraid}</td>
                                 <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.maintenancedate}</td>
                                 <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.serialnum}</td>
                                 <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.vra}</td>

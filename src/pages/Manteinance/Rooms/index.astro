@@ -9,6 +9,7 @@ import AddRegisterBtn from "../../../components/ui/Buttons/AddRegisterBtn.astro"
 //Array de maintenanceRecords para funcion tabla
 const maintenanceRoomsRecords = [
     {
+        mroomid:"9799",
         maintenancedate: "2024-10-22",
         maintenancetime: "08:00",
         employeeid: "EMP123",
@@ -25,6 +26,7 @@ const maintenanceRoomsRecords = [
         details: "Mantenimiento rutinario",
     },
     {
+        mroomid:"2154",
         maintenancedate: "2024-10-23",
         maintenancetime: "10:00",
         employeeid: "EMP456",
@@ -61,6 +63,7 @@ const maintenanceRoomsRecords = [
             <table class="w-full table-auto text-sm text-left">
                 <thead class="dark:bg-gray-400/20 dark:text-white bg-gray-50 text-gray-600 font-medium border-b">
                     <tr>
+                        <th class="py-3 px-6">Maintenance ID</th>
                         <th class="py-3 px-6">Maintenance Date</th>
                         <th class="py-3 px-6">Room</th>
                         <th class="py-3 px-6">Employee ID</th>
@@ -74,6 +77,7 @@ const maintenanceRoomsRecords = [
                     {
                         maintenanceRoomsRecords.map((item) => (
                             <tr>
+                                <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.mroomid}</td>
                                 <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.maintenancedate}</td>
                                 <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.room}</td>
                                 <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.employeeid}</td>
