@@ -1,5 +1,8 @@
 ---
 import Layout from "../../../layouts/Layout.astro"
+const path = Astro.url.pathname.replace(/\/$/, ""); // Elimina el "/" al final si existe.
+const previousPath = path.substring(0, path.lastIndexOf("/")) || "/";
+
 import type { InputType } from "@customTypes/InputType";
 
 interface Props {
@@ -27,10 +30,21 @@ const { title, type, placeholder, isRequired, name, value, isDisabled } =
           </label>
           <div class="relative">
             <input
-              type="text"
-              id="header-date"
-              placeholder="MM / DD / YYYY"
-              class="mt-1 p-2 w-full border border-gray-300 rounded-md"
+            type={type}
+            id={name}
+            name={name}
+            placeholder={placeholder}
+            value={value}
+            required={isRequired}
+            disabled={isDisabled}
+            aria-describedby="helper-text-explanation"
+            appearance-none
+            class={`w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 
+              focus:ring-LegacyBlue-600 focus:border-LegacyBlue-600 dark:border-2 dark:border-gray-700 
+              dark:text-white flex-1 min-w-[200px] 
+              [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none
+                ${isDisabled ? "dark:bg-gray-700/70" : "dark:bg-gray-700/20"}
+              `}
             />
             <span
               class="absolute right-3 top-1/2 transform -translate-y-1/2"
@@ -43,63 +57,147 @@ const { title, type, placeholder, isRequired, name, value, isDisabled } =
         </div>
       </div>
 
-      <!-- Columna 1 -->
-      <div class="mt-6  px-1 md:px-8 flex flex-col">
-        <div class="flex-1 mb-4">
-          <label
-            for={name}
-            class="block text-sm dark:text-white font-medium mb-1 capitalize"
-          >
-            {title ? title : <slot />}
-            {isRequired && <span class="text-red-500"> *</span>}
-          </label>
-          <input
-            type={type}
-            id={name}
-            name={name}
-            placeholder={placeholder}
-            value={value}
-            required={isRequired}
-            disabled={isDisabled}
-            aria-describedby="helper-text-explanation"
-            appearance-none
-            class={`w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 
-              focus:ring-LegacyBlue-600 focus:border-LegacyBlue-600 dark:border-2 dark:border-gray-700 
-              dark:text-white flex-1 min-w-[200px] 
-              [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none
-                ${isDisabled ? "dark:bg-gray-700/70" : "dark:bg-gray-700/20"}
-              `}
-          />
-        </div>
-      </div>
+      <div class="grid grid-cols-2 gap-4">
+                <!-- Primera columna -->
+                <div class="flex flex-col">
+                    <label for="idAlmacen" class="font-medium text-white mb-1">ID Almacén</label>
+                    <input type={type}
+                    id={name}
+                    name={name}
+                    placeholder={placeholder}
+                    value={value}
+                    required={isRequired}
+                    disabled={isDisabled}
+                    aria-describedby="helper-text-explanation"
+                    appearance-none
+                    class={`w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 
+                      focus:ring-LegacyBlue-600 focus:border-LegacyBlue-600 dark:border-2 dark:border-gray-700 
+                      dark:text-white flex-1 min-w-[200px] 
+                      [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none
+                        ${isDisabled ? "dark:bg-gray-700/70" : "dark:bg-gray-700/20"}
+                      `}>
 
-      <!-- Columna 2 -->
-      <div class="mt-6  px-1 md:px-8 flex-1">
-        <div class="flex-1 mb-4">
-          <label
-            for={name}
-            class="block text-sm dark:text-white font-medium mb-1 capitalize"
-          >
-            {title ? title : <slot />}
-            {isRequired && <span class="text-red-500"> *</span>}
-          </label>
-          <input
-            type={type}
-            id={name}
-            name={name}
-            placeholder={placeholder}
-            value={value}
-            required={isRequired}
-            disabled={isDisabled}
-            aria-describedby="helper-text-explanation"
-            appearance-none
-            class={`w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 
-              focus:ring-LegacyBlue-600 focus:border-LegacyBlue-600 dark:border-2 dark:border-gray-700 
-              dark:text-white flex-1 min-w-[200px] 
-              [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none
-                ${isDisabled ? "dark:bg-gray-700/70" : "dark:bg-gray-700/20"}
-              `}
-          />
-        </div>
-      </div>
+                    <label for="nombreSouvenir" class="font-medium text-white mt-4 mb-1">Nombre Souvenir</label>
+                    <input type={type}
+                    id={name}
+                    name={name}
+                    placeholder={placeholder}
+                    value={value}
+                    required={isRequired}
+                    disabled={isDisabled}
+                    aria-describedby="helper-text-explanation"
+                    appearance-none
+                    class={`w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 
+                      focus:ring-LegacyBlue-600 focus:border-LegacyBlue-600 dark:border-2 dark:border-gray-700 
+                      dark:text-white flex-1 min-w-[200px] 
+                      [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none
+                        ${isDisabled ? "dark:bg-gray-700/70" : "dark:bg-gray-700/20"}
+                      `}>
+
+                    <label for="IVA" class="font-medium text-white mt-4 mb-1">IVA</label>
+                    <input type={type}
+                    id={name}
+                    name={name}
+                    placeholder={placeholder}
+                    value={value}
+                    required={isRequired}
+                    disabled={isDisabled}
+                    aria-describedby="helper-text-explanation"
+                    appearance-none
+                    class={`w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 
+                      focus:ring-LegacyBlue-600 focus:border-LegacyBlue-600 dark:border-2 dark:border-gray-700 
+                      dark:text-white flex-1 min-w-[200px] 
+                      [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none
+                        ${isDisabled ? "dark:bg-gray-700/70" : "dark:bg-gray-700/20"}
+                      `}>
+                </div>
+
+                <!-- Segunda columna -->
+                <div class="flex flex-col">
+                    <label for="idStatus" class="font-medium text-white mb-1">ID Status</label>
+                    <input type={type}
+                    id={name}
+                    name={name}
+                    placeholder={placeholder}
+                    value={value}
+                    required={isRequired}
+                    disabled={isDisabled}
+                    aria-describedby="helper-text-explanation"
+                    appearance-none
+                    class={`w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 
+                      focus:ring-LegacyBlue-600 focus:border-LegacyBlue-600 dark:border-2 dark:border-gray-700 
+                      dark:text-white flex-1 min-w-[200px] 
+                      [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none
+                        ${isDisabled ? "dark:bg-gray-700/70" : "dark:bg-gray-700/20"}
+                      `}>
+
+                    <label for="precioSinIVA" class="font-medium text-white mt-4 mb-1">Precio sin IVA</label>
+                    <input type={type}
+                    id={name}
+                    name={name}
+                    placeholder={placeholder}
+                    value={value}
+                    required={isRequired}
+                    disabled={isDisabled}
+                    aria-describedby="helper-text-explanation"
+                    appearance-none
+                    class={`w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 
+                      focus:ring-LegacyBlue-600 focus:border-LegacyBlue-600 dark:border-2 dark:border-gray-700 
+                      dark:text-white flex-1 min-w-[200px] 
+                      [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none
+                        ${isDisabled ? "dark:bg-gray-700/70" : "dark:bg-gray-700/20"}
+                      `}>
+
+                    <label for="precioConIVA" class="font-medium text-white mt-4 mb-1">Precio con IVA</label>
+                    <input type={type}
+                    id={name}
+                    name={name}
+                    placeholder={placeholder}
+                    value={value}
+                    required={isRequired}
+                    disabled={isDisabled}
+                    aria-describedby="helper-text-explanation"
+                    appearance-none
+                    class={`w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 
+                      focus:ring-LegacyBlue-600 focus:border-LegacyBlue-600 dark:border-2 dark:border-gray-700 
+                      dark:text-white flex-1 min-w-[200px] 
+                      [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none
+                        ${isDisabled ? "dark:bg-gray-700/70" : "dark:bg-gray-700/20"}
+                      `}>
+                </div>
+            </div>
+
+            <!-- Campo descripción a lo largo -->
+            <div class="mt-4">
+                <label for="descripcion" class="font-medium text-white mb-1">Descripción</label>
+                <textarea type={type}
+                    id={name}
+                    name={name}
+                    placeholder={placeholder}
+                    value={value}
+                    required={isRequired}
+                    disabled={isDisabled}
+                    aria-describedby="helper-text-explanation"
+                    appearance-none
+                    class={`w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 
+                      focus:ring-LegacyBlue-600 focus:border-LegacyBlue-600 dark:border-2 dark:border-gray-700 
+                      dark:text-white flex-1 min-w-[200px] 
+                      [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none
+                        ${isDisabled ? "dark:bg-gray-700/70" : "dark:bg-gray-700/20"}
+                      `}></textarea>
+            </div>
+
+            <!-- Botón enviar -->
+            <div class="flex justify-center mt-6 space-x-4">
+              <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">Guardar</button>
+          
+              <a
+                  href={previousPath}
+                  class="inline-block px-4 py-2 text-white duration-150 font-medium bg-LegacyBlue-400 rounded-lg hover:bg-LegacyBlue-500 active:bg-LegacyBlue-700 md:text-sm capitalize"
+              >
+                  <button class="text-lg">Regresar</button>
+              </a>
+          </div>
+          
+
 </Layout>
