@@ -1,8 +1,15 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Card from '../components/Card.astro';
+import { turso } from '../turso'
+
+const { rows } = await turso.execute('SELECT * FROM Persons')
 ---
 
 <Layout title="Dashboard">
 	<h1 class="text-black">Hello world</h1>
+	<ul>
+		{rows.map((person) => (
+			<li class="dark:text-white">{person.FirstName}</li>
+		))}
+	</ul>
 </Layout>
