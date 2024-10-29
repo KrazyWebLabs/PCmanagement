@@ -6,6 +6,9 @@ import EditRecord from "../../../components/ui/Tables/EditRecord.astro";
 import ItemStatus from "../../../components/ui/Tables/ItemStatus.astro";
 import AddRegisterBtn from "../../../components/ui/Buttons/AddRegisterBtn.astro";
 
+import { turso } from '../../../turso'
+const { rows } = await turso.execute('SELECT * FROM souvenirs')
+
 const Products = [
     {
         id_Producto: "01",

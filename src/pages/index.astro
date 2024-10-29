@@ -3,7 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import Card from '../components/Card.astro';
 
 import { turso } from '../turso'
-const { rows } = await turso.execute('SELECT * FROM souvenir')
+const { rows } = await turso.execute('SELECT * FROM souvenirs')
 ---
 
 <Layout title="Dashboard">
@@ -11,8 +11,8 @@ const { rows } = await turso.execute('SELECT * FROM souvenir')
 	<a href="/pages/Products/AProducts"><h1>Muy buenas</h1></a>
 </Layout>
 <ul>
-	{rows.map((souvenir) => (
-		<li class="dark:text-white">{souvenir.id_Souvenir}</li>
+	{rows.map((souvenirs) => (
+		<li class="dark:text-white">{souvenirs.idSouvenir}</li>
 	))}
 </ul>
 </Layout>
