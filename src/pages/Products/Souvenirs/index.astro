@@ -6,6 +6,9 @@ import EditRecord from "../../../components/ui/Tables/EditRecord.astro";
 import ItemStatus from "../../../components/ui/Tables/ItemStatus.astro";
 import AddRegisterBtn from "../../../components/ui/Buttons/AddRegisterBtn.astro";
 
+const path = Astro.url.pathname.replace(/\/$/, ""); // Elimina el "/" al final si existe.
+const previousPath = path.substring(0, path.lastIndexOf("/")) || "/";
+
 const Products = [
     {
         id_Producto: "01",
@@ -123,5 +126,14 @@ const Products = [
           </tbody>
         </table>
       </div>
+
+      <div class="flex justify-center mt-6 space-x-4">
+        <a
+            href={previousPath}
+            class="inline-block px-4 py-2 text-white duration-150 font-medium bg-LegacyBlue-400 rounded-lg hover:bg-LegacyBlue-500 active:bg-LegacyBlue-700 md:text-sm capitalize"
+        >
+            <button class="text-lg">Regresar</button>
+        </a>
+    </div>
     </div>
 </Layout>
