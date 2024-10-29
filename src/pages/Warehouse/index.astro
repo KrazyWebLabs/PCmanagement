@@ -3,146 +3,156 @@ import Layout from "../../layouts/Layout.astro"
 ---
 
 <Layout title="Dashboard">
-	<style>
-		/* Base styles */
-		body {
-		  font-family: Arial, sans-serif;
-		  background-color: #f5f6f7;
-		  margin: 0;
-		  padding: 0;
-		  box-sizing: border-box;
-		}
-	  
-		.container {
-		  max-width: 900px;
-		  margin: 0 auto;
-		  padding: 20px;
-		  background-color: white;
-		  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-		  border-radius: 8px;
-		}
-	  
-		h1 {
-		  font-size: 2.5rem;
-		  font-weight: bold;
-		  margin-bottom: 1rem;
-		}
-	  
-		form {
-		  display: grid;
-		  grid-template-columns: repeat(2, 1fr);
-		  gap: 1.5rem;
-		}
-	  
-		label {
-		  font-weight: bold;
-		  margin-bottom: 0.5rem;
-		  display: block;
-		}
-	  
-		input[type="text"], input[type="number"], select {
-		  width: 100%;
-		  padding: 10px;
-		  border-radius: 5px;
-		  border: 1px solid #ccc;
-		  font-size: 1rem;
-		}
-	  
-		.input-group {
-		  margin-bottom: 1rem;
-		}
-	  
-		input[type="date"] {
-		  width: calc(100% - 40px);
-		  padding: 10px;
-		  border-radius: 5px;
-		  border: 1px solid #ccc;
-		  font-size: 1rem;
-		}
-	  
-		.button-group {
-		  display: flex;
-		  justify-content: center;
-		  gap: 1rem;
-		  grid-column: span 2;
-		}
-	  
-		button {
-		  background-color: #4f4f4f;
-		  color: white;
-		  padding: 10px 20px;
-		  border: none;
-		  border-radius: 5px;
-		  cursor: pointer;
-		  font-size: 1rem;
-		}
-	  
-		button:hover {
-		  background-color: #333;
-		}
-	  
-		.required {
-		  color: red;
-		  font-size: 1.2rem;
-		}
-	  
-		footer {
-		  margin-top: 20px;
-		  text-align: center;
-		  font-size: 0.8rem;
-		  color: #666;
-		}
-	  </style>
-	  
-	  <div class="container">
-		<h1>Almacen</h1>
-		<form>
-		  <!-- Left Column -->
-		  <div class="input-group">
-			<label for="product-id">ID del Producto <span class="required">*</span></label>
-			<input type="number" id="product-id" placeholder="Int(10)" />
-		  </div>
-		  <div class="input-group">
-			<label for="last-modified">Fecha de ultima modificación</label>
-			<input type="date" id="last-modified" />
-		  </div>
-		  <div class="input-group">
-			<label for="product-name">Nombre del producto <span class="required">*</span></label>
-			<input type="text" id="product-name" placeholder="S(20)" />
-		  </div>
-		  <div class="input-group">
-			<label for="category">Categoría <span class="required">*</span></label>
-			<select id="category">
-			  <option value="" disabled selected>Dropdown text</option>
-			  <!-- Add categories here -->
-			</select>
-		  </div>
-		  <div class="input-group">
-			<label for="description">Descripción <span class="required">*</span></label>
-			<input type="text" id="description" placeholder="S(50)" />
-		  </div>
-		  <div class="input-group">
-			<label for="condition">Condición <span class="required">*</span></label>
-			<select id="condition">
-			  <option value="" disabled selected>Dropdown text</option>
-			  <!-- Add conditions here -->
-			</select>
-		  </div>
-		  <div class="input-group">
-			<label for="quantity">Cantidad <span class="required">*</span></label>
-			<input type="number" id="quantity" placeholder="Int(10)" />
-		  </div>
-	  
-		  <!-- Buttons -->
-		  <div class="button-group">
-			<button type="submit">Agregar</button>
-			<button type="button">Regresar</button>
-		  </div>
-		</form>
-	  
-		<footer>
-		  <p>©2023 Zettabyte Solutions</p>
-		  <p>Este registro modificará la base de datos</p>
-		</footer>
-	  </div>
+<style>
+  /* Base styles */
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #1e1e2d; /* Adjust background to dark theme */
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: transparent; /* Set to transparent to remove white background */
+    box-shadow: none; /* Remove shadow */
+    border-radius: 8px;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    color: white; /* Adjust text color for dark background */
+  }
+
+  form {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+
+  label {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    display: block;
+    color: white; /* Adjust text color for dark background */
+  }
+
+  input[type="text"], input[type="number"], select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    background-color: #333; /* Darker background for input fields */
+    color: white; /* White text for input fields */
+  }
+
+  input[type="text"]::placeholder, input[type="number"]::placeholder {
+    color: #bbb; /* Placeholder text color */
+  }
+
+  .input-group {
+    margin-bottom: 1rem;
+  }
+
+  input[type="date"] {
+    width: calc(100% - 40px);
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    background-color: #333; /* Darker background for date input */
+    color: white;
+  }
+
+  .button-group {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    grid-column: span 2;
+  }
+
+  button {
+    background-color: #4f4f4f;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+  }
+
+  button:hover {
+    background-color: #333;
+  }
+
+  .required {
+    color: red;
+    font-size: 1.2rem;
+  }
+
+  footer {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 0.8rem;
+    color: #999;
+  }
+</style>
+
+<div class="container">
+  <h1>Almacen</h1>
+  <form>
+    <!-- Left Column -->
+    <div class="input-group">
+      <label for="warehouse-id">Warehouse Id <span class="required">*</span></label>
+      <input type="number" id="warehouse-id" placeholder="Int(10)" />
+    </div>
+    <div class="input-group">
+      <label for="last-modified">Last Modified</label>
+      <input type="date" id="last-modified" />
+    </div>
+    <div class="input-group">
+      <label for="warehouse-name">Name <span class="required">*</span></label>
+      <input type="text" id="warehouse-name" placeholder="S(20)" />
+    </div>
+    <div class="input-group">
+      <label for="category">Category <span class="required">*</span></label>
+      <select id="category">
+        <option value="" disabled selected>Dropdown text</option>
+        <!-- Add categories here -->
+      </select>
+    </div>
+    <div class="input-group">
+      <label for="description">Description <span class="required">*</span></label>
+      <input type="text" id="description" placeholder="S(50)" />
+    </div>
+    <div class="input-group">
+      <label for="state">State <span class="required">*</span></label>
+      <select id="state">
+        <option value="" disabled selected>Dropdown text</option>
+        <!-- Add conditions here -->
+      </select>
+    </div>
+    <div class="input-group">
+      <label for="quantity">Quantity <span class="required">*</span></label>
+      <input type="number" id="quantity" placeholder="Int(10)" />
+    </div>
+
+    <!-- Buttons -->
+    <div class="button-group">
+      <button type="submit">Add</button>
+      <button type="button">Back</button>
+    </div>
+  </form>
+
+  <footer>
+    <p>©2024 FongiSoft</p>
+  </footer>
+</div>
+
 </Layout>
