@@ -1,15 +1,20 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import TrashIcon from "../../components/ui/icons/TrashIcon.astro"
-import EditIcon from "../../components/ui/icons/EditIcon.astro"
+import TrashIcon from "../../components/ui/icons/TrashIcon.astro";
+import EditIcon from "../../components/ui/icons/EditIcon.astro";
 import EditRecord from "../../components/ui/Tables/EditRecord.astro";
 import ItemStatus from "../../components/ui/Tables/ItemStatus.astro";
 import AddRegisterBtn from "../../components/ui/Buttons/AddRegisterBtn.astro";
+
+import { turso } from 'src/turso';
+
+
 
 const Recipes = [
   {
     receptionID: "123",
     supplier: "Souvernirs 2",
+    souvenir: "Souvenir 2",
     rfc: "11123321",
     name: "Platos",
     direccion: "40 Norte 123",
@@ -24,6 +29,7 @@ const Recipes = [
   {
     receptionID: "125",
     supplier: "Souvernirs 3",
+    souvenir: "Souvenir 3",
     rfc: "11123321",
     name: "Platos",
     direccion: "40 Norte 123",
@@ -38,6 +44,7 @@ const Recipes = [
   {
     receptionID: "124",
     supplier: "Souvernirs 4",
+    souvenir: "Souvenir 4",
     rfc: "11123321",
     name: "Platos",
     direccion: "40 Norte 123",
@@ -71,6 +78,7 @@ const Recipes = [
           <tr>
             <th class="py-3 px-6">ID Reception</th>
             <th class="py-3 px-6">Supplier</th>
+            <th class="py-3 px-6">Souvenir</th>
             <th class="py-3 px-6">Warehouse</th>
             <th class="py-3 px-6">Status</th>
             <th class="py-3 px-6"></th>
@@ -82,6 +90,7 @@ const Recipes = [
               <tr>
                 <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.receptionID}</td>
                 <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.supplier}</td>
+                <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.souvenir}</td>
                 <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.warehouse}</td>
                 <td class="px-6 py-4 whitespace-nowrap dark:text-white capitalize">
                   <ItemStatus  status={item.status} />
