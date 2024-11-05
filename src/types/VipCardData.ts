@@ -14,3 +14,20 @@ export type VIPcardData = {
   birthDate: Date;              // Fecha de nacimiento del usuario
   status: number;               // Estado de la cuenta (1 = Activa, 0 = Inactiva, etc.)
 }
+
+export interface ConvertedData {
+  cardNumber: string;  // Aseguramos que sea solo string
+  email: string;
+  accountNumber: string | null;
+  accountType: string;
+  currency: string | null;
+  bicCode: string | null;
+  name: string;
+  paternalSurname: string;
+  maternalSurname: string;
+  rfc: string;
+  phone: string;
+  address: string;
+  birthDate: string | null;
+  status: string;
+}

@@ -5,19 +5,23 @@ import FormSelect from "@components/ui/Forms/FormSelect.astro";
 import SelectOption from "@components/ui/Forms/SelectOption.astro";
 import type { VIPcardData } from "@customTypes/VipCardData"
 import CapFrstLetter from "@functions/CapFrstLetter"
+import { generateRandomNumber } from "@functions/generateRandomNumber";
 
 interface Props {
   selectedCard?: any;
 }
 
 const { selectedCard } = Astro.props;
+
+let generatedCardNumber = "";
+if (!selectedCard) generatedCardNumber = generateRandomNumber(15)
 ---
 
 <Form title="Card Data">
   {
     !selectedCard 
     ?
-      <FormInput name="cardNumber" type="number" placeholder="1234567890123456789012" isDisabled>
+      <FormInput name="cardNumber" type="number" value={generatedCardNumber} placeholder={generatedCardNumber} isRequired>
         Card Number
       </FormInput>
       <FormInput name="email" type="email" isRequired placeholder="johndoe@mail.com">
@@ -31,7 +35,7 @@ const { selectedCard } = Astro.props;
           Account Number
         </FormInput>
 
-        <FormSelect name="accountType" title="Type">
+        <FormSelect name="accountType" isDisabled title="Type">
           <SelectOption value="corriente">Corriente</SelectOption>
           <SelectOption value="ahorro">Ahorro</SelectOption>
           <SelectOption value="nomina">Nómina</SelectOption>
@@ -40,7 +44,7 @@ const { selectedCard } = Astro.props;
           <SelectOption value="pensiones">Pensiones</SelectOption>
         </FormSelect>
 
-        <FormSelect title="Currency" name="currency">
+        <FormSelect title="Currency" isDisabled name="currency">
           <SelectOption value="usd">Dólar Estadounidense (USD)</SelectOption>
           <SelectOption value="eur">Euro (EUR)</SelectOption>
           <SelectOption value="mxn">Peso Mexicano (MXN)</SelectOption>
@@ -87,6 +91,7 @@ const { selectedCard } = Astro.props;
           Birth Date
         </FormInput>
       </div>
+      <slot/>
     :
       <FormInput name="cardNumber" type="number" value={selectedCard.cardNumber} isDisabled placeholder="1234567890123456789012">
         Card Number

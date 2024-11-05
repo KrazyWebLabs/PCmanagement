@@ -3,14 +3,18 @@ import BackBtn from "@components/ui/Buttons/BackBtn.astro";
 import Layout from "../../layouts/Layout.astro";
 import VIPcardForm from "@components/VipCard/VIPcardForm.astro";
 import VIPcardMembers from "../../../VIPcardData.json";
+import { turso } from "src/turso";
+import convertVIPcardDataToJSON from "@functions/ConvertDataToJSON";
 
 const { cardNumber } = Astro.params;
+const rows  = await turso.execute(`SELECT * FROM VIPCardMembers  WHERE vipCardID = ${cardNumber}`);
 
-const selectedCard = VIPcardMembers.vipcardmembers.filter((p) => p.cardNumber === cardNumber);
+// Convertir a formato JSON deseado
+const result = convertVIPcardDataToJSON(rows.toJSON());
 ---
 
 <Layout title="Editar">
-  <VIPcardForm selectedCard={selectedCard[0]}/>
+  <VIPcardForm selectedCard={result[0]}/>
   <div class="flex justify-end max-w-full mx-auto px-8">
     <BackBtn />
     <a
