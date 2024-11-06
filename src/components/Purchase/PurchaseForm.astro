@@ -1,6 +1,6 @@
 ---
-import FormInput from "@components/ui/Forms/FormInput.astro";
-import FormSelect from "@components/ui/Forms/FormSelect.astro";
+import FormInput from  "../ui/Forms/FormInput.astro";
+import FormSelect from "../ui/Forms/FormSelect.astro";
 
 
 ---
@@ -10,7 +10,7 @@ import FormSelect from "@components/ui/Forms/FormSelect.astro";
   <h2 class="text-2xl dark:text-white font-bold mb-6">Reception Data</h2>
 
   <div class="flex flex-wrap gap-3">
-    <FormSelect name="receptionID" title="Reception ID" isRequired>
+    <FormSelect name="purchaseID" title="Purchase ID" isRequired>
       <option value="" selected>Selecciona una Orden de Compra</option>
       <option value="PO1">1</option>
       <option value="PO2">2</option>
@@ -88,8 +88,8 @@ import FormSelect from "@components/ui/Forms/FormSelect.astro";
       Deliver To
     </FormInput>
     
-    <FormInput name="receptionDate" type="date"  placeholder="00/00/0000">
-      Reception Date
+    <FormInput name="purchaseDate" type="date"  placeholder="00/00/0000">
+      Purchase Date
     </FormInput>
 
     <FormInput name="discount" type="number"  placeholder="0%">
