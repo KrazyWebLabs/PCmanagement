@@ -1,5 +1,6 @@
 export type RecepcionData = {
     receptionID: number;
+    purchaseID: number;
     warehouseID: number;
     currencyID: number;
     souvenirID: number;
@@ -24,6 +25,7 @@ export type RecepcionData = {
 
 export interface ConvertedData {
     receptionID: string;
+    purchaseID: string;
     warehouseID: string | null;
     currencyID: string | null;
     souvenirID: string | null;

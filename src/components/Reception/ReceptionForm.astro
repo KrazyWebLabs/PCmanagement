@@ -1,21 +1,47 @@
 ---
+import Form from "@components/ui/Forms/Form.astro";
 import FormInput from "@components/ui/Forms/FormInput.astro";
 import FormSelect from "@components/ui/Forms/FormSelect.astro";
+import SelectOption from "@components/ui/Forms/SelectOption.astro";
+import { generateRandomNumber } from "@functions/generateRandomNumber";
+import { convertPurchaseDataToJSON } from "@functions/ConvertDataToJSON";
+import { turso } from "src/turso";
+
+interface Props {
+  selectedReception?: any;
+}
+
+const { selectedReception } = Astro.props;
+
+let generateCardNumber = "";
+let purchaseOrder;
+let result;
+
+purchaseOrder = await turso.execute("SELECT * FROM PurchaseOrders");
+const data = purchaseOrder?.toJSON()
+
+if (!selectedReception) {
+  generateCardNumber = generateRandomNumber(5)
+  result = convertPurchaseDataToJSON(data)
+}
+else result = convertPurchaseDataToJSON(data).filter((p) => p.purchaseID !== selectedReception.purchaseID);
 
 
 ---
 
-<form class="max-w-full mx-auto p-8">
-  
-  <h2 class="text-2xl dark:text-white font-bold mb-6">Reception Data</h2>
+<Form title="Reception Data">
 
-  <div class="flex flex-wrap gap-3">
-    <FormSelect name="receptionID" title="Reception ID" isRequired>
-      <option value="" selected>Selecciona una Orden de Compra</option>
-      <option value="PO1">1</option>
-      <option value="PO2">2</option>
-      <option value="PO3">3</option>
-      <option value="PO4">4</option>
+  <FormInput name="recepcionID" type="number" value={generateCardNumber} placeholder={generateCardNumber} isRequired isDisabled>
+    Recepcion ID
+  </FormInput>
+  <div class="flex flex-wrap gap-4">
+    <FormSelect name="purchaseID" title="Purchase ID" isRequired>
+      <SelectOption value="" isSelected> -- Select Purchase Order -- </SelectOption>
+      {
+        result?.map((acc) => (
+          <SelectOption value={acc.purchaseID.toString()}>{acc.purchaseID}</SelectOption>
+        ))
+      }
     </FormSelect>
     <FormSelect name="warehouse" title="Warehouse" isDisabled>
       <option value="">Selecciona un Almacen</option>
@@ -119,4 +145,5 @@ import FormSelect from "@components/ui/Forms/FormSelect.astro";
       Description
     </FormInput>
   </div>
-</form>
+  
+</Form>
