@@ -5,6 +5,7 @@ import EditIcon from "../../components/ui/icons/EditIcon.astro";
 import EditRecord from "../../components/ui/Tables/EditRecord.astro";
 import ItemStatus from "../../components/ui/Tables/ItemStatus.astro";
 import AddRegisterBtn from "../../components/ui/Buttons/AddRegisterBtn.astro";
+import convertReceptionDataToJSON from "../../functions/ConvertDataToJSON";
 
 import { turso } from 'src/turso';
 
@@ -58,6 +59,12 @@ const Recipes = [
   },
 ];
 
+const rows = await turso.execute('SELECT * FROM PurchaseOrders');
+
+const data = rows.toJSON()
+// Convertir a formato JSON deseado
+const result = convertReceptionDataToJSON(data);
+
 ---
 
 <Layout title="Purchase Reception">
@@ -86,12 +93,12 @@ const Recipes = [
         </thead>
         <tbody class="text-gray-600 divide-y">
           {
-            Recipes.map((item) => (
+            result.map((item) => (
               <tr>
                 <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.receptionID}</td>
-                <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.supplier}</td>
-                <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.souvenir}</td>
-                <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.warehouse}</td>
+                <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.supplierName}</td>
+                <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.souvenirName}</td>
+                <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.warehouseID}</td>
                 <td class="px-6 py-4 whitespace-nowrap dark:text-white capitalize">
                   <ItemStatus  status={item.status} />
                 </td>

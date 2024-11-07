@@ -51,7 +51,7 @@ import FormSelect from "@components/ui/Forms/FormSelect.astro";
 
   <h3 class="text-xl dark:text-white  font-semibold mb-4">Supplier Data</h3>
 
-  <div class="flex flex-wrap gap-3">
+  <div class="flex flex-wrap gap-2">
     <FormSelect name="supplierID" title="Supplier ID" isDisabled>
       <option value="">Selecciona un tipo de cuenta</option>
       <option value="supplierID" selected>1</option>
@@ -59,10 +59,6 @@ import FormSelect from "@components/ui/Forms/FormSelect.astro";
 
     <FormInput name="supplierName" type="text" placeholder="Name" isDisabled>
       Supplier Name
-    </FormInput>
-    
-    <FormInput name="rfc" type="text" placeholder="RFC" isDisabled>
-      RFC
     </FormInput>
   </div>
 
@@ -80,7 +76,7 @@ import FormSelect from "@components/ui/Forms/FormSelect.astro";
     </FormInput>
 
     <FormInput name="postalCode" type="number" placeholder="Postal Code" isDisabled>
-      Supplier Name
+      Postal Code
     </FormInput>
   </div>
 
