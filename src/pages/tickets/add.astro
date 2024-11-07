@@ -1,0 +1,94 @@
+---
+import BackBtn from "@components/ui/Buttons/BackBtn.astro";
+import Layout from "../../layouts/Layout.astro";
+import { turso } from '../../turso';
+import SubmitBtn from "@components/ui/Buttons/SubmitBtn.astro";
+import AddRegisterBtn from "@components/ui/Buttons/AddRegisterBtn.astro";
+
+// Fetch existing ticket data
+const { rows } = await turso.execute('SELECT * FROM Tickets');
+
+// Set the current date in YYYY-MM-DD format
+const currentDate = new Date().toISOString().split('T')[0];
+
+// Handle form submission
+if (Astro.request.method === 'POST') {
+  const formData = await Astro.request.formData();
+  const exhibition = formData.get('exhibition');
+  const ticketType = formData.get('ticketType');
+  const quantity = formData.get('quantity');
+  const payment = formData.get('payment');
+  const promotion = formData.get('promotion');
+  const date = formData.get('date') || currentDate;  // Use form date or default to currentDate
+
+  await turso.execute(`
+    INSERT INTO Tickets (exhibition, ticketType, quantity, payment, promotion, date) 
+    VALUES ('${exhibition}', ${ticketType}, ${quantity}, ${payment}, ${promotion}, '${date}')
+  `);
+
+  return Astro.redirect('/tickets');
+}
+---
+
+<Layout title="Dashboard">
+  <div class="max-w-6xl mx-auto mt-12 p-8 bg-gray-800 rounded-lg shadow-md">
+    <h1 class="text-3xl font-semibold text-white mb-6">Venta de Boletos</h1>
+    
+    <!-- Update form with method POST and names for formData -->
+    <form class="grid grid-cols-2 gap-6" method="POST">
+      
+      <div>
+        <label for="exhibition" class="block text-sm font-medium text-white">Exhibition <span class="text-red-500">*</span></label>
+        <input type="text" id="exhibition" name="exhibition" class="mt-1 block w-full px-3 py-2 bg-gray-700 text-white rounded-md focus:ring focus:ring-blue-500" placeholder="S(70)" />
+      </div>
+      
+      <div>
+        <label for="ticketType" class="block text-sm font-medium text-white">Ticket Type <span class="text-red-500">*</span></label>
+        <select id="ticketType" name="ticketType" class="mt-1 block w-full px-3 py-2 bg-gray-700 text-white rounded-md focus:ring focus:ring-blue-500">
+          <option value="" disabled selected>Dropdown text</option>
+          <option value="1">Souvenirs</option>
+          <option value="2">Accesorios de realidad virtual</option>
+          <option value="3">Comida</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="quantity" class="block text-sm font-medium text-white">Quantity</label>
+        <input type="number" id="quantity" name="quantity" class="mt-1 block w-full px-3 py-2 bg-gray-700 text-white rounded-md focus:ring focus:ring-blue-500" placeholder="Enter quantity" />
+      </div>
+
+      <div>
+        <label for="payment" class="block text-sm font-medium text-white">Payment</label>
+        <input type="number" id="payment" name="payment" class="mt-1 block w-full px-3 py-2 bg-gray-700 text-white rounded-md focus:ring focus:ring-blue-500" placeholder="Payment amount" />
+      </div>
+
+      <div>
+        <label for="promotion" class="block text-sm font-medium text-white">Promotion</label>
+        <input type="number" id="promotion" name="promotion" class="mt-1 block w-full px-3 py-2 bg-gray-700 text-white rounded-md focus:ring focus:ring-blue-500" placeholder="Promotion code" />
+      </div>
+
+      <div class="col-span-2">
+        <label for="date" class="block text-sm font-medium text-white">Date <span class="text-red-500">*</span></label>
+        <input type="text" id="date" name="date" class="mt-1 block w-full px-3 py-2 bg-gray-700 text-white rounded-md focus:ring focus:ring-blue-500" value={currentDate} readonly />
+      </div>
+
+      <div>
+        <label for="statusID" class="block text-sm font-medium text-white">Status <span class="text-red-500">*</span></label>
+        <select id="statusID" name="statusID" class="mt-1 block w-full px-3 py-2 bg-gray-700 text-white rounded-md focus:ring focus:ring-blue-500">
+          <option value="" disabled selected>Dropdown text</option>
+          <option value="1">Básico</option>
+          <option value="2">VIP</option>
+        </select>
+      </div>
+      
+      <div class="col-span-2 flex justify-end space-x-2">
+        <BackBtn>
+          Back
+        </BackBtn>
+        <SubmitBtn>
+          Add
+        </SubmitBtn>
+      </div>
+    </form>
+  </div>
+</Layout>
