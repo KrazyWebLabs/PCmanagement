@@ -1,4 +1,5 @@
 import type { ConvertedData } from "../Types/PurchaseData";
+import type { ConvertedSupplierData } from "src/Types/SupplierData";
 
 export default function convertPurchaseDataToJSON(data: DBData): ConvertedData[] {
   return data.rows.map((row: (string | number | null)[]) => {
@@ -23,7 +24,18 @@ export default function convertPurchaseDataToJSON(data: DBData): ConvertedData[]
     discount: row[17] as string,
     totalChange: row[18] as string,
     description: row[19] as string,
-    status: (row[1] as string).toLowerCase()
+    status: String(row[1]).toLowerCase()
     };
   });
-}
+};
+
+export function convertSupplierDataToJSON(data: DBData): ConvertedSupplierData[] {
+  return data.rows.map((row: (string | number | null)[]) => {
+    return {
+      supplierID: typeof row[6] === "number" ? row[6] : Number(row[0] ?? 0),
+      souvenirID: typeof row[7] === "number" ? row[7] : Number(row[0] ?? 0),
+      warehouseID: typeof row[8] === "number" ? row[8] : Number(row[0] ?? 0),
+      currencyID: typeof row[9] === "number" ? row[9] : Number(row[0] ?? 0),
+    };
+  });
+};

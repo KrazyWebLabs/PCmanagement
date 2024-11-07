@@ -5,16 +5,32 @@ import PurchaseForm from "../../components/Purchase/PurchaseForm.astro";
 
 import { turso } from "src/turso";
 
+import SubmitBtn from "@components/ui/Buttons/SubmitBtn.astro";
+
+
+
+if (Astro.request.method === 'POST') {
+  // Parse form data
+  const formData = await Astro.request.formData();
+  const purchaseID = formData.get('purchaseID');
+  const warehouseID = formData.get('warehouseID');
+  const currencyID = formData.get('currencyID');
+  const souvenirID = formData.get('souvenirID');
+  const supplierID = formData.get('supplierID');
+
+  await turso.execute(`INSERT INTO PurchaseOrders (purchaseOrderID ,warehouseID , currencyID ,souvenirID, supplierID, statusID ) VALUES(${purchaseID},${warehouseID},${currencyID},${souvenirID},${supplierID}, 7)`)
+
+  return Astro.redirect('/purchaseOrders')
+}
 ---
 
 <Layout title="purchaseOrders">
-  <PurchaseForm />
-  <div class="flex justify-end max-w-full mx-auto px-8">
-    <BackBtn />
-    <a
-      class="inline-block px-4 py-2 mr-4 text-white duration-150 font-medium bg-LegacyBlue-600 rounded-lg hover:bg-LegacyBlue-500 active:bg-LegacyBlue-700 md:text-sm capitalize"
-    >
-      <p class="text-lg">Add</p>
-    </a>
-  </div>
+  <PurchaseForm>
+    <div class="flex justify-end max-w-full mx-auto px-8">
+      <BackBtn/>
+        <SubmitBtn/>
+          Add
+        </SubmitBtn>
+    </div>
+  </PurchaseForm>
 </Layout>

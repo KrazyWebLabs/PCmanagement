@@ -1,4 +1,4 @@
-export type RecepcionData = {
+export type PurchaseData = {
     purchaseID: number;
     warehouseID: number;
     currencyID: number;
@@ -24,12 +24,12 @@ export type RecepcionData = {
 
 export interface ConvertedData {
     purchaseID: string;
-    warehouseID: string | null;
-    currencyID: string | null;
-    souvenirID: string | null;
+    warehouseID: string;
+    currencyID: string;
+    souvenirID: string;
     souvenirName: string;
     price: string | null;
-    supplierID: string | null;
+    supplierID: string;
     supplierName: string;
     streetName: string;
     neighborhood: string;
