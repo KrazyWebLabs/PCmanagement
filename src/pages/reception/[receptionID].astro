@@ -7,7 +7,7 @@ import { convertPurchaseDataToJSON } from "@functions/ConvertDataToJSON";
 import SubmitBtn from "@components/ui/Buttons/SubmitBtn.astro";
 
 const { receptionID } = Astro.params;
-const rows = await turso.execute(`SELECT * FROM Receptions  WHERE vipCardID = ${receptionID}`);
+const rows = await turso.execute(`SELECT * FROM ReceptionsData WHERE recepcionID = ${receptionID}`);
 
 const result = convertPurchaseDataToJSON(rows.toJSON());
 ---

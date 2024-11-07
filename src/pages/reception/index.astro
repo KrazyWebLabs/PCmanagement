@@ -59,11 +59,14 @@ const Recipes = [
   },
 ];
 
-const rows = await turso.execute('SELECT * FROM PurchaseOrders');
+const rows = await turso.execute('SELECT * FROM ReceptionsData');
+
 
 const data = rows.toJSON()
 // Convertir a formato JSON deseado
 const result = convertReceptionDataToJSON(data);
+
+console.log(result)
 
 ---
 
@@ -96,11 +99,11 @@ const result = convertReceptionDataToJSON(data);
             result.map((item) => (
               <tr>
                 <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.receptionID}</td>
-                <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.supplierName}</td>
+                <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.supplierEmail}</td>
                 <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.souvenirName}</td>
                 <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.warehouseID}</td>
                 <td class="px-6 py-4 whitespace-nowrap dark:text-white capitalize">
-                  <ItemStatus  status={item.status} />
+                  <ItemStatus  status={item.statusName} />
                 </td>
                 <td class="flex items-center justify-center gap-4 m-2 text-right px-6 whitespace-nowrap">
                   <EditRecord href={`/reception/${item.receptionID}`}>

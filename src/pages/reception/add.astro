@@ -9,12 +9,11 @@ import SubmitBtn from "../../components/ui/Buttons/SubmitBtn.astro";
 if(Astro.request.method === 'POST') {
   // Parse form data
   const formData = await Astro.request.formData();
+  const receptionID = formData.get('recepcionID');
   const purchaseID = formData.get('purchaseID');
+  const description = formData.get('description');
 
-  await turso.execute(`INSERT INTO PurchaseOrders (purchaseOrderID, deliverTo, purchaseDate, discount, totalChange, description, warehouseID, currencyID, souvenirID, supplierID, statusID)
-VALUES (1, 'Almacén Central', '2024-11-01', 5.0, 200.50, 'Pedido de souvenirs para la temporada alta', 1, 1, 3, 1, 7)`);
-
-  //await turso.execute(`INSERT INTO Recepcions (purchaseOrderID, statusID ) VALUES(${purchaseID}, 7)`)
+  await turso.execute(`INSERT INTO Recepcions (recepcionID, purchaseOrderID, statusID, description ) VALUES(${receptionID}, ${purchaseID}, 7, ${description})`)
 
   return Astro.redirect('/reception');
 }

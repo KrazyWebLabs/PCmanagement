@@ -2,12 +2,12 @@ export type RecepcionData = {
     receptionID: number;
     purchaseID: number;
     warehouseID: number;
-    currencyID: number;
+    currencyname: string;
     souvenirID: number;
     souvenirName: string;
     price: number;
     supplierID: number;
-    supplierName: number;
+    supplierEmail: string;
     streetName: string;
     neighborhood: string;
     outsideNumber: number;
@@ -20,19 +20,19 @@ export type RecepcionData = {
     discount: number;
     totalChange: number;
     description: string;
-    status: number;
+    statusName: string;
 }
 
 export interface ConvertedData {
     receptionID: string;
     purchaseID: string;
     warehouseID: string | null;
-    currencyID: string | null;
+    currencyName: string | null;
     souvenirID: string | null;
     souvenirName: string;
     price: string | null;
     supplierID: string | null;
-    supplierName: string;
+    supplierEmail: string;
     streetName: string;
     neighborhood: string;
     outsideNumber: string | null;
@@ -45,5 +45,5 @@ export interface ConvertedData {
     discount: string | null;
     totalChange: string | null;
     description: string;
-    status: string;
+    statusName: string;
 }
