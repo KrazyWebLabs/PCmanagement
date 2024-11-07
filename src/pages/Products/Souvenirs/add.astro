@@ -1,54 +1,38 @@
 ---
-import Layout from "../../../layouts/Layout.astro"
-import FormInput from "@components/ui/Forms/FormInput.astro"
 import BackBtn from "@components/ui/Buttons/BackBtn.astro";
+import Layout from "src/layouts/Layout.astro";
+import SouvenirForm from "@components/Souvenir/SouvenirForm.astro";
+import { turso } from "src/turso";
+import SubmitBtn from "@components/ui/Buttons/SubmitBtn.astro";
+import SouvenirIcon from "@components/ui/icons/SouvenirIcon.astro";
 
-const path = Astro.url.pathname.replace(/\/$/, ""); // Elimina el "/" al final si existe.
-const previousPath = path.substring(0, path.lastIndexOf("/")) || "/";
+if (Astro.request.method === 'POST') {
+  // Parse form data
+  const formData = await Astro.request.formData();
+  const souvenirID = formData.get('cardNumber');
+  const souvenirName = formData.get('souvenirName');
+  const priceWithoutIVA = formData.get('priceWithoutIVA ');
+  const IVA = formData.get('IVA');
+  const priceWithIVA = formData.get('priceWithIVA ');
+  const description  = formData.get('description ');
+  const warehouseID = formData.get('warehouseID');
+  const statusID  = formData.get('statusID ');
+
+  await turso.execute(`INSERT INTO Souvenirs (souvenirID, warehouseID, statusID) VALUES(${souvenirID},${warehouseID}, 7)`)
+
+  return Astro.redirect('/vipcard')
+}
+
+
 ---
 
-<Layout title="Alta Productos">
-    <div class="flex justify-between items-center mb-6">
-        <h3 
-        class="text-2xl font-semibold dark:text-white">Alta Productos
-        </h3>
-      </div>
-
-      <div class="grid grid-cols-2 gap-4">
-                <!-- Primera columna -->
-                <div class="flex flex-col">
-                  <!-- Id Souvenir -->
-                    <FormInput type="text" name="idSouvenir" title="idSouvenir" placeholder="ID Souvenir" isRequired/>
-
-                  <!-- Id Almacen -->
-                    <FormInput type="text" name="idAlmacen" title="idAlmacen" placeholder="ID Almacen" isRequired/>
-
-                  <!-- Id Status -->
-                  <FormInput type="text" name="idStatus" title="idStatus" placeholder="ID Status" isRequired/>
-
-                  <!-- Nombre del souvenir -->
-                  <FormInput type="text" name="nombreSouvenir" title="nombreSouvenir" placeholder="Nombre del souvenir"/>
-                </div>
-
-                <!-- Segunda columna -->
-                <div class="flex flex-col">
-                    <!-- Precio sin IVA -->
-                    <FormInput type="text" name="precioSinIVA" title="precioSinIVA" placeholder="Precio sin IVA"/>
-
-                  <!-- IVA -->
-                    <FormInput type="text" name="IVA" title="IVA" placeholder="IVA"/>
-
-                  <!-- Precio con IVA -->
-                  <FormInput type="text" name="precioConIVA" title="precioConIVA" placeholder="Precio con IVA"/>
-
-                  <!-- Descripción -->
-                  <FormInput type="text" name="descripcion" title="descripcion" placeholder="Descripción"/>
-                </div>
-            </div>
-            <!-- Botones -->
-            <div class="flex justify-center mt-6 space-x-4">
-              <BackBtn />
-
-              <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">Add</button>
-          </div>
+<Layout title="vipcard">
+  <SouvenirForm>
+    <div class="flex justify-end max-w-full mx-auto px-8">
+      <BackBtn />
+      <SubmitBtn>
+        Add
+      </SubmitBtn>
+    </div>
+  </SouvenirForm>
 </Layout>

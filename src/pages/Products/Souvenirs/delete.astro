@@ -1,0 +1,9 @@
+---
+import { turso } from "src/turso";
+
+const souvenirId = Astro.url.searchParams.get("souvenirID");
+
+await turso.execute(`DELETE FROM Souvenirs WHERE souvenirID = ${souvenirId}`);
+
+return Astro.redirect('/vipcard')
+---
