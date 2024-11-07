@@ -1,4 +1,5 @@
 export type VIPcardData = {
+  customerID: number;
   cardNumber: number;           // Número de tarjeta (entero largo)
   email: string;                // Correo electrónico del usuario
   accountNumber: number;        // Número de cuenta bancaria (entero largo)
@@ -11,14 +12,14 @@ export type VIPcardData = {
   rfc: string;                  // RFC del usuario (clave fiscal en México)
   phone: string;                // Teléfono de contacto
   address: number;              // Identificador de dirección (puede ser ID referenciado)
-  birthDate: Date;              // Fecha de nacimiento del usuario
   status: number;               // Estado de la cuenta (1 = Activa, 0 = Inactiva, etc.)
 }
 
 export interface ConvertedData {
-  cardNumber: string;  // Aseguramos que sea solo string
+  customerID: number;
+  cardNumber: number;  // Aseguramos que sea solo string
   email: string;
-  accountNumber: string | null;
+  accountNumber: number;
   accountType: string;
   currency: string | null;
   bicCode: string | null;
@@ -26,8 +27,7 @@ export interface ConvertedData {
   paternalSurname: string;
   maternalSurname: string;
   rfc: string;
-  phone: string;
+  phone: number;
   address: string;
-  birthDate: string | null;
   status: string;
 }

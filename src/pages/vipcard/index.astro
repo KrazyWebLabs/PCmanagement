@@ -5,91 +5,10 @@ import EditIcon from "../../components/ui/icons/EditIcon.astro"
 import EditRecord from "../../components/ui/Tables/EditRecord.astro";
 import ItemStatus from "../../components/ui/Tables/ItemStatus.astro";
 import AddRegisterBtn from "../../components/ui/Buttons/AddRegisterBtn.astro";
-import convertVIPcardDataToJSON from "@functions/ConvertDataToJSON"
+import { convertVIPcardDataToJSON } from "@functions/ConvertDataToJSON"
 import { turso } from "src/turso";
+import BackBtn from "@components/ui/Buttons/BackBtn.astro";
 
-const VIPCardMembers = [
-    {
-        cardNumber: "1234567890123456789012",
-        email: "liamjames@example.com",
-        accountNumber: "9876543210123456789012",
-        accountType: "ahorro",
-        currency: "USD",
-        bicCode: "BANKUS33",
-        name: "Liam James",
-        paternalSurname: "Smith",
-        maternalSurname: "Johnson",
-        rfc: "LJSM900101HDF",
-        phone: "5551234567",
-        address: "123 Main St, Anytown, USA",
-        birthDate: "1990-01-01",
-        status: "vigente",
-    },
-    {
-        cardNumber: "2345678901234567890123",
-        email: "oliviaemma@example.com",
-        accountNumber: "8765432101234567890123",
-        accountType: "corriente",
-        currency: "MXN",
-        bicCode: "BANKMX33",
-        name: "Olivia Emma",
-        paternalSurname: "Brown",
-        maternalSurname: "Davis",
-        rfc: "OEBD910202CDF",
-        phone: "5557654321",
-        address: "456 Elm St, Othertown, USA",
-        birthDate: "1991-02-02",
-        status: "cancelada",
-    },
-    {
-        cardNumber: "3456789012345678901234",
-        email: "william.benjamin@example.com",
-        accountNumber: "7654321098765432101234",
-        accountType: "nomina",
-        currency: "EUR",
-        bicCode: "BANKEU33",
-        name: "William Benjamin",
-        paternalSurname: "Wilson",
-        maternalSurname: "Martinez",
-        rfc: "WBWM920303MDF",
-        phone: "5558765432",
-        address: "789 Oak St, Thistown, USA",
-        birthDate: "1992-03-03",
-        status: "en tramite",
-    },
-    {
-        cardNumber: "4567890123456789012345",
-        email: "henrytheodore@example.com",
-        accountNumber: "6543210987654321098765",
-        accountType: "ahorro",
-        currency: "USD",
-        bicCode: "BANKUS44",
-        name: "Henry Theodore",
-        paternalSurname: "Jones",
-        maternalSurname: "Garcia",
-        rfc: "HTJG930404HDF",
-        phone: "5552345678",
-        address: "321 Pine St, Anycity, USA",
-        birthDate: "1993-04-04",
-        status: "vigente",
-    },
-    {
-        cardNumber: "5678901234567890123456",
-        email: "amelia.elijah@example.com",
-        accountNumber: "5432109876543210987654",
-        accountType: "corriente",
-        currency: "MXN",
-        bicCode: "BANKMX44",
-        name: "Amelia Elijah",
-        paternalSurname: "Miller",
-        maternalSurname: "Hernandez",
-        rfc: "AEML940505CDF",
-        phone: "5553456789",
-        address: "654 Maple St, Yourtown, USA",
-        birthDate: "1994-05-05",
-        status: "vigente",
-    },
-];
 const rows  = await turso.execute('SELECT * FROM VIPCardMembers')
 
 const data = rows.toJSON()
@@ -136,7 +55,7 @@ const result = convertVIPcardDataToJSON(data);
                   </EditRecord>
 
                   <a
-                    href="prueba"
+                    href={`/vipcard/delete?cardNumber=${item.cardNumber}`}
                     class="py-2 px-3 inline-block text-white duration-150 font-medium bg-red-600 rounded-lg hover:bg-red-500 active:bg-red-700 md:text-sm"
                   >
                     <TrashIcon/>

@@ -1,22 +1,31 @@
 import type { ConvertedData } from "@customTypes/VipCardData";
+import type { ConvertedCustomerData } from "@customTypes/CustomersData";
 
-export default function convertVIPcardDataToJSON(data: DBData): ConvertedData[] {
+export function convertVIPcardDataToJSON(data: DBData): ConvertedData[] {
   return data.rows.map((row: (string | number | null)[]) => {
     return {
-      cardNumber: row[0] !== null ? row[0].toString() : "", // Aseguramos que no sea undefined
-      email: row[8] as string,
-      accountNumber: row[10] ? row[10].toString() : null,
-      accountType: (row[11] as string).toLowerCase(),
-      currency: row[13] as string,
-      bicCode: row[12] as string,
-      name: row[2] as string,
-      paternalSurname: row[3] as string,
-      maternalSurname: row[4] as string,
-      rfc: row[6] as string,
-      phone: row[7] as string,
-      address: row[9] as string,
-      birthDate: null, // No se proporciona en los datos originales
-      status: (row[1] as string).toLowerCase()
+      customerID: Number(row[15]), // Aseguramos que sea número
+      cardNumber: Number(row[0]), // Convertimos a número
+      email: row[7] as string,
+      accountNumber: row[12] ? Number(row[12]) : 0, // Aseguramos que sea número
+      accountType: String(row[10]), // Convertimos a string
+      currency: row[13] ? String(row[13]) : null,
+      bicCode: row[11] as string | null,
+      name: row[1] as string,
+      paternalSurname: row[2] as string,
+      maternalSurname: row[3] as string,
+      rfc: row[5] as string,
+      phone: Number(row[6]), // Convertimos a número
+      address: String(row[8]), // Convertimos a string
+      status: String(row[14]).toLowerCase(), // Convertimos a string
     };
   });
-}
+};
+
+export function convertCustomersDataToJSON(data: DBData): ConvertedCustomerData[] {
+  return data.rows.map((row: (string | number | null)[]) => {
+    return {
+      customerID: typeof row[6] === "number" ? row[6] : Number(row[0] ?? 0),
+    };
+  });
+};

@@ -2,9 +2,9 @@
 import BackBtn from "@components/ui/Buttons/BackBtn.astro";
 import Layout from "../../layouts/Layout.astro";
 import VIPcardForm from "@components/VipCard/VIPcardForm.astro";
-import VIPcardMembers from "../../../VIPcardData.json";
 import { turso } from "src/turso";
-import convertVIPcardDataToJSON from "@functions/ConvertDataToJSON";
+import { convertVIPcardDataToJSON } from "@functions/ConvertDataToJSON";
+import SubmitBtn from "@components/ui/Buttons/SubmitBtn.astro";
 
 const { cardNumber } = Astro.params;
 const rows  = await turso.execute(`SELECT * FROM VIPCardMembers  WHERE vipCardID = ${cardNumber}`);
@@ -14,13 +14,12 @@ const result = convertVIPcardDataToJSON(rows.toJSON());
 ---
 
 <Layout title="Editar">
-  <VIPcardForm selectedCard={result[0]}/>
-  <div class="flex justify-end max-w-full mx-auto px-8">
-    <BackBtn />
-    <a
-      class="inline-block px-4 py-2 mr-4 text-white duration-150 font-medium bg-LegacyBlue-600 rounded-lg hover:bg-LegacyBlue-500 active:bg-LegacyBlue-700 md:text-sm capitalize"
-    >
-      <p class="text-lg">Update</p>
-    </a>
-  </div>
+  <VIPcardForm selectedCard={result[0]}>
+    <div class="flex justify-end max-w-full mx-auto px-8">
+      <BackBtn />
+      <SubmitBtn>
+        Update
+      </SubmitBtn>
+    </div>
+  </VIPcardForm>
 </Layout>
