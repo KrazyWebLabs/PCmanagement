@@ -1,5 +1,5 @@
-import type { ConvertedData } from "../Types/RecepcionData";
-import type { ConvertedPurchaseData } from "src/Types/PurchaseData";
+import type { ConvertedData } from "../Types/PurchaseData";
+import type { ConvertedPurchaseData } from "..src/Types/PurchaseData";
 
 export default function convertReceptionDataToJSON(data: DBData): ConvertedData[] {
   return data.rows.map((row: (string | number | null)[]) => {
