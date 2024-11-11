@@ -1,7 +1,9 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import { turso } from '../../turso';
-
+import AddRegisterBtn from "@components/ui/Buttons/AddRegisterBtn.astro";
+import OpenRegisterBtn from "@components/ui/Buttons/OpenRegisterBtn.astro";
+import CloseRegisterBtn from "@components/ui/Buttons/CloseRegisterBtn.astro";
 // Fetch existing ticket data
 const { rows } = await turso.execute('SELECT * FROM Tickets');
 
@@ -38,17 +40,18 @@ const porcentajeVip = ((rows.filter(ticket => ticket.ticketType === 2).length / 
       </div>
     </div>
 
-    <!-- Botones para Agregar Ticket, Abrir y Cerrar Caja -->
-    <div class="flex justify-center space-x-4 mt-8">
-      <a href="/tickets/add" class="px-6 py-3 bg-blue-600 text-white rounded hover:bg-blue-700 focus:ring focus:ring-blue-500">
-        Agregar Ticket
-      </a>
-      <a href="/cashRegisters/open-register" class="px-6 py-3 bg-blue-600 text-white rounded hover:bg-blue-700 focus:ring focus:ring-blue-500">
-        Abrir Caja
-      </a>
-      <a href="/cashRegisters/close-register" class="px-6 py-3 bg-blue-600 text-white rounded hover:bg-blue-700 focus:ring focus:ring-blue-500">
+    <AddRegisterBtn>
+      Agregar Ticket
+    </AddRegisterBtn>
+
+    <OpenRegisterBtn>
+      Abrir Caja 
+    </OpenRegisterBtn>
+      
+      <CloseRegisterBtn>
         Cerrar Caja
-      </a>
+      </CloseRegisterBtn>
+      
     </div>
   </div>
 </Layout>
