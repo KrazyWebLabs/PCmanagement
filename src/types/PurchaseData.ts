@@ -1,4 +1,4 @@
-export type RecepcionData = {
+export type PurchaseData = {
     purchaseID: number;
     warehouseID: number;
     currencyID: number;
