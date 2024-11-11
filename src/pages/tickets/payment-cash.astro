@@ -1,0 +1,93 @@
+---
+import Layout from "../../layouts/Layout.astro";
+---
+
+<Layout title="Cash Payment">
+  <div class="max-w-6xl mx-auto mt-12 p-8 bg-gray-800 rounded-lg shadow-md">
+    <h1 class="text-3xl font-semibold text-white mb-6">Payment with Cash</h1>
+
+    <form class="grid grid-cols-2 gap-6" onsubmit="event.preventDefault();">
+      <!-- Nombre del comprador -->
+      <div>
+        <label class="block text-sm font-medium text-white">First Name</label>
+        <input type="text" class="mt-1 block w-full px-3 py-2 bg-gray-700 text-white rounded-md focus:ring focus:ring-blue-500" placeholder="First Name" />
+      </div>
+
+      <!-- Apellido del comprador -->
+      <div>
+        <label class="block text-sm font-medium text-white">Last Name</label>
+        <input type="text" class="mt-1 block w-full px-3 py-2 bg-gray-700 text-white rounded-md focus:ring focus:ring-blue-500" placeholder="Last Name" />
+      </div>
+
+      <!-- Cantidad a pagar -->
+      <div class="col-span-2">
+        <label class="block text-sm font-medium text-white">Amount to Pay</label>
+        <p class="mt-1 text-xl font-semibold text-white" id="amountToPay">$500</p>
+      </div>
+
+      <!-- Cantidad con la que paga el usuario -->
+      <div class="col-span-2">
+        <label class="block text-sm font-medium text-white">Amount Given</label>
+        <input type="number" id="amountGiven" class="mt-1 block w-full px-3 py-2 bg-gray-700 text-white rounded-md focus:ring focus:ring-blue-500" placeholder="Enter amount given" oninput="calculateChange()" />
+      </div>
+
+      <!-- Resultado del cambio -->
+      <div class="col-span-2">
+        <label class="block text-sm font-medium text-white">Change</label>
+        <pre id="changeOutput" class="mt-1 block w-full px-3 py-2 bg-gray-700 text-white rounded-md h-24"></pre>
+      </div>
+
+      <!-- Botón de Confirmar Transacción -->
+      <div class="col-span-2 flex justify-end">
+        <button type="submit" class="px-6 py-3 bg-blue-600 text-white rounded hover:bg-blue-700 focus:ring focus:ring-blue-500">
+          Confirm Transaction
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Script para calcular el cambio -->
+  <script>
+    function calculateChange() {
+      const amountToPay = 500; // Cantidad fija como ejemplo
+      const amountGiven = parseInt(document.getElementById("amountGiven").value);
+      const changeOutput = document.getElementById("changeOutput");
+
+      // Limpia el contenido de `changeOutput` si no hay un valor válido
+      if (isNaN(amountGiven)) {
+        changeOutput.textContent = "";
+        return;
+      }
+
+      if (amountGiven < amountToPay) {
+        changeOutput.textContent = "The amount given is insufficient.";
+        return;
+      }
+
+      let change = amountGiven - amountToPay;
+      const denominations = [
+        { name: "$1000 bill", value: 1000 },
+        { name: "$500 bill", value: 500 },
+        { name: "$200 bill", value: 200 },
+        { name: "$100 bill", value: 100 },
+        { name: "$50 bill", value: 50 },
+        { name: "$20 bill", value: 20 },
+        { name: "$10 coin", value: 10 },
+        { name: "$5 coin", value: 5 },
+        { name: "$2 coin", value: 2 },
+        { name: "$1 coin", value: 1 }
+      ];
+
+      let result = `Total Change: $${change}\n\nBreakdown:\n`;
+      denominations.forEach(denomination => {
+        const count = Math.floor(change / denomination.value);
+        if (count > 0) {
+          result += `${count} x ${denomination.name}\n`;
+          change %= denomination.value;
+        }
+      });
+
+      changeOutput.textContent = result;
+    }
+  </script>
+</Layout>

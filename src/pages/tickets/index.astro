@@ -1,0 +1,54 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { turso } from '../../turso';
+
+// Fetch existing ticket data
+const { rows } = await turso.execute('SELECT * FROM Tickets');
+
+// Calcula el total de tickets vendidos y el monto total recaudado
+const totalTickets = rows.length;
+const totalRecaudado = rows.reduce((total, ticket) => total + ticket.payment, 0);
+
+// Calcula el porcentaje de cada tipo de ticket
+const porcentajeBasico = ((rows.filter(ticket => ticket.ticketType === 1).length / totalTickets) * 100).toFixed(2);
+const porcentajeVip = ((rows.filter(ticket => ticket.ticketType === 2).length / totalTickets) * 100).toFixed(2);
+---
+
+<Layout title="Dashboard">
+  <div class="max-w-6xl mx-auto mt-12 p-8 bg-gray-800 rounded-lg shadow-md">
+    <h1 class="text-3xl font-semibold text-white mb-6">Dashboard de Venta de Tickets</h1>
+    
+    <!-- Sección de Estadísticas de Venta -->
+    <div class="grid grid-cols-2 gap-4 text-white mb-6">
+      <div class="p-4 bg-gray-700 rounded-lg">
+        <h3 class="text-xl font-semibold">Total de Tickets Vendidos</h3>
+        <p class="text-3xl">{totalTickets}</p>
+      </div>
+      <div class="p-4 bg-gray-700 rounded-lg">
+        <h3 class="text-xl font-semibold">Monto Total Recaudado</h3>
+        <p class="text-3xl">${totalRecaudado}</p>
+      </div>
+      <div class="p-4 bg-gray-700 rounded-lg">
+        <h3 class="text-xl font-semibold">Porcentaje de Time Traveler (Básico)</h3>
+        <p class="text-3xl">{porcentajeBasico}%</p>
+      </div>
+      <div class="p-4 bg-gray-700 rounded-lg">
+        <h3 class="text-xl font-semibold">Porcentaje de Legacy Explorer (VIP)</h3>
+        <p class="text-3xl">{porcentajeVip}%</p>
+      </div>
+    </div>
+
+    <!-- Botones para Agregar Ticket, Abrir y Cerrar Caja -->
+    <div class="flex justify-center space-x-4 mt-8">
+      <a href="/tickets/add" class="px-6 py-3 bg-blue-600 text-white rounded hover:bg-blue-700 focus:ring focus:ring-blue-500">
+        Agregar Ticket
+      </a>
+      <a href="/cashRegisters/open-register" class="px-6 py-3 bg-blue-600 text-white rounded hover:bg-blue-700 focus:ring focus:ring-blue-500">
+        Abrir Caja
+      </a>
+      <a href="/cashRegisters/close-register" class="px-6 py-3 bg-blue-600 text-white rounded hover:bg-blue-700 focus:ring focus:ring-blue-500">
+        Cerrar Caja
+      </a>
+    </div>
+  </div>
+</Layout>
