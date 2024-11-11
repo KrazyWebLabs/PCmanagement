@@ -109,12 +109,20 @@ else result = convertCustomersDataToJSON(data).filter((p) => p.customerID !== se
       </div>
       <slot/>
     :
-      <FormInput name="cardNumber" type="number" value={selectedCard.cardNumber} isDisabled placeholder="1234567890123456789012">
+      <FormInput name="cardNumber" type="number" value={selectedCard.cardNumber} placeholder="1234567890123456789012">
         Card Number
       </FormInput>
-      <FormInput name="email" type="email" value={selectedCard.email} placeholder="johndoe@mail.com">
-        Email
-      </FormInput>
+      <div class="flex flex-wrap gap-4">
+        <FormInput name="email" type="email" value={selectedCard.email} isDisabled placeholder="johndoe@mail.com">
+          Email
+        </FormInput>
+        <FormSelect title="Card Status" name="status">
+          <SelectOption value="" isSelected>--Selecciona--</SelectOption>
+          <SelectOption value="en tramite">En tramite</SelectOption>
+          <SelectOption value="vigente">Vigente</SelectOption>
+          <SelectOption value="cancelada">Cancelada</SelectOption> 
+        </FormSelect>
+      </div>
 
       <h3 class="text-xl dark:text-white  font-semibold mb-4">Back Account</h3>
 
@@ -181,6 +189,7 @@ else result = convertCustomersDataToJSON(data).filter((p) => p.customerID !== se
           Birth Date
         </FormInput>
       </div>
+      
       <slot/>
 
   }

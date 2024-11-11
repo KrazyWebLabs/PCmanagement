@@ -5,21 +5,60 @@ import VIPcardForm from "@components/VipCard/VIPcardForm.astro";
 import { turso } from "src/turso";
 import { convertVIPcardDataToJSON } from "@functions/ConvertDataToJSON";
 import SubmitBtn from "@components/ui/Buttons/SubmitBtn.astro";
+import { nullable } from "astro:schema";
+import statusTextToId from "@functions/statusTextToId";
 
 const { cardNumber } = Astro.params;
-const rows  = await turso.execute(`SELECT * FROM VIPCardMembers  WHERE vipCardID = ${cardNumber}`);
+const rows = await turso.execute(
+  `SELECT * FROM VIPCardMembers  WHERE vipCardID = ${cardNumber}`
+);
 
 // Convertir a formato JSON deseado
 const result = convertVIPcardDataToJSON(rows.toJSON());
+
+if (Astro.request.method === "POST") {
+  // Parse form data
+  const formData = await Astro.request.formData();
+
+  const cardNumber = formData.get("cardNumber");
+  const statusID = formData.get("status");
+  const accNumber = formData.get("accountNumber");
+  let statusText;
+  let accNum = 0;
+
+  if (typeof statusID === "string") statusText = statusTextToId(statusID);
+  if (typeof accNumber === "string") accNum = parseInt(accNumber);
+
+
+
+  if (statusText !== result[0].status && accNum !== result[0].accountNumber) {
+    //update both
+    await turso.execute(`UPDATE VIPCards SET customerID = ${accNumber}, statusID = ${statusText} WHERE vipCardID = ${cardNumber};`);
+  }
+  else if (statusText !== result[0].status) {
+    //update status
+    await turso.execute(`UPDATE VIPCards SET statusID = ${statusText} WHERE vipCardID = ${cardNumber};`);
+  }
+  else if (accNum !== result[0].accountNumber) {
+    //update account number
+    await turso.execute(`UPDATE VIPCards SET customerID = ${accNumber} WHERE vipCardID = ${cardNumber};`);
+  }
+  /* Checar cual de las propiedades cambia
+      Opciones que pueden cambiar
+        - status
+        - accountNumber
+      Pueden cambiar los dos en una sola req o cambiar solo uno
+  */
+
+  return Astro.redirect('/vipcard')
+}
 ---
 
 <Layout title="Editar">
   <VIPcardForm selectedCard={result[0]}>
     <div class="flex justify-end max-w-full mx-auto px-8">
       <BackBtn />
-      <SubmitBtn>
-        Update
-      </SubmitBtn>
+      <SubmitBtn> Update </SubmitBtn>
     </div>
   </VIPcardForm>
 </Layout>
