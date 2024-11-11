@@ -1,36 +1,76 @@
 ---
-import BackBtn from "../../components/ui/Buttons/BackBtn.astro";
-import Layout from "../../layouts/Layout.astro";
-import PurchaseForm from "../../components/Purchase/PurchaseForm.astro";
+import Form from "@components/ui/Forms/Form.astro";
+import FormInput from "@components/ui/Forms/FormInput.astro";
+import FormSelect from "@components/ui/Forms/FormSelect.astro";
+import SelectOption from "@components/ui/Forms/SelectOption.astro";
 import { turso } from "src/turso";
-import SubmitBtn from "../../components/ui/Buttons/SubmitBtn.astro";
-import PurchaseOrderID from "./[PurchaseOrderID].astro";
 
+// Función para enviar los datos a la base de datos
+async function handleSubmit(event) {
+  event.preventDefault(); // Previene el comportamiento por defecto del formulario
 
-if (Astro.request.method === 'POST') {
-  
-  const formData = await Astro.request.formData();
-  const orderID = formData.get('purchaseID');
-  const supplierID = formData.get('supplierID');
-  const totalAmount = formData.get('totalAmount');
-  const orderDate = formData.get('orderDate');
+  // Obtén los datos del formulario
+  const formData = new FormData(event.target);
 
-  await turso.execute(`
-    INSERT INTO PurchaseOrders (purchaseID, supplierID, totalAmount, orderDate)
-    VALUES (${PurchaseOrderID}, ${supplierID}, ${totalAmount})
-  `);
+  // Convierte los datos del formulario en un objeto
+  const data = {
+    purchaseID: formData.get("purchaseID"),
+    warehouse: formData.get("warehouse"),
+    currency: formData.get("currency"),
+    supplierID: formData.get("supplierID"),
+    deliverTo: formData.get("deliverTo"),
+    purchaseDate: formData.get("purchaseDate"),
+    discount: formData.get("discount"),
+    totalChange: formData.get("totalChange"),
+    description: formData.get("description"),
+  };
 
-  return Astro.redirect('/purchaseOrders');
+  // Envía los datos a la base de datos usando turso
+  await turso.execute("INSERT INTO PurchaseOrders SET ?", data);
 }
 ---
 
-<Layout title="purchaseOrders">
-  <PurchaseForm />
-  <div class="flex justify-end max-w-full mx-auto px-8">
-    <BackBtn />
-    <SubmitBtn>
-      Add
-    </SubmitBtn>
-    </a>
+<form class="max-w-full mx-auto p-8" onSubmit={handleSubmit}>
+  
+  <h2 class="text-2xl dark:text-white font-bold mb-6">Purchase Order Data</h2>
+
+  <div class="flex flex-wrap gap-3">
+    <FormSelect name="purchaseID" title="Purchase ID" isRequired>
+      <option value="" selected>Selecciona una Orden de Compra</option>
+      <option value="PO1">1</option>
+      <option value="PO2">2</option>
+      <option value="PO3">3</option>
+      <option value="PO4">4</option>
+    </FormSelect>
+    <FormSelect name="warehouse" title="Warehouse" isDisabled>
+      <option value="">Selecciona un Almacen</option>
+      <option value="WH1" selected>1</option>
+      <option value="WH2">2</option>
+      <option value="WH3">3</option>
+      <option value="WH4">4</option>
+    </FormSelect>
+    <FormSelect name="currency" title="Currency" isDisabled>
+      <option value="">Selecciona un tipo de Moneda</option>
+      <option value="pesos" selected>Pesos</option>
+      <option value="dolares">Dolares</option>
+      <option value="euros">Euros</option>
+    </FormSelect>
   </div>
-</Layout>
+
+  <!-- Supplier Data Section -->
+  <!-- Continúa con el resto de los campos como están en tu formulario actual -->
+
+  <div class="flex flex-wrap gap-4">
+    <FormInput name="deliverTo" type="text" placeholder="Deliver To" />
+    <FormInput name="purchaseDate" type="date" placeholder="00/00/0000" />
+    <FormInput name="discount" type="number" placeholder="0%" />
+    <FormInput name="totalChange" type="number" placeholder="0.00" />
+  </div>
+
+  <div class="flex flex-wrap gap-1">
+    <FormInput name="description" type="text" placeholder="Description" />
+  </div>
+  
+  <!-- Botón de Enviar -->
+  <button type="submit" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">Submit</button>
+</form>
