@@ -6,7 +6,7 @@ import EditRecord from "../../../components/ui/Tables/EditRecord.astro";
 import ItemStatus from "../../../components/ui/Tables/ItemStatus.astro";
 import AddRegisterBtn from "../../../components/ui/Buttons/AddRegisterBtn.astro";
 import BackBtn from "@components/ui/Buttons/BackBtn.astro";
-import { convertSouvenirsDataToJSON } from "@functions/ConvertDataToJSON";
+import { convertSouvenirsDataToJSON } from "@functions/ConvertCU04DataToJSON";
 import { turso } from "src/turso";
 
 const rows = await turso.execute('SELECT * FROM Souvenirs');
@@ -14,6 +14,8 @@ const rows = await turso.execute('SELECT * FROM Souvenirs');
 const data = rows.toJSON()
 
 const result = convertSouvenirsDataToJSON(data);
+
+console.log(result)
 ---
 
 <Layout title="Souvenirs">
@@ -59,12 +61,12 @@ const result = convertSouvenirsDataToJSON(data);
                     <ItemStatus  status={item.statusID} />
                   </td>
                   <td class="flex items-center justify-center gap-4 m-2 text-right px-6 whitespace-nowrap">
-                    <EditRecord href={`/souvenir/${item.souvenirID}`}>
+                    <EditRecord href={`/souvenir/souvenirName${item.souvenirName}`}>
                       <EditIcon/>
                     </EditRecord>
   
                     <a
-                      href={`/souvenir/delete?souvenirID=${item.souvenirID}`}
+                      href={`/products/souvenirs/delete?souvenirName=${item.souvenirName}`}
                       class="py-2 px-3 inline-block text-white duration-150 font-medium bg-red-600 rounded-lg hover:bg-red-500 active:bg-red-700 md:text-sm"
                     >
                       <TrashIcon/>

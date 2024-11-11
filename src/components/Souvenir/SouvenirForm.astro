@@ -2,7 +2,7 @@
 import Form from "@components/ui/Forms/Form.astro";
 import FormInput from "@components/ui/Forms/FormInput.astro"
 import BackBtn from "@components/ui/Buttons/BackBtn.astro";
-import { convertSouvenirsDataToJSON } from "@functions/ConvertDataToJSON";
+import { convertSouvenirsDataToJSON } from "@functions/ConvertCU04DataToJSON";
 import { turso } from "src/turso";
 
 const path = Astro.url.pathname.replace(/\/$/, ""); // Elimina el "/" al final si existe.
