@@ -11,21 +11,27 @@ if(Astro.request.method === 'POST') {
   const formData = await Astro.request.formData();
   const receptionID = formData.get('recepcionID');
   const purchaseID = formData.get('purchaseID');
-  const description = formData.get('description');
+  const delTo = formData.get('deliverTo');
+  const repDate = formData.get('receptionDate');
+  const dicount = formData.get('discount');
+  const totChange = formData.get('totalChange');
+  const descriptions = formData.get('description');
 
-  await turso.execute(`INSERT INTO Recepcions (recepcionID, purchaseOrderID, statusID, description ) VALUES(${receptionID}, ${purchaseID}, 7, ${description})`)
+   
+
+  await turso.execute(`INSERT INTO Recepcions (recepcionID, deliverTo, purchaseDate, discount, totalChange, description, purchaseOrderID) VALUES(${receptionID}, "${delTo}", ${repDate}, ${dicount}, ${totChange}, "${descriptions}", ${purchaseID})`)
 
   return Astro.redirect('/reception');
 }
 ---
 
 <Layout title="reception">
-  <ReceptionForm />
-  <div class="flex justify-end max-w-full mx-auto px-8">
-    <BackBtn />
-    <SubmitBtn>
-      Add
-    </SubmitBtn>
-    </a>
-  </div>
+  <ReceptionForm>
+    <div class="flex justify-end max-w-full mx-auto px-8">
+      <BackBtn />
+      <SubmitBtn>
+        Add
+      </SubmitBtn>
+    </div>
+  </ReceptionForm>
 </Layout>

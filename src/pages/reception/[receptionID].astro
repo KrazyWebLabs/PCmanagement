@@ -3,13 +3,66 @@ import BackBtn from "../../components/ui/Buttons/BackBtn.astro";
 import Layout from "../../layouts/Layout.astro";
 import ReceptionForm from "@components/Reception/ReceptionForm.astro";
 import { turso } from "src/turso";
-import { convertPurchaseDataToJSON } from "@functions/ConvertDataToJSON";
+import convertReceptionDataToJSON  from "@functions/ConvertDataToJSON";
 import SubmitBtn from "@components/ui/Buttons/SubmitBtn.astro";
+import { number } from "astro:schema";
 
 const { receptionID } = Astro.params;
+
 const rows = await turso.execute(`SELECT * FROM ReceptionsData WHERE recepcionID = ${receptionID}`);
 
-const result = convertPurchaseDataToJSON(rows.toJSON());
+const result = convertReceptionDataToJSON(rows.toJSON());
+
+
+
+if (Astro.request.method === "POST") {
+  // Parse form data
+  const formData = await Astro.request.formData();
+
+  const recepcionID = formData.get("receptionID");
+  //const purchaseOrderID = formData.get("purchaseID");
+  const deliverTo = formData.get("deliverTo");
+  const recepcionDate = formData.get("recepcionDate");
+  const discount = formData.get("discount");
+  const totalChange = formData.get("totalChange");
+  const description = formData.get("description");
+  //const statusName = formData.get("statusName");
+  
+  await turso.execute(`UPDATE Recepcions SET deliverTo = "${deliverTo}", discount = ${discount}, description = "${description}" WHERE recepcionID = ${recepcionID};`);
+
+  //let statusText;
+  //let recp = 0;
+
+  //if (typeof recepcionID === "string") recp = parseInt(recepcionID);
+
+
+/*
+  if (recp !== result[0].receptionID) {
+    //update both
+    await turso.execute(`UPDATE Recepcions SET deliverTo = "${deliverTo}", purchaseDate = ${recepcionDate}, discount = ${discount}, description = "${description}" WHERE recepcionID = ${recepcionID};`);
+  }
+    */
+
+  //console.log(recp);
+  /*
+  else if (statusText !== result[0].statusName) {
+    //update status
+    await turso.execute(`UPDATE PurchaseOrders SET statusID = ${statusText} WHERE purchaseOrderID = ${purchaseOrderID};`);
+  }
+  
+  else if (accNum !== result[0].accountNumber) {
+    //update account number
+    await turso.execute(`UPDATE VIPCards SET customerID = ${accNumber} WHERE vipCardID = ${cardNumber};`);
+  }
+   Checar cual de las propiedades cambia
+      Opciones que pueden cambiar
+        - status
+        - accountNumber
+      Pueden cambiar los dos en una sola req o cambiar solo uno
+  */
+
+  return Astro.redirect('/reception')
+}
 ---
 
 <Layout title="Editar">

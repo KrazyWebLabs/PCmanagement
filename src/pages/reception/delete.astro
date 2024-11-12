@@ -3,7 +3,7 @@ import { turso } from "src/turso";
 
 const receptionID = Astro.url.searchParams.get("receptionID");
 
-await turso.execute(`DELETE FROM Receptions WHERE receptionID = ${receptionID}`);
+await turso.execute(`DELETE FROM Recepcions WHERE recepcionID = ${receptionID}`);
 
 return Astro.redirect('/reception')
 ---

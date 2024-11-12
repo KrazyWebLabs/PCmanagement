@@ -24,7 +24,7 @@ export type RecepcionData = {
 }
 
 export interface ConvertedData {
-    receptionID: string;
+    receptionID: number;
     purchaseID: string;
     warehouseID: string | null;
     currencyName: string | null;
