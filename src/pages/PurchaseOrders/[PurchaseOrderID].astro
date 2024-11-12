@@ -3,16 +3,36 @@ import BackBtn from "../../components/ui/Buttons/BackBtn.astro";
 import Layout from "../../layouts/Layout.astro";
 import PurchaseForm from "@components/Purchase/PurchaseForm.astro";
 import { turso } from "src/turso";
+import { convertPurchaseDataToJSON } from "@functions/ConvertDataToJSON";
 import SubmitBtn from "@components/ui/Buttons/SubmitBtn.astro";
 
 const { purchaseOrderID } = Astro.params;
 const rows = await turso.execute(`SELECT * FROM PurchaseOrdersData WHERE purchaseOrderID = ${purchaseOrderID}`);
 
 const result = convertPurchaseDataToJSON(rows.toJSON());
----
 
+if (Astro.request.method === "POST") {
+
+  const formData = await Astro.request.formData();
+
+  const orderID = formData.get("purchaseOrderID");
+  const supplierID = formData.get("supplierID");
+  const totalAmount = formData.get("totalAmount");
+  const orderDate = formData.get("orderDate");
+
+  await turso.execute(`
+    UPDATE PurchaseOrders
+    SET supplierID = ${supplierID}, totalAmount = ${totalAmount}, orderDate = "${orderDate}"
+    WHERE purchaseOrderID = ${orderID};
+  `);
+
+  return Astro.redirect("/purchaseOrders");
+}
+---
 <Layout title="Editar Orden de Compra">
-  <h1 class="dark:text-white">{purchaseOrderID}</h1>
+  <h1 class="dark:text-white">Editar Orden de Compra {purchaseOrderID}</h1>
+  <PurchaseForm selectedPurchase={result[0]} />
+
   <div class="flex justify-end max-w-full mx-auto px-8">
     <BackBtn />
     <SubmitBtn>

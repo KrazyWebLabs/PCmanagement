@@ -1,122 +1,80 @@
 ---
 import Form from "@components/ui/Forms/Form.astro";
-import FormInput from  "../ui/Forms/FormInput.astro";
-import FormSelect from "../ui/Forms/FormSelect.astro";
+import FormInput from "@components/ui/Forms/FormInput.astro";
+import FormSelect from "@components/ui/Forms/FormSelect.astro";
 import SelectOption from "@components/ui/Forms/SelectOption.astro";
-import CapFrstLetter from "@functions/CapFrstLetter";
 import { generateRandomNumber } from "@functions/generateRandomNumber";
-import convertPurchaseDataToJSON from "@functions/ConvertDataToJSON";
+import { convertPurchaseDataToJSON } from "@functions/ConvertDataToJSON";
 import { turso } from "src/turso";
 
 interface Props {
-  selectedCard?: any;
+  selectedOrder?: any;
 }
 
-const { selectedCard } = Astro.props;
-let generatedCardNumber = "";
-let result1;
-let result2;
-let result3;
-let result4;
-let suppliers;
-let souvenirs;
-let warehouse;
-let currency;
+const { selectedOrder } = Astro.props;
 
+let generateOrderNumber = "";
+let orderData;
+let result;
 
-suppliers = await turso.execute("SELECT * FROM Suppliers");
-const data = suppliers?.toJSON()
+orderData = await turso.execute("SELECT * FROM PurchaseOrders");
+const data = orderData?.toJSON();
 
-souvenirs = await turso.execute("SELECT * FROM Souvenirs");
-const data2 = souvenirs?.toJSON()
-
-warehouse = await turso.execute("SELECT * FROM Warehouses");
-const data3 = souvenirs?.toJSON()
-
-currency = await turso.execute("SELECT * FROM Currencies");
-const data4 = souvenirs?.toJSON()
-
-if (!selectedCard) {
-  generatedCardNumber = generateRandomNumber(15)
-  result1 = convertPurchaseDataToJSON(data)
-  result2 = convertPurchaseDataToJSON(data2)
-  result3 = convertPurchaseDataToJSON(data3)
-  result4 = convertPurchaseDataToJSON(data4)
+if (!selectedOrder) {
+  generateOrderNumber = generateRandomNumber(5);
+  result = convertPurchaseDataToJSON(data);
+} else {
+  result = convertPurchaseDataToJSON(data).filter((p) => p.orderID !== selectedOrder.orderID);
 }
-else {
-  result1 = convertPurchaseDataToJSON(data).filter((p) => p.supplierID !== selectedCard.supplierID);
-  result2 = convertPurchaseDataToJSON(data2).filter((p) => p.souvenirID !== selectedCard.souvernirID);
-  result3 = convertPurchaseDataToJSON(data3).filter((p) => p.warehouseID !== selectedCard.warehouseID);
-  result4 = convertPurchaseDataToJSON(data4).filter((p) => p.currencyID !== selectedCard.currencyID);
-}
-
-
 ---
 
-<Form title="Purchase Data">
+<Form title="Purchase Order Data">
 
-  <div class="flex flex-wrap gap-3">
-    <FormSelect name="purchaseID" title="Purchase ID" isDisabled>
-      <option value="" selected>Selecciona una Orden de Compra</option>
-      <option value="PO1">1</option>
-      <option value="PO2">2</option>
-      <option value="PO3">3</option>
-      <option value="PO4">4</option>
-    </FormSelect>
-    <FormSelect name="warehouse" title="Warehouse" >
-      <SelectOption value="" isSelected>--- Select Warehouse ---</SelectOption>
+  <FormInput name="orderID" type="number" value={generateOrderNumber} placeholder={generateOrderNumber} isRequired isDisabled>
+    Order ID
+  </FormInput>
+  <div class="flex flex-wrap gap-4">
+    <FormSelect name="purchaseID" title="Purchase ID" isRequired>
+      <SelectOption value="" isSelected> -- Select Purchase Order -- </SelectOption>
       {
-        result2?.map((acc) => (
-          <SelectOption value={acc.warehouseID.toString()}>{acc.warehouseID}</SelectOption>
+        result?.map((acc) => (
+          <SelectOption value={acc.orderID.toString()}>{acc.orderID}</SelectOption>
         ))
       }
     </FormSelect>
-    <FormSelect name="currency" title="Currency" >
-      <SelectOption value="" isSelected>--- Select Currency ---</SelectOption>
-      {
-        result2?.map((acc) => (
-          <SelectOption value={acc.currencyID.toString()}>{acc.currencyID}</SelectOption>
-        ))
-      }
+    <FormSelect name="warehouse" title="Warehouse" isDisabled>
+      <option value="">Selecciona un Almacen</option>
+      <option value="WH1" selected>1</option>
+      <option value="WH2">2</option>
+      <option value="WH3">3</option>
+      <option value="WH4">4</option>
+    </FormSelect>
+    <FormSelect name="currency" title="Currency" isDisabled>
+      <option value="">Selecciona un tipo de Moneda</option>
+      <option value="pesos" selected>Pesos</option>
+      <option value="dolares">Dolares</option>
+      <option value="euros">Euros</option>
     </FormSelect>
   </div>
 
-  <h3 class="text-xl dark:text-white  font-semibold mb-4">Souvenir Data</h3>
+  <h3 class="text-xl dark:text-white font-semibold mb-4">Supplier Data</h3>
 
   <div class="flex flex-wrap gap-3">
-    <FormSelect name="souvenirID" title="Souvenir ID" isRequired>
-      <SelectOption value="" isSelected>--- Select Souvenir ---</SelectOption>
+    <FormSelect name="supplierID" title="Supplier ID" isDisabled>
+      <option value="">Selecciona un Proveedor</option>
       {
-        result2?.map((acc) => (
-          <SelectOption value={acc.souvenirID.toString()}>{acc.souvenirID}</SelectOption>
-        ))
-      }
-    </FormSelect>
-
-    <FormInput name="souvenirName" type="text" placeholder="Name" isDisabled>
-      Souvenir Name
-    </FormInput>
-    
-    <FormInput name="price" type="number" placeholder="0.00" isDisabled>
-      Price W/IVA
-    </FormInput>
-  </div>
-
-
-  <h3 class="text-xl dark:text-white  font-semibold mb-4">Supplier Data</h3>
-
-  <div class="flex flex-wrap gap-2">
-    <FormSelect name="supplierID" title="Supplier ID">
-      <SelectOption value="" isSelected>--- Select Supplier ---</SelectOption>
-      {
-        result1?.map((acc) => (
-          <SelectOption value={acc.supplierID.toString()}>{acc.supplierID}</SelectOption>
+        result?.map((acc) => (
+          <SelectOption value={acc.supplierID.toString()}>{acc.supplierName}</SelectOption>
         ))
       }
     </FormSelect>
 
     <FormInput name="supplierName" type="text" placeholder="Name" isDisabled>
       Supplier Name
+    </FormInput>
+    
+    <FormInput name="rfc" type="text" placeholder="RFC" isDisabled>
+      RFC
     </FormInput>
   </div>
 
@@ -134,7 +92,7 @@ else {
     </FormInput>
 
     <FormInput name="postalCode" type="number" placeholder="Postal Code" isDisabled>
-      Supplier Name
+      Postal Code
     </FormInput>
   </div>
 
@@ -152,22 +110,22 @@ else {
     </FormInput>
   </div>
 
-  <h3 class="text-xl dark:text-white  font-semibold mb-4">Other Information</h3>
+  <h3 class="text-xl dark:text-white font-semibold mb-4">Other Information</h3>
 
   <div class="flex flex-wrap gap-4">
     <FormInput name="deliverTo" type="text" placeholder="Deliver To">
       Deliver To
     </FormInput>
     
-    <FormInput name="purchaseDate" type="date"  placeholder="00/00/0000">
+    <FormInput name="purchaseDate" type="date" placeholder="00/00/0000">
       Purchase Date
     </FormInput>
 
-    <FormInput name="discount" type="number"  placeholder="0%">
+    <FormInput name="discount" type="number" placeholder="0%">
       Discount
     </FormInput>
 
-    <FormInput name="totalChange" type="number"  placeholder="0.00">
+    <FormInput name="totalChange" type="number" placeholder="0.00">
       Total Change
     </FormInput>
   </div>
@@ -177,5 +135,5 @@ else {
       Description
     </FormInput>
   </div>
-</Form>
 
+</Form>

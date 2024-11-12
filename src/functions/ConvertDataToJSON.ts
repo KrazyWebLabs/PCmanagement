@@ -1,9 +1,6 @@
 import type { ConvertedData } from "../Types/PurchaseData";
-<<<<<<< HEAD
-import type { ConvertedPurchaseData } from "..src/Types/PurchaseData";
-=======
+import type { ConvertedPurchaseData } from "src/Types/PurchaseData";
 import type { ConvertedSupplierData } from "src/Types/SupplierData";
->>>>>>> c9b798a1776486f7cd5c5ab31754909df4916ec9
 
 export default function convertReceptionDataToJSON(data: DBData): ConvertedData[] {
   return data.rows.map((row: (string | number | null)[]) => {
@@ -20,10 +17,7 @@ export default function convertReceptionDataToJSON(data: DBData): ConvertedData[
     warehouseID: row[2] as string,
     currencyName: row[3] as string,
     souvenirID: row[4] as string,
-<<<<<<< HEAD
     supplierID: row[7] as string,
-    
-
     souvenirName: row[5] as string,
     price: row[6] as string,
 
@@ -46,7 +40,6 @@ export function convertPurchaseDataToJSON(data: DBData): ConvertedPurchaseData[]
   return data.rows.map((row: (string | number | null)[]) => {
     return {
       purchaseID: typeof row[6] === "number" ? row[6] : Number(row[0] ?? 0),
-=======
     souvenirName: row[6] as string,
     price: row[7] as string,
     supplierID: row[5] as string,
@@ -75,7 +68,6 @@ export function convertSupplierDataToJSON(data: DBData): ConvertedSupplierData[]
       souvenirID: typeof row[7] === "number" ? row[7] : Number(row[0] ?? 0),
       warehouseID: typeof row[8] === "number" ? row[8] : Number(row[0] ?? 0),
       currencyID: typeof row[9] === "number" ? row[9] : Number(row[0] ?? 0),
->>>>>>> c9b798a1776486f7cd5c5ab31754909df4916ec9
     };
   });
 };
