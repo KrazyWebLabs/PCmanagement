@@ -9,7 +9,7 @@ import BackBtn from "@components/ui/Buttons/BackBtn.astro";
 import { convertSouvenirsDataToJSON } from "@functions/ConvertCU04DataToJSON";
 import { turso } from "src/turso";
 
-const rows = await turso.execute('SELECT * FROM Souvenirs');
+const rows = await turso.execute('SELECT * FROM Souvenirs AS so JOIN status AS s ON so.statusID = s.statusID');
 
 const data = rows.toJSON()
 
@@ -56,17 +56,16 @@ console.log(result)
                   <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.priceWithIVA}</td>
                   <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.description}</td>
                   <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.warehouseID}</td>
-                  <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.statusID}</td>
                   <td class="px-6 py-4 whitespace-nowrap dark:text-white capitalize">
-                    <ItemStatus  status={item.statusID} />
+                    <ItemStatus  status={item.statusName} />
                   </td>
                   <td class="flex items-center justify-center gap-4 m-2 text-right px-6 whitespace-nowrap">
-                    <EditRecord href={`/souvenir/souvenirName${item.souvenirName}`}>
+                    <EditRecord href={`/products/souvenirs/${item.souvenirID}`}>
                       <EditIcon/>
                     </EditRecord>
   
                     <a
-                      href={`/products/souvenirs/delete?souvenirName=${item.souvenirName}`}
+                      href={`/products/souvenirs/delete?souvenirID=${item.souvenirID}`}
                       class="py-2 px-3 inline-block text-white duration-150 font-medium bg-red-600 rounded-lg hover:bg-red-500 active:bg-red-700 md:text-sm"
                     >
                       <TrashIcon/>

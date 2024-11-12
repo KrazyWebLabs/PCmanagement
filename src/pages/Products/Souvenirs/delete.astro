@@ -1,19 +1,13 @@
 ---
 import { turso } from "src/turso";
 
-// Habilitar claves foráneas
-await turso.execute('PRAGMA foreign_keys = ON;');
+const souvenirID = Astro.url.searchParams.get("souvenirID");
 
-const souvenirName = Astro.url.searchParams.get("souvenirName");
-
-// Supongamos que necesitas limpiar las dependencias antes de eliminar (solo si es necesario)
-// Este paso es opcional y depende del esquema exacto de tu base de datos y sus restricciones
-await turso.execute(`DELETE FROM Warehouses WHERE warehouseID IN (SELECT warehouseID FROM Souvenirs WHERE souvenirName = '${souvenirName}')`);
-await turso.execute(`DELETE FROM Status WHERE statusID IN (SELECT statusID FROM Souvenirs WHERE souvenirName = '${souvenirName}')`);
+console.log(souvenirID)
 
 // Ahora eliminar el registro en la tabla Souvenirs
-await turso.execute(`DELETE FROM Souvenirs WHERE souvenirName = '${souvenirName}'`);
+await turso.execute(`UPDATE Souvenirs SET statusID = 11 WHERE souvenirID = ${souvenirID}`);
 
-return Astro.redirect('/souvenirs');
+return Astro.redirect('/products/souvenirs');
 
 ---

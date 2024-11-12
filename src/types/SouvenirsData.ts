@@ -18,4 +18,5 @@ export interface ConvertedData {
     description: string;
     warehouseID: string;
     statusID: string;
+    statusName: string;
 }

@@ -10,7 +10,8 @@ export function convertSouvenirsDataToJSON(data: DBData): ConvertedData[] {
       priceWithIVA: Number(row[4]),
       description: row[5] as string,
       warehouseID: String(row[6]).toLowerCase()  , 
-      statusID: String(row[7]).toLowerCase(),    
+      statusID: String(row[7]).toLowerCase(),
+      statusName: String(row[9]).toLowerCase(),     
     };
   });
 };

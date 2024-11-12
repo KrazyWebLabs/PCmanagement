@@ -6,15 +6,15 @@ import { turso } from "src/turso";
 import { convertSouvenirsDataToJSON } from "@functions/ConvertCU04DataToJSON";
 import SubmitBtn from "@components/ui/Buttons/SubmitBtn.astro";
 
-const { souvenirName } = Astro.params;
-const rows  = await turso.execute(`SELECT * FROM Souvenirs  WHERE souvenirName = ${souvenirName}`);
+const { souvenirID } = Astro.params;
+const rows  = await turso.execute(`SELECT * FROM Souvenirs  WHERE souvenirID = ${souvenirID}`);
 
 // Convertir a formato JSON deseado
 const result = convertSouvenirsDataToJSON(rows.toJSON());
 ---
 
 <Layout title="Editar">
-  <SouvenirForm souvenirName={result[0]}>
+  <SouvenirForm selectedSouvenir={result[0]}>
     <div class="flex justify-end max-w-full mx-auto px-8">
       <BackBtn />
       <SubmitBtn>
