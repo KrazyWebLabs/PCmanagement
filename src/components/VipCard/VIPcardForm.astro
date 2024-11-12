@@ -6,6 +6,7 @@ import SelectOption from "@components/ui/Forms/SelectOption.astro";
 import CapFrstLetter from "@functions/CapFrstLetter"
 import { generateRandomNumber } from "@functions/generateRandomNumber";
 import { convertCustomersDataToJSON } from "@functions/ConvertDataToJSON"
+import { getStatus } from "@functions/getStatus"
 import { turso } from "src/turso";
 
 interface Props {
@@ -16,6 +17,7 @@ const { selectedCard } = Astro.props;
 let generatedCardNumber = "";
 let bankAccNumbers;
 let result;
+let statusWTOSelectedStatus
 
 bankAccNumbers = await turso.execute("SELECT * FROM BankAccounts")
 const data = bankAccNumbers?.toJSON()
@@ -24,8 +26,10 @@ if (!selectedCard) {
   generatedCardNumber = generateRandomNumber(15)
   result = convertCustomersDataToJSON(data)
 }
-else result = convertCustomersDataToJSON(data).filter((p) => p.customerID !== selectedCard.customerID);
-
+else {
+  statusWTOSelectedStatus = getStatus(selectedCard.status);
+  result = convertCustomersDataToJSON(data).filter((p) => p.customerID !== selectedCard.customerID);
+}
 ---
 
 <Form title="Card Data">
@@ -117,10 +121,13 @@ else result = convertCustomersDataToJSON(data).filter((p) => p.customerID !== se
           Email
         </FormInput>
         <FormSelect title="Card Status" name="status">
-          <SelectOption value="" isSelected>--Selecciona--</SelectOption>
-          <SelectOption value="en tramite">En tramite</SelectOption>
-          <SelectOption value="vigente">Vigente</SelectOption>
-          <SelectOption value="cancelada">Cancelada</SelectOption> 
+          <SelectOption value="">--Selecciona--</SelectOption>
+          <SelectOption value={selectedCard.status} isSelected>{CapFrstLetter(selectedCard.status)}</SelectOption>
+          {
+            statusWTOSelectedStatus?.map((stat) => (
+              <SelectOption value={stat}>{CapFrstLetter(stat)}</SelectOption>
+            ))
+          }
         </FormSelect>
       </div>
 

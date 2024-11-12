@@ -21,36 +21,26 @@ if (Astro.request.method === "POST") {
   const formData = await Astro.request.formData();
 
   const cardNumber = formData.get("cardNumber");
-  const statusID = formData.get("status");
+  const statusText = formData.get("status");
   const accNumber = formData.get("accountNumber");
-  let statusText;
+  let statusConvertedID;
   let accNum = 0;
 
-  if (typeof statusID === "string") statusText = statusTextToId(statusID);
-  if (typeof accNumber === "string") accNum = parseInt(accNumber);
+  if (typeof statusText === "string") statusConvertedID = statusTextToId(statusText);
+  if (typeof accNumber === "string") accNum = parseInt(accNumber, 10);
 
-
-
-  if (statusText !== result[0].status && accNum !== result[0].accountNumber) {
-    //update both
-    await turso.execute(`UPDATE VIPCards SET customerID = ${accNumber}, statusID = ${statusText} WHERE vipCardID = ${cardNumber};`);
-  }
-  else if (statusText !== result[0].status) {
+  if (statusText !== result[0].status && accNum === result[0].accountNumber) {
     //update status
-    await turso.execute(`UPDATE VIPCards SET statusID = ${statusText} WHERE vipCardID = ${cardNumber};`);
+    await turso.execute(`UPDATE VIPCards SET statusID = ${statusConvertedID} WHERE vipCardID = ${cardNumber};`);
+  } else if (accNum !== result[0].accountNumber && statusText === result[0].status ) {
+    //update accNumber
+    await turso.execute(`UPDATE VIPCards SET customerID = ${accNum}, statusID = 7 WHERE vipCardID = ${cardNumber};`);
+  } else {
+    //update both
+    await turso.execute(`UPDATE VIPCards SET customerID = ${accNum}, statusID = ${statusConvertedID} WHERE vipCardID = ${cardNumber};`);
   }
-  else if (accNum !== result[0].accountNumber) {
-    //update account number
-    await turso.execute(`UPDATE VIPCards SET customerID = ${accNumber} WHERE vipCardID = ${cardNumber};`);
-  }
-  /* Checar cual de las propiedades cambia
-      Opciones que pueden cambiar
-        - status
-        - accountNumber
-      Pueden cambiar los dos en una sola req o cambiar solo uno
-  */
 
-  return Astro.redirect('/vipcard')
+  return Astro.redirect("/vipcard");
 }
 ---
 
