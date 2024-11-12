@@ -5,12 +5,30 @@ import SouvenirForm from "@components/Souvenir/SouvenirForm.astro";
 import { turso } from "src/turso";
 import { convertSouvenirsDataToJSON } from "@functions/ConvertCU04DataToJSON";
 import SubmitBtn from "@components/ui/Buttons/SubmitBtn.astro";
+import statusTextToId from "@functions/statusTextToId";
 
 const { souvenirID } = Astro.params;
 const rows  = await turso.execute(`SELECT * FROM Souvenirs  WHERE souvenirID = ${souvenirID}`);
 
 // Convertir a formato JSON deseado
 const result = convertSouvenirsDataToJSON(rows.toJSON());
+
+if(Astro.request.method === "POST"){
+  //Parse form data
+  const formData = await Astro.request.formData();
+
+  const souvenirID = formData.get("souvenirID");
+  const statusID = formData.get("statusID");
+  const warehouseID = formData.get("warehouseID");
+  let statusName;
+
+  if(typeof statusID === "string") statusName = statusTextToId(statusID);
+
+  if(statusName !== result[0].statusID)
+  await turso.execute(`UPDATE Souvenirs SET statusID = 10 WHERE souvenirID = ${souvenirID}`);
+
+  return Astro.redirect('/products/souvenirs')
+}
 ---
 
 <Layout title="Editar">

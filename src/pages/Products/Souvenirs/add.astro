@@ -17,15 +17,15 @@ if (Astro.request.method === 'POST') {
   const warehouseID = formData.get('warehouseID');
   const statusID  = formData.get('statusID ');
 
-  await turso.execute(`INSERT INTO Souvenirs (souvenirID, warehouseID, statusID) VALUES(${souvenirID},${warehouseID}, 7)`)
+  await turso.execute(`INSERT INTO Souvenirs (souvenirID, warehouseID, statusID) VALUES(${souvenirID},${warehouseID}, 10)`)
 
-  return Astro.redirect('/vipcard')
+  return Astro.redirect('/products/souvenirs')
 }
 
 
 ---
 
-<Layout title="vipcard">
+<Layout title="souvenir">
   <SouvenirForm>
     <div class="flex justify-end max-w-full mx-auto px-8">
       <BackBtn />

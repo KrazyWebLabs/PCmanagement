@@ -17,6 +17,7 @@ export interface ConvertedData {
     priceWithIVA: number;
     description: string;
     warehouseID: string;
+    warehouseName: string;
     statusID: string;
     statusName: string;
 }
