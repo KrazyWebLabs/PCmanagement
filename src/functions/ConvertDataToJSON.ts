@@ -7,7 +7,7 @@ export function convertVIPcardDataToJSON(data: DBData): ConvertedData[] {
       customerID: Number(row[15]), // Aseguramos que sea número
       cardNumber: Number(row[0]), // Convertimos a número
       email: row[7] as string,
-      accountNumber: row[12] ? Number(row[12]) : 0, // Aseguramos que sea número
+      accountNumber: row[15] ? Number(row[15]) : 0, // Aseguramos que sea número
       accountType: String(row[10]), // Convertimos a string
       currency: row[13] ? String(row[13]) : null,
       bicCode: row[11] as string | null,
