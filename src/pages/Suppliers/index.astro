@@ -9,9 +9,9 @@ import BackBtn from "@components/ui/Buttons/BackBtn.astro";
 import { convertSouvenirsDataToJSON } from "@functions/ConvertSuppliersDataToJSON";
 import { turso } from "src/turso";
 
-const rows = await turso.execute('SELECT * FROM Suppliers AS so JOIN status AS s ON so.statusID = s.statusID');
+const rows = await turso.execute('SELECT * FROM Suppliers');
 
-const data = rows.toJSON()
+const data = rows.toJSON();
 
 const result = convertSouvenirsDataToJSON(data);
 

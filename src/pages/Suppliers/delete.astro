@@ -1,0 +1,9 @@
+---
+import { turso } from "src/turso";
+
+const supplierID = Astro.url.searchParams.get("supplierID");
+
+await turso.execute(`DELETE FROM Suppliers WHERE supplierID = ${supplierID}`);
+
+return Astro.redirect('/suppliers')
+---
