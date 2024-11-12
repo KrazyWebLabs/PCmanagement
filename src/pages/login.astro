@@ -1,0 +1,107 @@
+---
+import Form from "@components/ui/Forms/Form.astro";
+import Layout from "../layouts/Layout.astro";
+import FormInput from "@components/ui/Forms/FormInput.astro";
+import SubmitBtn from "@components/ui/Buttons/SubmitBtn.astro";
+import { convertUserDataToJSON } from "@functions/ConvertUserDataToJson";
+import { decryptPasswrd } from "@functions/registerUser";
+import type { InputType } from "@customTypes/InputType";
+import { turso } from "src/turso";
+
+export interface Inputs {
+  name: string;
+  label: string;
+  type: InputType;
+  isRequired: boolean;
+  placeholder: string;
+}
+
+const session = Astro.cookies.get("userSes");
+
+if (session) {
+  Astro.cookies.delete("userSes");
+  return Astro.redirect("/");
+}
+
+if (Astro.request.method === "POST") {
+  // Analizar datos de formulario
+  const formData = await Astro.request.formData();
+
+  const employeeID = formData.get("employeeID");
+  const passw = formData.get("passw");
+
+  //TODO: Do a better UI/UX for register
+  if (typeof passw === "string" && typeof employeeID === "string") {
+    let decUserPasswrd = await decryptPasswrd(passw);
+
+    try {
+      const selection = await turso.execute(
+        `SELECT * FROM Employees WHERE employeeID = ${employeeID}`
+      );
+      const userSession = convertUserDataToJSON(selection.toJSON());
+
+			console.log(userSession)
+
+      let userInfo = {
+        id: userSession[0].employeeID,
+				name: userSession[0].name,
+				lastName: userSession[0].paternalSurname
+      };
+
+			console.log(userInfo)
+
+			console.log(decryptPasswrd(passw) + " : " + passw)
+
+      if (decUserPasswrd === passw) {
+        Astro.cookies.set("userSes", userInfo);
+
+        return Astro.redirect("/");
+      }
+    } catch (e: any) {
+      console.error(
+        `No se puede logear un usuario con nombre ${employeeID}\n\n${e.message}`
+      );
+    }
+  }
+  return Astro.redirect("/");
+}
+
+const inputs: Inputs[] = [
+  {
+    name: "employeeID",
+    label: "# User",
+    type: "number",
+    isRequired: true,
+    placeholder: "982472834824",
+  },
+  {
+    name: "passw",
+    label: "Password",
+    type: "password",
+    isRequired: true,
+    placeholder: "123456",
+  },
+];
+---
+
+<Layout title="Log into you Account">
+  <div class="flex items-center justify-center flex-col mt-10">
+    <Form title="Log In">
+      {
+        inputs.map((inp) => (
+          <FormInput
+            name={inp.name}
+            type={inp.type}
+            isRequired
+            placeholder={inp.placeholder}
+          >
+            {inp.label}
+          </FormInput>
+        ))
+      }
+      <div class="flex justify-center items-center min-w-full mt-2">
+        <SubmitBtn> Login </SubmitBtn>
+      </div>
+    </Form>
+  </div>
+</Layout>
