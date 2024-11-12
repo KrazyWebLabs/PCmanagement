@@ -8,7 +8,7 @@ import SubmitBtn from "@components/ui/Buttons/SubmitBtn.astro";
 import statusTextToId from "@functions/statusTextToId";
 
 const { souvenirID } = Astro.params;
-const rows  = await turso.execute(`SELECT * FROM Souvenirs  WHERE souvenirID = ${souvenirID} `);
+const rows  = await turso.execute(`SELECT * FROM Souvenirs WHERE souvenirID = ${souvenirID} `);
 
 // Convertir a formato JSON deseado
 const result = convertSouvenirsDataToJSON(rows.toJSON());
@@ -18,19 +18,21 @@ if (Astro.request.method === "POST") {
   const formData = await Astro.request.formData();
 
   const souvenirID = formData.get("souvenirID");
-  const statusText = formData.get("status");
-  const warehouseNumber = formData.get("warehouseNumber");
+  const statusText = formData.get("statusID");
+  const warehouseName = formData.get("warehouseID");
   let statusConvertedID;
   let warehouseConvertedID;
 
   if (typeof statusText === "string") statusConvertedID = statusTextToId(statusText);
+  if (typeof warehouseName === "string") warehouseConvertedID = statusTextToId(warehouseName);
 
-  if (statusText !== result[0].statusName && warehouseConvertedID === result[0].warehouseID) {
+
+  if (statusText !== result[0].statusID && warehouseConvertedID === result[0].warehouseID) {
     //update status
     await turso.execute(`UPDATE Souvenirs SET statusID = ${statusConvertedID} WHERE souvenirID = ${souvenirID};`);
   } else if (warehouseConvertedID !== result[0].warehouseID && statusText === result[0].statusID ) {
     //update accNumber
-    await turso.execute(`UPDATE Souvenirs SET warehouseID = ${warehouseConvertedID}, statusID = ${statusConvertedID} WHERE souvenirID = ${souvenirID};`);
+    await turso.execute(`UPDATE Souvenirs SET warehouseID = ${warehouseConvertedID}, statusID = 7 WHERE souvenirID = ${souvenirID};`);
   } else {
     //update both
     await turso.execute(`UPDATE Souvenirs SET warehouseID = ${warehouseConvertedID}, statusID = ${statusConvertedID} WHERE souvenirID = ${souvenirID};`);
@@ -41,7 +43,7 @@ if (Astro.request.method === "POST") {
 ---
 
 <Layout title="Editar">
-  <SouvenirForm selectedSouvenir={result[0]}>
+  <SouvenirForm selectedSouvenir={  result[0]}>
     <div class="flex justify-end max-w-full mx-auto px-8">
       <BackBtn />
       <SubmitBtn>

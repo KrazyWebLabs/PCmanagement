@@ -26,33 +26,40 @@ console.log(selectedSouvenir);
         <!-- Primera columna -->
         <div class="flex flex-col">
           <!-- Id Souvenir -->
-            <FormInput type="number" name="idSouvenir" title="idSouvenir" placeholder="ID Souvenir" isRequired/>
+            <FormInput type="number" name="idSouvenir" title="idSouvenir" placeholder="ID Souvenir" isRequired isDisabled/>
 
           <!-- Id Almacen -->
-            <FormInput type="number" name="idAlmacen" title="idAlmacen" placeholder="ID Almacen" isRequired/>
+          <FormSelect name="idwarehouse" title="idwarehouse" >
+            <SelectOption value="" isSelected> -- Selecciona -- </SelectOption>
+            <SelectOption value="alta"> Alta </SelectOption>
+            <SelectOption value="en stock"> En stock </SelectOption>
+          </FormSelect>
 
-          <!-- Id Status -->
-          <FormInput type="number" name="idStatus" title="idStatus" placeholder="ID Status" isRequired/>
+            <!-- Id Status -->
+          <FormSelect name="idStatus" title="idStatus" >
+            <SelectOption value="" isSelected> -- Selecciona -- </SelectOption>
+            <SelectOption value="alta"> Alta </SelectOption>
+            <SelectOption value="en stock"> En stock </SelectOption>
+          </FormSelect>
 
-          <!-- Nombre del souvenir -->
-          <FormInput type="text" name="nombreSouvenir" title="nombreSouvenir" placeholder="Nombre del souvenir"/>
+          
         </div>
 
         <!-- Segunda columna -->
         <div class="flex flex-col">
+          <!-- Nombre del souvenir -->
+          <FormInput type="text" name="nombreSouvenir" title="nombreSouvenir" placeholder="Nombre del souvenir"/>
+
             <!-- Precio sin IVA -->
             <FormInput type="text" name="precioSinIVA" title="precioSinIVA" placeholder="Precio sin IVA" />
 
           <!-- IVA -->
             <FormInput type="text" name="IVA" title="IVA" placeholder="IVA"/>
-
-          <!-- Precio con IVA -->
-          <FormInput type="text" name="precioConIVA" title="precioConIVA" placeholder="Precio con IVA"/>
-
-          <!-- Descripción -->
-          <FormInput type="text" name="descripcion" title="descripcion" placeholder="Descripción"/>
         </div>
+        <!-- Descripción -->
+          
     </div>
+    <FormInput type="text" name="descripcion" title="descripcion" placeholder="Descripción"/>
 
     <slot/>
   :
@@ -67,7 +74,11 @@ console.log(selectedSouvenir);
             <FormInput type="number" name="idSouvenir" title="idSouvenir" placeholder="ID Souvenir" value={selectedSouvenir.souvenirID} isDisabled/>
 
           <!-- Id Almacen -->
-            <FormInput type="number" name="idAlmacen" title="idAlmacen" placeholder="ID Almacen" value={selectedSouvenir.warehouseID}/>
+            <FormSelect  name="idAlmacen" title="idAlmacen"  value={selectedSouvenir.warehouseID}>
+              <SelectOption value="" isSelected> -- Selecciona -- </SelectOption>
+              <SelectOption value="almacén central"> Almacén Central </SelectOption>
+              <SelectOption value="almacén norte"> Almacén Norte </SelectOption>
+            </FormSelect>
 
           <!-- Id Status -->
           <FormSelect name="idStatus" title="idStatus" value={selectedSouvenir.statusName} >

@@ -14,10 +14,11 @@ if (Astro.request.method === 'POST') {
   const IVA = formData.get('IVA');
   const priceWithIVA = formData.get('priceWithIVA ');
   const description  = formData.get('description ');
-  const warehouseID = formData.get('warehouseID');
+  const warehouseName = formData.get('warehouseName');
   const statusID  = formData.get('statusID ');
 
-  await turso.execute(`INSERT INTO Souvenirs (souvenirID, warehouseID, statusID) VALUES(${souvenirID},${warehouseID}, 10)`)
+  await turso.execute(`INSERT INTO Souvenirs (souvenirID, warehouseID, statusID) VALUES(${souvenirID}, ${warehouseName}, ${statusID})`);
+
 
   return Astro.redirect('/products/souvenirs')
 }
