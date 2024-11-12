@@ -19,23 +19,13 @@ if (Astro.request.method === "POST") {
 
   const souvenirID = formData.get("souvenirID");
   const statusText = formData.get("statusID");
-  const warehouseName = formData.get("warehouseID");
   let statusConvertedID;
-  let warehouseConvertedID;
 
   if (typeof statusText === "string") statusConvertedID = statusTextToId(statusText);
-  if (typeof warehouseName === "string") warehouseConvertedID = statusTextToId(warehouseName);
 
-
-  if (statusText !== result[0].statusID && warehouseConvertedID === result[0].warehouseID) {
-    //update status
-    await turso.execute(`UPDATE Souvenirs SET statusID = ${statusConvertedID} WHERE souvenirID = ${souvenirID};`);
-  } else if (warehouseConvertedID !== result[0].warehouseID && statusText === result[0].statusID ) {
-    //update accNumber
-    await turso.execute(`UPDATE Souvenirs SET warehouseID = ${warehouseConvertedID}, statusID = 7 WHERE souvenirID = ${souvenirID};`);
-  } else {
-    //update both
-    await turso.execute(`UPDATE Souvenirs SET warehouseID = ${warehouseConvertedID}, statusID = ${statusConvertedID} WHERE souvenirID = ${souvenirID};`);
+  if(statusText !== result[0].statusName)
+  {
+    await turso.execute(`UPDATE Souvenirs SET statusID = ${statusConvertedID} WHERE souvenirID = ${souvenirID}`);
   }
 
   return Astro.redirect('/products/souvenirs')
