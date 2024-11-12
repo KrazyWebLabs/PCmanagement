@@ -17,15 +17,15 @@ if(Astro.request.method === "POST"){
   //Parse form data
   const formData = await Astro.request.formData();
 
-  const souvenirID = formData.get("souvenirID");
+  const supplierID = formData.get("supplierID");
   const statusID = formData.get("statusID");
-  const warehouseID = formData.get("warehouseID");
   let statusName;
 
   if(typeof statusID === "string") statusName = statusTextToId(statusID);
+  console.log(statusID)
 
   if(statusName !== result[0].statusID)
-  await turso.execute(`UPDATE Suppliers SET statusID = 10 WHERE supplierID = ${supplierID}`);
+  await turso.execute(`UPDATE Suppliers SET statusID = ${statusName} WHERE supplierID = ${supplierID}`);
 
   return Astro.redirect('/suppliers')
 }

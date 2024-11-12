@@ -28,23 +28,23 @@ console.log(selectedSouvenir);
           <!-- Id Proveedor -->
             <FormInput type="number" name="idSupplier" title="idSupplier" placeholder="ID Supplier" isRequired/>
 
-          <!-- Id Almacen -->
-            <FormInput type="number" name="idAlmacen" title="idAlmacen" placeholder="ID Almacen" isRequired/>
+          <!-- Id Entidad Legal -->
+            <FormInput type="number" name="legalEntityID" title="legalEntityID" placeholder="Id Entidad Legal" isRequired/>
 
           <!-- Id Status -->
-          <FormInput type="number" name="idStatus" title="idStatus" placeholder="ID Status" isRequired/>
+          <FormInput type="number" name="statusID" title="statusID" placeholder="ID Status" isRequired/>
         </div>
 
         <!-- Segunda columna -->
         <div class="flex flex-col">
-            <!-- Precio sin IVA -->
-            <FormInput type="text" name="precioSinIVA" title="precioSinIVA" placeholder="Precio sin IVA" />
+            <!-- Dirección -->
+            <FormInput type="text" name="address" title="address" placeholder="Dirección" />
 
-          <!-- IVA -->
-            <FormInput type="text" name="IVA" title="IVA" placeholder="IVA"/>
+          <!-- Número fe telefono -->
+            <FormInput type="text" name="phoneNumber" title="phoneNumber" placeholder="Número de telefono"/>
 
-          <!-- Precio con IVA -->
-          <FormInput type="text" name="precioConIVA" title="precioConIVA" placeholder="Precio con IVA"/>
+          <!-- Email -->
+          <FormInput type="text" name="email" title="email" placeholder="Email"/>
         </div>
     </div>
 
@@ -57,37 +57,30 @@ console.log(selectedSouvenir);
         
         <!-- Primera columna -->
         <div class="flex flex-col">
-          <!-- Id Souvenir -->
-            <FormInput type="number" name="idSouvenir" title="idSouvenir" placeholder="ID Souvenir" value={selectedSouvenir.souvenirID} isRequired/>
+          <!-- Id Proveedor -->
+            <FormInput type="number" name="idSupplier" title="idSupplier" placeholder="ID Supplier"/>
 
-          <!-- Id Almacen -->
-            <FormInput type="number" name="idAlmacen" title="idAlmacen" placeholder="ID Almacen" value={selectedSouvenir.warehouseID} isRequired/>
+          <!-- Id Entidad Legal -->
+            <FormInput type="number" name="legalEntityID" title="legalEntityID" placeholder="Id Entidad Legal"/>
 
-          <!-- Id Status -->
-          <FormSelect name="idStatus" title="idStatus" value={selectedSouvenir.statusName} isRequired>
+            <!-- Id Status -->
+          <FormSelect name="idStatus" title="idStatus" value={selectedSouvenir.statusName} >
             <SelectOption value="" isSelected> -- Selecciona -- </SelectOption>
             <SelectOption value="alta"> Alta </SelectOption>
             <SelectOption value="en stock"> En stock </SelectOption>
           </FormSelect>
-
-          <!-- Nombre del souvenir -->
-          <FormInput type="text" name="nombreSouvenir" title="nombreSouvenir" placeholder="Nombre del souvenir"
-          value={selectedSouvenir.souvenirName} />
         </div>
 
         <!-- Segunda columna -->
         <div class="flex flex-col">
-            <!-- Precio sin IVA -->
-            <FormInput type="text" name="precioSinIVA" title="precioSinIVA" placeholder="Precio sin IVA" value={selectedSouvenir.precioSinIVA}  />
+            <!-- Dirección -->
+            <FormInput type="text" name="address" title="address" placeholder="Dirección" />
 
-          <!-- IVA -->
-            <FormInput type="text" name="IVA" title="IVA" placeholder="IVA" value={selectedSouvenir.IVA} isDisabled />
+          <!-- Número fe telefono -->
+            <FormInput type="text" name="phoneNumber" title="phoneNumber" placeholder="Número de telefono"/>
 
-          <!-- Precio con IVA -->
-          <FormInput type="text" name="precioConIVA" title="precioConIVA" placeholder="Precio con IVA" value={selectedSouvenir.precioConIVA} isDisabled />
-
-          <!-- Descripción -->
-          <FormInput type="text" name="descripcion" title="descripcion" placeholder="Descripción" value={selectedSouvenir.descripcion} />
+          <!-- Email -->
+          <FormInput type="text" name="email" title="email" placeholder="Email"/>
         </div>
     </div>
 
