@@ -14,7 +14,6 @@ export interface ConvertedData {
     souvenirName: string;
     priceWithoutIVA: number;
     IVA: number;
-    priceWithIVA: number;
     description: string;
     warehouseID: string;
     warehouseName: string;

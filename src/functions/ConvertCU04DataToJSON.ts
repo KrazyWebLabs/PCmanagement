@@ -7,12 +7,11 @@ export function convertSouvenirsDataToJSON(data: DBData): ConvertedData[] {
       souvenirName: row[1] as string,
       priceWithoutIVA: Number(row[2]),
       IVA: Number(row[3]),
-      priceWithIVA: Number(row[4]),
-      description: row[5] as string,
-      warehouseID: String(row[6]).toLowerCase()  , 
-      warehouseName: String(row[7]).toLowerCase()  , 
-      statusID: String(row[9]).toLowerCase(),
-      statusName: String(row[9]).toLowerCase(),     
+      description: row[4] as string,
+      warehouseID: String(row[5]).toLowerCase()  , 
+      warehouseName: String(row[8]).toLowerCase()  , 
+      statusID: String(row[6]).toLowerCase(),
+      statusName: String(row[7]).toLowerCase(),     
     };
   });
 };

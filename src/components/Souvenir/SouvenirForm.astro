@@ -64,13 +64,13 @@ console.log(selectedSouvenir);
         <!-- Primera columna -->
         <div class="flex flex-col">
           <!-- Id Souvenir -->
-            <FormInput type="number" name="idSouvenir" title="idSouvenir" placeholder="ID Souvenir" value={selectedSouvenir.souvenirID} isRequired/>
+            <FormInput type="number" name="idSouvenir" title="idSouvenir" placeholder="ID Souvenir" value={selectedSouvenir.souvenirID} isDisabled/>
 
           <!-- Id Almacen -->
-            <FormInput type="number" name="idAlmacen" title="idAlmacen" placeholder="ID Almacen" value={selectedSouvenir.warehouseID} isRequired/>
+            <FormInput type="number" name="idAlmacen" title="idAlmacen" placeholder="ID Almacen" value={selectedSouvenir.warehouseID}/>
 
           <!-- Id Status -->
-          <FormSelect name="idStatus" title="idStatus" value={selectedSouvenir.statusName} isRequired>
+          <FormSelect name="idStatus" title="idStatus" value={selectedSouvenir.statusName} >
             <SelectOption value="" isSelected> -- Selecciona -- </SelectOption>
             <SelectOption value="alta"> Alta </SelectOption>
             <SelectOption value="en stock"> En stock </SelectOption>
