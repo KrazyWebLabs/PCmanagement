@@ -6,6 +6,7 @@
       "@functions/*": ["src/functions/*"],
       "@components/*": ["src/components/*"],
       "@form/*": ["src/components/ui/Forms/*"],
+      "@icons/*": ["src/components/ui/icons/*"],
       "@customTypes/*": ["src/types/*"],
     }
   }
