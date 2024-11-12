@@ -2,101 +2,91 @@
 import BackBtn from "@components/ui/Buttons/BackBtn.astro";
 import Layout from "../../layouts/Layout.astro";
 import { turso } from '../../turso';
-import SubmitBtn from "@components/ui/Buttons/SubmitBtn.astro";
 import AddRegisterBtn from "@components/ui/Buttons/AddRegisterBtn.astro";
+import TrashIcon from "@components/ui/icons/TrashIcon.astro";
 
-// Fetch existing warehouse data
+type Warehouse = {
+  warehouseID: number;
+  warehouseName: string;
+  categoryID: number;
+  dimensions: number;
+  capacity: number;
+  temperature: number;
+  statusID: number;
+};
+
+// Fetch warehouse data and map it to the Warehouse type
 const { rows } = await turso.execute('SELECT * FROM Warehouses');
+const result: Warehouse[] = rows.map((row: any) => ({
+  warehouseID: row.warehouseID,
+  warehouseName: row.warehouseName,
+  categoryID: row.categoryID,
+  dimensions: row.dimensions,
+  capacity: row.capacity,
+  temperature: row.temperature,
+  statusID: row.statusID
+}));
 
-// Handle form submission
-if (Astro.request.method === 'POST') {
-  const formData = await Astro.request.formData();
-  const warehouseID = formData.get('warehouseID');
-  const warehouseName = formData.get('warehouseName');
-  const categoryID = formData.get('categoryID');
-  const dimensions = formData.get('dimensions');
-  const capacity = formData.get('capacity');
-  const temperature = formData.get('temperature');
-  const description = formData.get('description');
-  const statusID = formData.get('statusID');
-
-  await turso.execute(`
-    INSERT INTO Warehouses (warehouseID, warehouseName, categoryID, dimensions, capacity, temperature, description, statusID) 
-    VALUES (${warehouseID}, '${warehouseName}', ${categoryID}, ${dimensions}, ${capacity}, ${temperature}, '${description}', ${statusID})
-  `);
-
-  return Astro.redirect('/warehouses');
-}
 ---
-
-<Layout title="Dashboard">
-  <div class="max-w-6xl mx-auto mt-12 p-8 bg-gray-800 rounded-lg shadow-md">
-    <h1 class="text-3xl font-semibold text-white mb-6">Almacen</h1>
-    
-    <!-- Update form with method POST and names for formData -->
-    <form class="grid grid-cols-2 gap-6" method="POST">
-      
-      <div class="col-span-2">
-        <label for="warehouse-id" class="block text-sm font-medium text-white">Warehouse ID <span class="text-red-500">*</span></label>
-        <input type="number" id="warehouse-id" name="warehouseID" class="mt-1 block w-full px-3 py-2 bg-gray-700 text-white rounded-md focus:ring focus:ring-blue-500" placeholder="Int(10)" value="{rows[0]?.warehouseID || ''}" />
+<Layout title="Warehouse Dashboard">
+  <div class="max-w-screen-xl mx-auto px-4 md:px-8">
+    <div class="items-start justify-between md:flex">
+      <div class="max-w-lg">
+        <h3 class="text-gray-800 text-xl font-bold sm:text-2xl dark:text-gray-300">
+          Warehouses
+        </h3>
       </div>
-
-      <div>
-        <label for="warehouse-name" class="block text-sm font-medium text-white">Name <span class="text-red-500">*</span></label>
-        <input type="text" id="warehouse-name" name="warehouseName" class="mt-1 block w-full px-3 py-2 bg-gray-700 text-white rounded-md focus:ring focus:ring-blue-500" placeholder="S(70)" />
+      <div class="mt-3 md:mt-0">
+        <AddRegisterBtn/>
       </div>
-      
-      <div>
-        <label for="category" class="block text-sm font-medium text-white">Category <span class="text-red-500">*</span></label>
-        <select id="category" name="categoryID" class="mt-1 block w-full px-3 py-2 bg-gray-700 text-white rounded-md focus:ring focus:ring-blue-500">
-          <option value="" disabled selected>Dropdown text</option>
-          <option value="1">Souvernirs</option>
-          <option value="2">Accesorios de realidad virtual</option>
-          <option value="3">Comida</option>
-        </select>
-      </div>
-
-      <div>
-        <label for="dimensions" class="block text-sm font-medium text-white">Dimensions</label>
-        <input type="number" step="0.01" id="dimensions" name="dimensions" class="mt-1 block w-full px-3 py-2 bg-gray-700 text-white rounded-md focus:ring focus:ring-blue-500" placeholder="Decimal(10,2)" />
-      </div>
-
-      <div>
-        <label for="capacity" class="block text-sm font-medium text-white">Capacity</label>
-        <input type="number" id="capacity" name="capacity" class="mt-1 block w-full px-3 py-2 bg-gray-700 text-white rounded-md focus:ring focus:ring-blue-500" placeholder="Int" />
-      </div>
-
-      <div>
-        <label for="temperature" class="block text-sm font-medium text-white">Temperature</label>
-        <input type="number" step="0.01" id="temperature" name="temperature" class="mt-1 block w-full px-3 py-2 bg-gray-700 text-white rounded-md focus:ring focus:ring-blue-500" placeholder="Decimal(5,2)" />
-      </div>
-
-      <div class="col-span-2">
-        <label for="description" class="block text-sm font-medium text-white">Description <span class="text-red-500">*</span></label>
-        <input type="text" id="description" name="description" class="mt-1 block w-full px-3 py-2 bg-gray-700 text-white rounded-md focus:ring focus:ring-blue-500" placeholder="S(150)" />
-      </div>
-
-      <div>
-        <label for="status" class="block text-sm font-medium text-white">Status <span class="text-red-500">*</span></label>
-        <select id="status" name="statusID" class="mt-1 block w-full px-3 py-2 bg-gray-700 text-white rounded-md focus:ring focus:ring-blue-500">
-          <option value="" disabled selected>Dropdown text</option>
-          <option value="1">Activo</option>
-          <option value="2">Inactivo</option>
-          <option value="3">En Mantenimiento</option>
-        </select>
-      </div>
-      
-      <div class="col-span-2 flex justify-end space-x-2">
-        <BackBtn>
-          Back
-        </BackBtn>
-        <SubmitBtn>
-          Add
-        </SubmitBtn>
-        <AddRegisterBtn>
-          Add Warehouse
-        </AddRegisterBtn>
-      </div>
-    </form>
+    </div>
+    <div class="mt-6 shadow-sm border rounded-lg overflow-x-auto">
+      <table class="w-full table-auto text-sm text-left">
+        <thead class="dark:bg-gray-400/20 dark:text-white bg-gray-50 text-gray-600 font-medium border-b">
+          <tr>
+            <th class="py-3 px-6">Warehouse ID</th>
+            <th class="py-3 px-6">Name</th>
+            <th class="py-3 px-6">Category</th>
+            <th class="py-3 px-6">Dimensions</th>
+            <th class="py-3 px-6">Capacity</th>
+            <th class="py-3 px-6">Temperature</th>
+            <th class="py-3 px-6">Status</th>
+            <th class="py-3 px-6">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="text-gray-600 divide-y">
+          {
+            result.map((item: Warehouse) => (
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.warehouseID}</td>
+                <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.warehouseName}</td>
+                <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.categoryID}</td>
+                <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.dimensions}</td>
+                <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.capacity}</td>
+                <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.temperature}</td>
+                <td class="px-6 py-4 whitespace-nowrap dark:text-white">
+                  <!-- Replace ItemStatus with actual status handling or remove it -->
+                  {item.statusID === 1 ? "Active" : item.statusID === 2 ? "Inactive" : "Maintenance"}
+                </td>
+                <td class="flex items-center justify-center gap-4 m-2 text-right px-6 whitespace-nowrap">
+                  <a
+                    href={`/warehouse/delete?warehouseID=${item.warehouseID}`}
+                    class="py-2 px-3 inline-block text-white duration-150 font-medium bg-red-600 rounded-lg hover:bg-red-500 active:bg-red-700 md:text-sm"
+                  >
+                    <TrashIcon/>
+                  </a>
+                </td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
+  <div class="col-span-2 flex justify-end space-x-2">
+    <BackBtn>
+      Back
+    </BackBtn>
   </div>
 </Layout>

@@ -25,7 +25,7 @@ if (Astro.request.method === 'POST') {
     VALUES (${warehouseID}, '${warehouseName}', ${categoryID}, ${dimensions}, ${capacity}, ${temperature}, '${description}', ${statusID})
   `);
 
-  return Astro.redirect('/warehouses');
+  return Astro.redirect('/warehouse');
 }
 ---
 
@@ -33,7 +33,6 @@ if (Astro.request.method === 'POST') {
   <div class="max-w-6xl mx-auto mt-12 p-8 bg-gray-800 rounded-lg shadow-md">
     <h1 class="text-3xl font-semibold text-white mb-6">Almacen</h1>
     
-    <!-- Update form with method POST and names for formData -->
     <form class="grid grid-cols-2 gap-6" method="POST">
       
       <div class="col-span-2">
