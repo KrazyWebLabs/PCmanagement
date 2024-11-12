@@ -1,0 +1,43 @@
+---
+import BackBtn from "@components/ui/Buttons/BackBtn.astro";
+import Layout from "src/layouts/Layout.astro";
+import SupplierForm from "@components/Supplier/SupplierForm.astro";
+import { turso } from "src/turso";
+import { convertSouvenirsDataToJSON } from "@functions/ConvertSuppliersDataToJSON";
+import SubmitBtn from "@components/ui/Buttons/SubmitBtn.astro";
+import statusTextToId from "@functions/statusTextToId";
+
+const { supplierID } = Astro.params;
+const rows  = await turso.execute(`SELECT * FROM Suppliers  WHERE supplierID = ${supplierID}`);
+
+// Convertir a formato JSON deseado
+const result = convertSouvenirsDataToJSON(rows.toJSON());
+
+if(Astro.request.method === "POST"){
+  //Parse form data
+  const formData = await Astro.request.formData();
+
+  const souvenirID = formData.get("souvenirID");
+  const statusID = formData.get("statusID");
+  const warehouseID = formData.get("warehouseID");
+  let statusName;
+
+  if(typeof statusID === "string") statusName = statusTextToId(statusID);
+
+  if(statusName !== result[0].statusID)
+  await turso.execute(`UPDATE Suppliers SET statusID = 10 WHERE supplierID = ${supplierID}`);
+
+  return Astro.redirect('/suppliers')
+}
+---
+
+<Layout title="Editar">
+  <SupplierForm selectedSouvenir={result[0]}>
+    <div class="flex justify-end max-w-full mx-auto px-8">
+      <BackBtn />
+      <SubmitBtn>
+        Update
+      </SubmitBtn>
+    </div>
+  </SupplierForm>
+</Layout>

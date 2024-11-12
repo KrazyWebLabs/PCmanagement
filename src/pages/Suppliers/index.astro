@@ -1,121 +1,29 @@
 ---
-import Layout from "src/layouts/Layout.astro";
-import TrashIcon from "@components/ui/icons/TrashIcon.astro";
-import EditIcon from "@components/ui/icons/EditIcon.astro";
-import EditRecord from "@components/ui/Tables/EditRecord.astro";
-import ItemStatus from "@components/ui/Tables/ItemStatus.astro";
-import AddRegisterBtn from "@components/ui/Buttons/AddRegisterBtn.astro";
+import Layout from "../../layouts/Layout.astro";
+import TrashIcon from "../../components/ui/icons/TrashIcon.astro";
+import EditIcon from "../../components/ui/icons/EditIcon.astro";
+import EditRecord from "../../components/ui/Tables/EditRecord.astro";
+import ItemStatus from "../../components/ui/Tables/ItemStatus.astro";
+import AddRegisterBtn from "../../components/ui/Buttons/AddRegisterBtn.astro";
+import BackBtn from "@components/ui/Buttons/BackBtn.astro";
+import { convertSouvenirsDataToJSON } from "@functions/ConvertSuppliersDataToJSON";
+import { turso } from "src/turso";
 
-const Suppliers = [
-    {
-        id_Proveedor: "01",
-        razon: "Proveedor A S.A. de C.V.",
-        rfc: "PROA000101ABC",
-        curp: "ABC123456HDFG",
-        direccion: "Calle Falsa 123",
-        estado: "Estado de México",
-        municipio: "Tlalnepantla",
-        colonia: "Colonia Centro",
-        codigo_postal: "54000",
-        telefono: "5551234567",
-        estratificacion: "Alto",
-        giro_comercial: "Tecnología",
-        copia_lne: "link_a_la_copia_lne",
-        banco: "Banco del Estado",
-        cuenta: "1234567890",
-        sucursal: "Sucursal Principal",
-        clave: "123456789012",
-        status: "vigente",
-    },
-    {
-        id_Proveedor: "02",
-        razon: "Proveedor B S.A. de C.V.",
-        rfc: "PROB000202XYZ",
-        curp: "XYZ987654HDFG",
-        direccion: "Avenida Siempre Viva 742",
-        estado: "Jalisco",
-        municipio: "Guadalajara",
-        colonia: "Colonia Primavera",
-        codigo_postal: "44100",
-        telefono: "3339876543",
-        estratificacion: "Medio",
-        giro_comercial: "Alimentos",
-        copia_lne: "link_a_la_copia_lne",
-        banco: "Banco Nacional",
-        cuenta: "0987654321",
-        sucursal: "Sucursal Centro",
-        clave: "987654321098",
-        status: "cancelada",
-    },
-    {
-        id_Proveedor: "03",
-        razon: "Proveedor C S.A. de C.V.",
-        rfc: "PROC000303DEF",
-        curp: "DEF456789HDFG",
-        direccion: "Boulevard de los Sueños 456",
-        estado: "Nuevo León",
-        municipio: "Monterrey",
-        colonia: "Colonia Luz",
-        codigo_postal: "64000",
-        telefono: "8187654321",
-        estratificacion: "Bajo",
-        giro_comercial: "Construcción",
-        copia_lne: "link_a_la_copia_lne",
-        banco: "Banco del Norte",
-        cuenta: "2468135790",
-        sucursal: "Sucursal Norte",
-        clave: "246813579012",
-        status: "en tramite",
-    },
-    {
-        id_Proveedor: "04",
-        razon: "Proveedor D S.A. de C.V.",
-        rfc: "PROD000404GHI",
-        curp: "GHI789123HDFG",
-        direccion: "Calle de la Paz 789",
-        estado: "Puebla",
-        municipio: "Puebla",
-        colonia: "Colonia Flores",
-        codigo_postal: "72000",
-        telefono: "2223334444",
-        estratificacion: "Alto",
-        giro_comercial: "Moda",
-        copia_lne: "link_a_la_copia_lne",
-        banco: "Banco de Puebla",
-        cuenta: "9876543210",
-        sucursal: "Sucursal Sur",
-        clave: "789123456789",
-        status: "vigente",
-    },
-    {
-        id_Proveedor: "05",
-        razon: "Proveedor E S.A. de C.V.",
-        rfc: "PROE000505JKL",
-        curp: "JKL012345HDFG",
-        direccion: "Calle del Ejemplo 321",
-        estado: "Veracruz",
-        municipio: "Veracruz",
-        colonia: "Colonia Río",
-        codigo_postal: "91700",
-        telefono: "5555555555",
-        estratificacion: "Medio",
-        giro_comercial: "Transporte",
-        copia_lne: "link_a_la_copia_lne",
-        banco: "Banco del Mar",
-        cuenta: "1234567891",
-        sucursal: "Sucursal Este",
-        clave: "123456789012",
-        status: "vigente",
-    },
-];
+const rows = await turso.execute('SELECT * FROM Suppliers AS so JOIN status AS s ON so.statusID = s.statusID');
 
+const data = rows.toJSON()
+
+const result = convertSouvenirsDataToJSON(data);
+
+console.log(result)
 ---
-<Layout title="Proveedores">
+
+<Layout title="Souvenirs">
     <div class="max-w-screen-xl mx-auto px-4 md:px-8">
       <div class="flex items-start justify-between md:flex">
         <div class="max-w-lg">
           <h3 class="text-gray-800 text-xl font-bold sm:text-2xl dark:text-gray-300">
-            Proveedores
+            Souvenirs
           </h3>
         </div>
         <div class="mt-3 md:mt-0">
@@ -126,65 +34,49 @@ const Suppliers = [
         <table class="w-full table-auto text-sm text-left">
           <thead class="dark:bg-gray-400/20 dark:text-white bg-gray-50 text-gray-600 font-medium border-b">
             <tr>
-              <th class="py-3 px-6 text-left">Id Proveedor</th>
-              <th class="py-3 px-6 text-left">Razón Social</th>
-              <th class="py-3 px-6 text-left">RFC</th>
-              <th class="py-3 px-6 text-left">CURP</th>
+              <th class="py-3 px-6 text-left">ID Proveedor</th>
+              <th class="py-3 px-6 text-left">ID Entidad Legal</th>
               <th class="py-3 px-6 text-left">Dirección</th>
-              <th class="py-3 px-6 text-left">Estado</th>
-              <th class="py-3 px-6 text-left">Municipio</th>
-              <th class="py-3 px-6 text-left">Colonia</th>
-              <th class="py-3 px-6 text-left">Código Postal</th>
               <th class="py-3 px-6 text-left">Teléfono</th>
-              <th class="py-3 px-6 text-left">Estratificación</th>
-              <th class="py-3 px-6 text-left">Giro Comercial</th>
-              <th class="py-3 px-6 text-left">Copia del LNE</th>
-              <th class="py-3 px-6 text-left">Banco</th>
-              <th class="py-3 px-6 text-left">Cuenta</th>
-              <th class="py-3 px-6 text-left">Sucursal</th>
-              <th class="py-3 px-6 text-left">CLABE</th>
-              <th class="py-3 px-6 text-left">Status</th>
+              <th class="py-3 px-6 text-left">Correo Electrónico</th>
+              <th class="py-3 px-6 text-left">Estado</th>
               <th class="py-3 px-6 text-right"></th>
             </tr>
           </thead>
           <tbody class="text-gray-600 divide-y">
-            {Suppliers.map((item) => (
-              <tr key={item.id_Proveedor}>
-                <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.id_Proveedor}</td>
-                <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.razon}</td>
-                <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.rfc}</td>
-                <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.curp}</td>
-                <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.direccion}</td>
-                <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.estado}</td>
-                <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.municipio}</td>
-                <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.colonia}</td>
-                <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.codigo_postal}</td>
-                <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.telefono}</td>
-                <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.estratificacion}</td>
-                <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.giro_comercial}</td>
-                <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.copia_lne}</td>
-                <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.banco}</td>
-                <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.cuenta}</td>
-                <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.sucursal}</td>
-                <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.clave}</td>
-                <td class="px-6 py-4 whitespace-nowrap dark:text-white capitalize">
-                  <ItemStatus status={item.status} />
-                </td>
-                <td class="flex items-center justify-end gap-4 m-2 text-right px-6 whitespace-nowrap">
-                  <EditRecord href={`/proveedores/${item.id_Proveedor}`}>
-                    <EditIcon />
-                  </EditRecord>
-                  <a
-                    href="prueba"
-                    class="py-2 px-3 inline-block text-white duration-150 font-medium bg-red-600 rounded-lg hover:bg-red-500 active:bg-red-700 md:text-sm"
-                  >
-                    <TrashIcon />
-                  </a>
-                </td>
-              </tr>
-            ))}
+            {
+              result.map((item) => (
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.supplierID}</td>
+                  <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.legalEntityID}</td>
+                  <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.address}</td>
+                  <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.phoneNumber}</td>
+                  <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.email}</td>
+                  <td class="px-6 py-4 whitespace-nowrap dark:text-white capitalize">
+                    <ItemStatus  status={item.statusName} />
+                  </td>
+                  <td class="flex items-center justify-center gap-4 m-2 text-right px-6 whitespace-nowrap">
+                    <EditRecord href={`/suppliers/${item.supplierID}`}>
+                      <EditIcon/>
+                    </EditRecord>
+  
+                    <a
+                      href={`/suppliers/delete?souvenirID=${item.supplierID}`}
+                      class="py-2 px-3 inline-block text-white duration-150 font-medium bg-red-600 rounded-lg hover:bg-red-500 active:bg-red-700 md:text-sm"
+                    >
+                      <TrashIcon/>
+                    </a>
+                  </td>
+                </tr>
+              ))
+            }
           </tbody>
         </table>
       </div>
+
+      <div class="flex justify-center mt-6 space-x-4">
+        <BackBtn />
+        </a>
+    </div>
     </div>
 </Layout>
