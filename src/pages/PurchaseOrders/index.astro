@@ -38,27 +38,14 @@ const Purchases = [
     description: "Platos con diseño grabados",
     status: "en proceso",
   },
-  {
-    purchaseID: "124",
-    supplier: "Souvernirs 4",
-    rfc: "11123321",
-    name: "Platos",
-    direccion: "40 Norte 123",
-    postalCode: "72203",
-    city: "Puebla",
-    coin: "Pesos",
-    chain: "2",
-    warehouse: "Souvenirs 1",
-    description: "Platos con diseño grabados",
-    status: "cancelada",
-  },
 ];
 
 const rows = await turso.execute('SELECT * FROM PurchaseOrders');
 
 const data = rows.toJSON()
-// Convertir a formato JSON deseado
+
 const result = convertPurchaseDataToJSON(data);
+console.log(result)
 
 ---
 

@@ -11,37 +11,50 @@ interface Props {
   selectedOrder?: any;
 }
 
-const { selectedOrder } = Astro.props;
+const { selectedOrder} = Astro.props;
 
 let generateOrderNumber = "";
 let orderData;
-let result;
+let result: any[];
+
 
 orderData = await turso.execute("SELECT * FROM PurchaseOrders");
 const data = orderData?.toJSON();
 
-if (!selectedOrder) {
-  generateOrderNumber = generateRandomNumber(5);
-  result = convertPurchaseDataToJSON(data);
+
+if (!data) {
+  console.error("No data found");
+  result = [];
 } else {
-  result = convertPurchaseDataToJSON(data).filter((p) => p.orderID !== selectedOrder.orderID);
+  
+  if (!selectedOrder) {
+    generateOrderNumber = generateRandomNumber(5);
+    result = convertPurchaseDataToJSON(data);
+  } else {
+    
+    result = convertPurchaseDataToJSON(data).filter((p) => p.orderID !== selectedOrder?.orderID);
+  }
 }
+
 ---
 
 <Form title="Purchase Order Data">
-
   <FormInput name="orderID" type="number" value={generateOrderNumber} placeholder={generateOrderNumber} isRequired isDisabled>
     Order ID
   </FormInput>
+  
   <div class="flex flex-wrap gap-4">
     <FormSelect name="purchaseID" title="Purchase ID" isRequired>
-      <SelectOption value="" isSelected> -- Select Purchase Order -- </SelectOption>
+      <SelectOption value="" isSelected>-- Select Purchase Order --</SelectOption>
       {
-        result?.map((acc) => (
-          <SelectOption value={acc.orderID.toString()}>{acc.orderID}</SelectOption>
+        result?.map((order) => (
+          order?.orderID ? (
+            <SelectOption value={order.orderID.toString()}>{order.orderID}</SelectOption>
+          ) : null
         ))
       }
     </FormSelect>
+
     <FormSelect name="warehouse" title="Warehouse" isDisabled>
       <option value="">Selecciona un Almacen</option>
       <option value="WH1" selected>1</option>
@@ -49,6 +62,7 @@ if (!selectedOrder) {
       <option value="WH3">3</option>
       <option value="WH4">4</option>
     </FormSelect>
+
     <FormSelect name="currency" title="Currency" isDisabled>
       <option value="">Selecciona un tipo de Moneda</option>
       <option value="pesos" selected>Pesos</option>
@@ -63,8 +77,10 @@ if (!selectedOrder) {
     <FormSelect name="supplierID" title="Supplier ID" isDisabled>
       <option value="">Selecciona un Proveedor</option>
       {
-        result?.map((acc) => (
-          <SelectOption value={acc.supplierID.toString()}>{acc.supplierName}</SelectOption>
+        result?.map((order) => (
+          order?.supplierID ? (
+            <SelectOption value={order.supplierID.toString()}>{order.supplierName}</SelectOption>
+          ) : null
         ))
       }
     </FormSelect>
@@ -135,5 +151,4 @@ if (!selectedOrder) {
       Description
     </FormInput>
   </div>
-
 </Form>
