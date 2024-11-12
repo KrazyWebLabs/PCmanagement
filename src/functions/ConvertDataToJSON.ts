@@ -1,4 +1,4 @@
-import type { ConvertedData } from "../Types/PurchaseData";
+import type { ConvertedData } from "../../Types/PurchaseData";
 import type { ConvertedPurchaseData } from "src/Types/PurchaseData";
 import type { ConvertedSupplierData } from "src/Types/SupplierData";
 
