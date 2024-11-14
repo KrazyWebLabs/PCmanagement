@@ -6,19 +6,20 @@ export default function convertReceptionDataToJSON(data: DBData): PurchaseData[]
     return {
     purchaseID: row[1] as string, // Aseguramos que no sea undefined
 
-    deliverTo: row[17] as string,
-    recepcionDate: row[18] as Date,
-    discount: row[19] as number,
-    totalChange: row[20] as number,
-    description: row[21] as string,
+    deliverTo: row[2] as string,
+    recepcionDate: row[3] as Date,
+    discount: row[4] as number,
+    totalChange: row[5] as number,
+    description: row[6] as string,
     
-    warehouseID: row[2] as number,
-    currencyName: row[3] as string,
-    souvenirID: row[4] as number,
-    supplierID: row[7] as number,
-    supplierName: row[22] as string,
+    warehouseID: row[7] as number,
+    currencyName: row[8] as string,
+    souvenirID: row[9] as number,
+    supplierID: row[10] as number,
+    supplierName: row [13] as string,
 
     souvenirName: row[5] as string,
+    //Hacer un JOIN para obtener el souvenir name
     price: row[6] as number,
 
     supplierEmail: row[8] as string,
@@ -31,6 +32,7 @@ export default function convertReceptionDataToJSON(data: DBData): PurchaseData[]
     state: row[15] as string,
     city: row[16] as string,
     status: row[9] as string
+    //Crear una vista con los campos necesarios para la orden de compra haciendo el JOIN a suppliers, status, souvenirs, legalEntities, adresses. 
     };
   });
 }

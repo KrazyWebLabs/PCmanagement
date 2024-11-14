@@ -8,6 +8,7 @@ import AddRegisterBtn from "../../components/ui/Buttons/AddRegisterBtn.astro";
 import convertPurchaseDataToJSON from "@functions/ConvertDataToJSON";
 
 import { turso } from "src/turso";
+import type { log } from "node_modules/astro/dist/core/logger/core";
 
 const Purchases = [
   {
@@ -40,12 +41,11 @@ const Purchases = [
   },
 ];
 
-const rows = await turso.execute('SELECT * FROM PurchaseOrders');
+const rows = await turso.execute('SELECT po.*,s.legalEntityID, le.name, le.PaternalLastName FROM PurchaseOrders po INNER JOIN Suppliers s ON po.supplierID=s.supplierID INNER JOIN  LegalEntities le ON le.legalEntityID=s.legalEntityID');
 
 const data = rows.toJSON()
-
+console.log(data)
 const result = convertPurchaseDataToJSON(data);
-console.log(result)
 
 ---
 
