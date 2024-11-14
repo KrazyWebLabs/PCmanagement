@@ -4,6 +4,8 @@ import FormInput from "@components/ui/Forms/FormInput.astro"
 import FormSelect from "@components/ui/Forms/FormSelect.astro";
 import SelectOption from "@components/ui/Forms/SelectOption.astro";
 import { convertSouvenirsDataToJSON } from "@functions/ConvertCU04DataToJSON";
+import { convertWarehousesDataToJSON } from "@functions/ConvertCU04DataToJSON";
+import { convertStatusDataToJSON } from "@functions/ConvertCU04DataToJSON";
 import { turso } from "src/turso";
 
 const path = Astro.url.pathname.replace(/\/$/, ""); // Elimina el "/" al final si existe.
@@ -18,19 +20,31 @@ const {selectedSouvenir} = Astro.props;
 let souvenirID = "";
 let souvenirData;
 let result;
+let resultWarehouses;
+let resultStatus;
+let StatusData;
+let WarehousesData;
 
-souvenirData = await turso.execute("SELECT Souvenirs.*, Warehouses.warehouseID, Warehouses.warehouseName FROM Souvenirs JOIN Warehouses ON Souvenirs.warehouseID = Warehouses.warehouseID;")
+WarehousesData = await turso.execute("SELECT * FROM Warehouses")
+
+StatusData = await turso.execute("SELECT * FROM Status")
+
+souvenirData = await turso.execute("SELECT * FROM Souvenirs")
 
 const data = souvenirData.toJSON()
 
 if (!selectedSouvenir) {
   result = convertSouvenirsDataToJSON(data)
+  resultWarehouses = convertWarehousesDataToJSON(WarehousesData.toJSON())
+  resultStatus = convertStatusDataToJSON(StatusData.toJSON())
 }
 else  {
   result = convertSouvenirsDataToJSON(data).filter((p) => p.souvenirID !== selectedSouvenir.souvenirID); 
+  resultWarehouses = convertWarehousesDataToJSON(WarehousesData.toJSON()).filter((w) => w.warehouseID !== selectedSouvenir.warehouseID); 
+  resultStatus = convertStatusDataToJSON(StatusData.toJSON()).filter((s) => s.statusID  !== selectedSouvenir.statusID ); 
 }
 
-console.log(selectedSouvenir);
+console.log(resultWarehouses);
 ---
 
 <Form title="Alta Productos">
@@ -42,21 +56,26 @@ console.log(selectedSouvenir);
         <!-- Primera columna -->
         <div class="flex flex-col">
           <!-- Id Souvenir -->
-            <FormInput type="number" name="idSouvenir" title="idSouvenir" value={souvenirID} placeholder={souvenirID} isRequired isDisabled/>
+            <FormInput type="number" name="souvenirID" title="idSouvenir"  placeholder={souvenirID} isRequired isDisabled/>
 
           <!-- Id Almacen -->
-          <FormSelect name="Nombre almacen" title="Nombre almacen" >
+          <FormSelect name="warehouseID" title="Nombre almacen"  >
             <SelectOption value="" isSelected> -- Selecciona -- </SelectOption>
-            <SelectOption value="1"> Almacén central </SelectOption>
-            <SelectOption value="2"> Almacén norte </SelectOption>
-            <SelectOption value="3"> Almacén sur </SelectOption>
+            {
+              resultWarehouses?.map((w) => (
+                <SelectOption value={w.warehouseID?.toString() ?? ''}>{w.warehouseName }</SelectOption>
+              ))
+            }
           </FormSelect>
 
             <!-- Id Status -->
-          <FormSelect name="idStatus" title="Status" >
+          <FormSelect name="statusID" title="Status">
             <SelectOption value="" isSelected> -- Selecciona -- </SelectOption>
-            <SelectOption value="alta"> Alta </SelectOption>
-            <SelectOption value="en stock"> En stock </SelectOption>
+            {
+              resultStatus?.map((w) => (
+                <SelectOption value={w.statusID?.toString() ?? ''}>{w.statusName}</SelectOption>
+              ))
+            }
           </FormSelect>
 
           
@@ -65,10 +84,10 @@ console.log(selectedSouvenir);
         <!-- Segunda columna -->
         <div class="flex flex-col">
           <!-- Nombre del souvenir -->
-          <FormInput type="text" name="nombreSouvenir" title="nombre Souvenir" placeholder="Nombre del souvenir"/>
+          <FormInput type="text" name="souvenirName" title="nombre Souvenir" placeholder="Nombre del souvenir" />
 
             <!-- Precio sin IVA -->
-            <FormInput type="text" name="precioSinIVA" title="precio Sin IVA" placeholder="Precio sin IVA" />
+            <FormInput type="text" name="priceWithoutIVA" title="precio Sin IVA" placeholder="Precio sin IVA"  />
 
           <!-- IVA -->
             <FormInput type="text" name="IVA" title="IVA" placeholder="IVA"/>
@@ -76,7 +95,7 @@ console.log(selectedSouvenir);
         <!-- Descripción -->
           
     </div>
-    <FormInput type="text" name="descripcion" title="descripcion" placeholder="Descripción"/>
+    <FormInput type="text" name="description" title="descripcion" placeholder="Descripción"/>
 
     <slot/>
   :
@@ -88,40 +107,42 @@ console.log(selectedSouvenir);
         <!-- Primera columna -->
         <div class="flex flex-col">
           <!-- Id Souvenir -->
-            <FormInput type="number" name="idSouvenir" title="idSouvenir" placeholder="ID Souvenir" value={selectedSouvenir.souvenirID} isDisabled/>
+            <FormInput type="number" name="souvenirID" title="idSouvenir" placeholder="ID Souvenir" value={selectedSouvenir.souvenirID} />
 
-          <!-- Id Almacen -->
-            <FormSelect  name="idAlmacen" title="idAlmacen"  value={selectedSouvenir.warehouseID}>
-              <SelectOption value="" isSelected> -- Selecciona -- </SelectOption>
-              <SelectOption value="almacén central"> Almacén Central </SelectOption>
-              <SelectOption value="almacén norte"> Almacén Norte </SelectOption>
-            </FormSelect>
-
-          <!-- Id Status -->
-          <FormSelect name="idStatus" title="idStatus" value={selectedSouvenir.statusName} >
+            <!-- Id Almacen -->
+          <FormSelect name="warehouseID" title="Nombre almacen"  >
             <SelectOption value="" isSelected> -- Selecciona -- </SelectOption>
-            <SelectOption value="alta"> Alta </SelectOption>
-            <SelectOption value="en stock"> En stock </SelectOption>
+            {
+              resultWarehouses?.map((w) => (
+                <SelectOption value={w.warehouseID?.toString() ?? ''}>{w.warehouseName }</SelectOption>
+              ))
+            }
+          </FormSelect>
+
+            <!-- Id Status -->
+          <FormSelect name="statusID" title="Status">
+            <SelectOption value="" isSelected> -- Selecciona -- </SelectOption>
+            {
+              resultStatus?.map((w) => (
+                <SelectOption value={w.statusID?.toString() ?? ''}>{w.statusName}</SelectOption>
+              ))
+            }
           </FormSelect>
 
           <!-- Nombre del souvenir -->
-          <FormInput type="text" name="nombreSouvenir" title="nombreSouvenir" placeholder="Nombre del souvenir"
-          value={selectedSouvenir.souvenirName} />
+          <FormInput type="text" name="souvenirName" title="nombreSouvenir" placeholder="Nombre del souvenir" value={selectedSouvenir.souvenirName} />
         </div>
 
         <!-- Segunda columna -->
         <div class="flex flex-col">
             <!-- Precio sin IVA -->
-            <FormInput type="text" name="precioSinIVA" title="precioSinIVA" placeholder="Precio sin IVA" value={selectedSouvenir.precioSinIVA}  />
+            <FormInput type="text" name="priceWithoutIVA" title="precioSinIVA" placeholder="Precio sin IVA" value={selectedSouvenir.precioSinIVA}  />
 
           <!-- IVA -->
             <FormInput type="text" name="IVA" title="IVA" placeholder="IVA" value={selectedSouvenir.IVA} isDisabled />
 
-          <!-- Precio con IVA -->
-          <FormInput type="text" name="precioConIVA" title="precioConIVA" placeholder="Precio con IVA" value={selectedSouvenir.precioConIVA} isDisabled />
-
           <!-- Descripción -->
-          <FormInput type="text" name="descripcion" title="descripcion" placeholder="Descripción" value={selectedSouvenir.descripcion} />
+          <FormInput type="text" name="description" title="descripcion" placeholder="Descripción" value={selectedSouvenir.descripcion} />
         </div>
     </div>
 

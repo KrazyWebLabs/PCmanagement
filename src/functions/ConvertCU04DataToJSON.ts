@@ -1,4 +1,6 @@
 import type { ConvertedData } from "@customTypes/SouvenirsData";
+import type { ConvertedWarehouseData } from "@customTypes/WarehousesData";
+import type { ConvertedStatusData } from "@customTypes/StatusData";
 
 export function convertSouvenirsDataToJSON(data: DBData): ConvertedData[] {
   return data.rows.map((row: (string | number | null)[]) => {
@@ -16,3 +18,20 @@ export function convertSouvenirsDataToJSON(data: DBData): ConvertedData[] {
   });
 };
 
+export function convertWarehousesDataToJSON(data: DBData): ConvertedWarehouseData[]{
+  return data.rows.map((row: (string | number | null)[]) => {
+    return {
+      warehouseID: Number(row[0]),
+      warehouseName: row[1] as string,    
+    };
+  });
+};
+
+export function convertStatusDataToJSON(data: DBData): ConvertedStatusData[]{
+  return data.rows.map((row: (string | number | null)[]) => {
+    return {
+      statusID: Number(row[0]),
+      statusName: row[1] as string,    
+    };
+  });
+};

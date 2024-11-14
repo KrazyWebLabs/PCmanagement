@@ -9,20 +9,39 @@ import statusTextToId from "@functions/statusTextToId";
 
 const { souvenirID } = Astro.params;
 
-const rows = await turso.execute(`SELECT * FROM Souvenirs WHERE souvenirID = ${souvenirID }`);
+const rows = await turso.execute(`SELECT * FROM Souvenirs WHERE souvenirID = ${souvenirID}`);
+console.log(rows.toJSON()); 
+
 
 const result = convertSouvenirsDataToJSON(rows.toJSON());
 
-if (Astro.request.method === "POST")
-{
+if (Astro.request.method === 'POST') {
   // Parse form data
   const formData = await Astro.request.formData();
 
-  const souvenirID = formData.get("souvenirID");
-  
-}
+  const souvenirID = formData.get('souvenirID');
+  const souvenirName = formData.get('souvenirName');
+  const priceWithoutIVA = formData.get('priceWithoutIVA');
+  const IVA = formData.get('IVA');
+  const description = formData.get('description');
+  const warehouseID = formData.get('warehouseID');
+  const statusID = formData.get('statusID');
 
+  // Corrección de la sentencia UPDATE
+  await turso.execute(`UPDATE Souvenirs SET souvenirName = '${souvenirName}', priceWithoutIVA = ${priceWithoutIVA}, IVA = ${IVA}, description = '${description}', warehouseID = ${warehouseID}, statusID = ${statusID} WHERE souvenirID = ${souvenirID}`);
+
+  console.log(souvenirID);
+  console.log(souvenirName);
+  console.log(priceWithoutIVA);
+  console.log(IVA);
+  console.log(description);
+  console.log(warehouseID);
+  console.log(statusID);
+
+  return Astro.redirect('/products/souvenirs');
+}
 ---
+
 <Layout title="Editar">
   <SouvenirForm selectedSouvenir={result[0]}>
     <div class="flex justify-end max-w-full mx-auto px-8">

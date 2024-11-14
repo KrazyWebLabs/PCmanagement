@@ -4,6 +4,7 @@ import Layout from "src/layouts/Layout.astro";
 import SouvenirForm from "@components/Souvenir/SouvenirForm.astro";
 import { turso } from "src/turso";
 import SubmitBtn from "@components/ui/Buttons/SubmitBtn.astro";
+import AddRegisterBtn from "@components/ui/Buttons/AddRegisterBtn.astro";
 
 if (Astro.request.method === 'POST') {
   // Parse form data
@@ -11,18 +12,24 @@ if (Astro.request.method === 'POST') {
 
   const souvenirID = formData.get('souvenirID');
   const souvenirName = formData.get('souvenirName');
-  const priceWithoutIVA = formData.get('priceWithoutIVA ');
+  const priceWithoutIVA = formData.get('priceWithoutIVA');
   const IVA = formData.get('IVA');
-  const description  = formData.get('description ');
+  const description  = formData.get('description');
   const warehouseID = formData.get('warehouseID');
-  const statusID  = formData.get('statusID ');
+  const statusID  = formData.get('statusID');
 
-  await turso.execute(`INSERT INTO Souvenirs (souvenirID, souvenirName, priceWithoutIVA, IVA, description, warehouseID, statusID) VALUES(${souvenirID}, '${souvenirName}', ${priceWithoutIVA}, ${IVA}, '${description}', ${warehouseID}, ${statusID}) JOIN Warehouses ON Souvenirs.warehouseID = Warehouses.warehouseID;`);
+  await turso.execute(`INSERT INTO Souvenirs (souvenirID, souvenirName, priceWithoutIVA, IVA, description, warehouseID, statusID) VALUES(${souvenirID}, '${souvenirName}', ${priceWithoutIVA}, ${IVA}, '${description}', ${warehouseID}, ${statusID})`);
 
+  console.log(souvenirID);
+  console.log(souvenirName);
+  console.log(priceWithoutIVA);
+  console.log(IVA);
+  console.log(description);
+  console.log(warehouseID);
+  console.log(statusID);
 
   return Astro.redirect('/products/souvenirs')
 }
-
 
 ---
 
