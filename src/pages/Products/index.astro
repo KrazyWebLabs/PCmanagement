@@ -1,8 +1,6 @@
 ---
 import Layout from "../../layouts/Layout.astro"
-import SouvenirIcon from "@components/ui/icons/SouvenirIcon.astro"
-import SnackIcon from "@components/ui/icons/SnackIcon.astro"
-import VRAIcon from "@components/ui/icons/VRAIcon.astro"
+import ProductIcon from "@components/ui/icons/ProductIcon.astro"
 ---
 
 <Layout title="Products">
@@ -20,30 +18,10 @@ import VRAIcon from "@components/ui/icons/VRAIcon.astro"
         <!--  Souvenirs -->
         <div class="flex flex-col items-center text-center dark:text-white text-gray-700 icon-group">
             <a href="/products/souvenirs" class="icon-container">
-                <SouvenirIcon>Souvenirs</SouvenirIcon>
+                <ProductIcon>Souvenirs</ProductIcon>
                   <a href="/products/souvenirs">
                     <p class="flex flex-col items-center justify-center text-2xl font-bold leading-7 text-white sm:truncate sm:text-xl sm:tracking-tight mt-2">Souvenirs</p>
                   </a>
-            </a>
-        </div>
-
-        <!--  Snacks -->
-        <div class="flex flex-col items-center text-center dark:text-white text-gray-700 icon-group">
-            <a href="/products/snacks" class="icon-container">
-                <SnackIcon></SnackIcon>
-            </a>
-            <a href="/products/snacks">
-                <p class="flex flex-col items-center justify-center text-2xl font-bold leading-7 text-white sm:truncate sm:text-xl sm:tracking-tight mt-2">Snacks</p>
-            </a>
-        </div>
-        
-        <!--  VRA -->
-        <div class="flex flex-col items-center text-center dark:text-white text-gray-700 icon-group">
-            <a href="/products/vra" class="icon-container">
-                <VRAIcon></VRAIcon>
-            </a>
-            <a href="/products/vra">
-                <p class="flex flex-col items-center justify-center text-2xl font-bold leading-7 text-white sm:truncate sm:text-xl sm:tracking-tight mt-2">Virtual Reality Accesories</p>
             </a>
         </div>
     </div>
