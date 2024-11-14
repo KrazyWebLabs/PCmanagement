@@ -31,7 +31,7 @@ if (Astro.request.method === "POST") {
 ---
 <Layout title="Editar Orden de Compra">
   <h1 class="dark:text-white">Editar Orden de Compra {purchaseOrderID}</h1>
-  <PurchaseForm selectedPurchase={result[0]} />
+  <PurchaseForm selectedOrder={result[0]} />
 
   <div class="flex justify-end max-w-full mx-auto px-8">
     <BackBtn />

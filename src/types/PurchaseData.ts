@@ -1,12 +1,12 @@
 export type PurchaseData = {
-    purchaseID: number;
+    purchaseID: string;
     warehouseID: number;
-    currencyID: number;
+    //currencyID: number;
     souvenirID: number;
     souvenirName: string;
     price: number;
     supplierID: number;
-    supplierName: number;
+    supplierName: string;
     streetName: string;
     neighborhood: string;
     outsideNumber: number;
@@ -19,7 +19,7 @@ export type PurchaseData = {
     discount: number;
     totalChange: number;
     description: string;
-    status: number;
+    status: string;
 }
 
 export interface ConvertedData {

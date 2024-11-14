@@ -32,7 +32,7 @@ if (!data) {
     result = convertPurchaseDataToJSON(data);
   } else {
     
-    result = convertPurchaseDataToJSON(data).filter((p) => p.orderID !== selectedOrder?.orderID);
+    result = convertPurchaseDataToJSON(data).filter((p) => p.purchaseID !== selectedOrder?.orderID);
   }
 }
 
