@@ -11,6 +11,11 @@ if (Astro.request.method === 'POST') {
   const quantity = formData.get('quantity');
   const paymentMethod = formData.get('paymentMethod'); // Nuevo campo para el método de pago
 
+  // Guardamos el ticket en la base de datos
+  await turso.execute(`
+    INSERT INTO Tickets (exhibition, ticketType, quantity, date) 
+    VALUES ('${exhibition}', ${ticketType}, ${quantity}, '${currentDate}')
+  `);
 
   // Redirigir según el método de pago
   if (paymentMethod === 'card') {
