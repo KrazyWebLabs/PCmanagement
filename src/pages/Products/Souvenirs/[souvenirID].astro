@@ -8,32 +8,23 @@ import SubmitBtn from "@components/ui/Buttons/SubmitBtn.astro";
 import statusTextToId from "@functions/statusTextToId";
 
 const { souvenirID } = Astro.params;
-const rows  = await turso.execute(`SELECT * FROM Souvenirs WHERE souvenirID = ${souvenirID} `);
 
-// Convertir a formato JSON deseado
+const rows = await turso.execute(`SELECT * FROM Souvenirs WHERE souvenirID = ${souvenirID }`);
+
 const result = convertSouvenirsDataToJSON(rows.toJSON());
 
-if (Astro.request.method === "POST") {
+if (Astro.request.method === "POST")
+{
   // Parse form data
   const formData = await Astro.request.formData();
 
   const souvenirID = formData.get("souvenirID");
-  const statusText = formData.get("statusID");
-  let statusConvertedID;
-
-  if (typeof statusText === "string") statusConvertedID = statusTextToId(statusText);
-
-  if(statusText !== result[0].statusName)
-  {
-    await turso.execute(`UPDATE Souvenirs SET statusID = ${statusConvertedID} WHERE souvenirID = ${souvenirID}`);
-  }
-
-  return Astro.redirect('/products/souvenirs')
+  
 }
----
 
+---
 <Layout title="Editar">
-  <SouvenirForm selectedSouvenir={  result[0]}>
+  <SouvenirForm selectedSouvenir={result[0]}>
     <div class="flex justify-end max-w-full mx-auto px-8">
       <BackBtn />
       <SubmitBtn>

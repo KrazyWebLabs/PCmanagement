@@ -15,8 +15,8 @@ export interface ConvertedData {
     priceWithoutIVA: number;
     IVA: number;
     description: string;
-    warehouseID: string;
-    warehouseName: string;
+    warehouseID: string | null;
+    warehouseName: string | null;
     statusID: string;
     statusName: string;
 }

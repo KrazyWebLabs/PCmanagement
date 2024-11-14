@@ -8,16 +8,16 @@ import SubmitBtn from "@components/ui/Buttons/SubmitBtn.astro";
 if (Astro.request.method === 'POST') {
   // Parse form data
   const formData = await Astro.request.formData();
-  const souvenirID = formData.get('cardNumber');
+
+  const souvenirID = formData.get('souvenirID');
   const souvenirName = formData.get('souvenirName');
   const priceWithoutIVA = formData.get('priceWithoutIVA ');
   const IVA = formData.get('IVA');
-  const priceWithIVA = formData.get('priceWithIVA ');
   const description  = formData.get('description ');
-  const warehouseName = formData.get('warehouseName');
+  const warehouseID = formData.get('warehouseID');
   const statusID  = formData.get('statusID ');
 
-  await turso.execute(`INSERT INTO Souvenirs (souvenirID, warehouseID, statusID) VALUES(${souvenirID}, ${warehouseName}, ${statusID})`);
+  await turso.execute(`INSERT INTO Souvenirs (souvenirID, souvenirName, priceWithoutIVA, IVA, description, warehouseID, statusID) VALUES(${souvenirID}, '${souvenirName}', ${priceWithoutIVA}, ${IVA}, '${description}', ${warehouseID}, ${statusID}) JOIN Warehouses ON Souvenirs.warehouseID = Warehouses.warehouseID;`);
 
 
   return Astro.redirect('/products/souvenirs')
