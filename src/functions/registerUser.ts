@@ -6,7 +6,6 @@ export function hashPasswrd(password: string) {
   try {
     const hashedPassword = CryptoJS.AES.encrypt(password, SECRET);
     return hashedPassword.toString();
-
   } catch (error) {
     console.log("Error while creating password ", error);
     throw new Error("Error while creating password");

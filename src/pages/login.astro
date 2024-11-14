@@ -29,28 +29,21 @@ if (Astro.request.method === "POST") {
 
   const employeeID = formData.get("employeeID");
   const passw = formData.get("passw");
-
-  //TODO: Do a better UI/UX for register
-  if (typeof passw === "string" && typeof employeeID === "string") {
-    let decUserPasswrd = await decryptPasswrd(passw);
-
+  
+  if (typeof passw === "string" && typeof employeeID === "string") {  
     try {
       const selection = await turso.execute(
         `SELECT * FROM Employees WHERE employeeID = ${employeeID}`
       );
       const userSession = convertUserDataToJSON(selection.toJSON());
 
-			console.log(userSession)
+      let decUserPasswrd = decryptPasswrd(userSession[0].passwrd);
 
       let userInfo = {
         id: userSession[0].employeeID,
 				name: userSession[0].name,
 				lastName: userSession[0].paternalSurname
       };
-
-			console.log(userInfo)
-
-			console.log(decryptPasswrd(passw) + " : " + passw)
 
       if (decUserPasswrd === passw) {
         Astro.cookies.set("userSes", userInfo);
