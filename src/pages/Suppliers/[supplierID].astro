@@ -3,36 +3,42 @@ import BackBtn from "@components/ui/Buttons/BackBtn.astro";
 import Layout from "src/layouts/Layout.astro";
 import SupplierForm from "@components/Supplier/SupplierForm.astro";
 import { turso } from "src/turso";
-import { convertSouvenirsDataToJSON } from "@functions/ConvertSuppliersDataToJSON";
 import SubmitBtn from "@components/ui/Buttons/SubmitBtn.astro";
-import statusTextToId from "@functions/statusTextToId";
+import { convertSuppliersDataToJSON } from "@functions/ConvertSuppliersDataToJSON";
 
-const { supplierID } = Astro.params;
-const rows  = await turso.execute(`SELECT * FROM Suppliers  WHERE supplierID = ${supplierID}`);
+const { supplierID  } = Astro.params;
 
-// Convertir a formato JSON deseado
-const result = convertSouvenirsDataToJSON(rows.toJSON());
+const rows = await turso.execute(`SELECT * FROM Suppliers WHERE supplierID  = ${supplierID }`);
+console.log(rows.toJSON()); 
 
-if(Astro.request.method === "POST"){
-  //Parse form data
-  const formData = await Astro.request.formData();
 
-  const supplierID = formData.get("supplierID");
-  const statusID = formData.get("statusID");
-  let statusName;
+const result = convertSuppliersDataToJSON(rows.toJSON());
 
-  if(typeof statusID === "string") statusName = statusTextToId(statusID);
-  console.log(statusID)
+if (Astro.request.method === 'POST') {
+    // Parse form data
+    const formData = await Astro.request.formData();
 
-  if(statusName !== result[0].statusID)
-  await turso.execute(`UPDATE Suppliers SET statusID = ${statusName} WHERE supplierID = ${supplierID}`);
+    const supplierID = formData.get('supplierID');
+    const legalEntityID = formData.get('legalEntityID');
+    const phoneNumber = formData.get('phoneNumber');
+    const email = formData.get('email');
+    const statusID = formData.get('statusID');
+
+    await turso.execute(`UPDATE Suppliers SET legalEntityID = '${legalEntityID}', phoneNumber = '${phoneNumber}', email = '${email}', statusID = ${statusID} WHERE supplierID = ${supplierID}`);
+
+    console.log(supplierID);
+    console.log(legalEntityID);
+    console.log(phoneNumber);
+    console.log(email);
+    console.log(statusID);
 
   return Astro.redirect('/suppliers')
 }
+
 ---
 
 <Layout title="Editar">
-  <SupplierForm selectedSouvenir={result[0]}>
+  <SupplierForm selectedSupplier={result[0]}>
     <div class="flex justify-end max-w-full mx-auto px-8">
       <BackBtn />
       <SubmitBtn>

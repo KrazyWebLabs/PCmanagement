@@ -3,48 +3,96 @@ import Form from "@components/ui/Forms/Form.astro";
 import FormInput from "@components/ui/Forms/FormInput.astro"
 import FormSelect from "@components/ui/Forms/FormSelect.astro";
 import SelectOption from "@components/ui/Forms/SelectOption.astro";
-import { convertSouvenirsDataToJSON } from "@functions/ConvertSuppliersDataToJSON";
+import { convertSuppliersDataToJSON } from "@functions/ConvertSuppliersDataToJSON";
+import { convertStatusDataToJSON } from "@functions/ConvertSuppliersDataToJSON";
+import { convertLegalDataToJSON } from "@functions/ConvertSuppliersDataToJSON";
 import { turso } from "src/turso";
 
 const path = Astro.url.pathname.replace(/\/$/, ""); // Elimina el "/" al final si existe.
 const previousPath = path.substring(0, path.lastIndexOf("/")) || "/";
 
+
+
 interface Props {
-  selectedSouvenir?: any;
+  selectedSupplier?: any;
 }
 
-const {selectedSouvenir} = Astro.props;
-console.log(selectedSouvenir);
+const {selectedSupplier} = Astro.props;
+
+let supplierID = "";
+let souvenirData;
+let result;
+let resultLegal;
+let legalData;
+let resultStatus;
+let StatusData;
+
+legalData = await turso.execute("SELECT * FROM LegalEntities")
+
+StatusData = await turso.execute("SELECT * FROM Status")
+
+souvenirData = await turso.execute("SELECT * FROM Souvenirs")
+
+const data = souvenirData.toJSON()
+
+if (!selectedSupplier) {
+  result = convertSuppliersDataToJSON(data)
+  resultLegal = convertLegalDataToJSON(legalData.toJSON())
+  resultStatus = convertStatusDataToJSON(StatusData.toJSON())
+}
+else  {
+  result = convertSuppliersDataToJSON(data).filter((p) => p.supplierID !== selectedSupplier.supplierID); 
+  resultLegal = convertLegalDataToJSON(legalData.toJSON()).filter((l) => l.legalEntityID  !== selectedSupplier.legalEntityID ); 
+  resultStatus = convertStatusDataToJSON(StatusData.toJSON()).filter((s) => s.statusID  !== selectedSupplier.statusID ); 
+}
+
+console.log(result);
+console.log(resultLegal);
+console.log(resultStatus);
+
 ---
 
-<Form title="Alta Productos">
+<Form title="Alta Proveedores">
   {
-    !selectedSouvenir
+    !selectedSupplier
     ?
     <div class="grid grid-cols-2 gap-4">
 
         <!-- Primera columna -->
         <div class="flex flex-col">
           <!-- Id Proveedor -->
-            <FormInput type="number" name="idSupplier" title="idSupplier" placeholder="ID Supplier" isRequired/>
+            <FormInput type="number" name="supplierID" title="idSupplier" placeholder={supplierID} isRequired isDisabled/>
 
           <!-- Id Entidad Legal -->
-            <FormInput type="number" name="legalEntityID" title="legalEntityID" placeholder="Id Entidad Legal" isRequired/>
+          <FormSelect name="legalEntityID" title="Nombre almacen" isRequired >
+            <SelectOption value="" isSelected> -- Selecciona -- </SelectOption>
+            {
+              resultLegal?.map((w) => (
+                <SelectOption value={w.legalEntityID?.toString() ?? ''}>{w.name }</SelectOption>
+              ))
+            }
+          </FormSelect>
 
           <!-- Id Status -->
-          <FormInput type="number" name="statusID" title="statusID" placeholder="ID Status" isRequired/>
+          <FormSelect name="statusID" title="Status">
+            <SelectOption value="" isSelected> -- Selecciona -- </SelectOption>
+            {
+              resultStatus?.map((w) => (
+                <SelectOption value={w.statusID?.toString() ?? ''}>{w.statusName}</SelectOption>
+              ))
+            }
+          </FormSelect>
+          
         </div>
 
         <!-- Segunda columna -->
         <div class="flex flex-col">
-            <!-- Dirección -->
-            <FormInput type="text" name="address" title="address" placeholder="Dirección" />
 
           <!-- Número fe telefono -->
             <FormInput type="text" name="phoneNumber" title="phoneNumber" placeholder="Número de telefono"/>
 
           <!-- Email -->
-          <FormInput type="text" name="email" title="email" placeholder="Email"/>
+          <FormInput type="email" name="email" title="email" placeholder="Email"/>
         </div>
     </div>
 
@@ -58,23 +106,32 @@ console.log(selectedSouvenir);
         <!-- Primera columna -->
         <div class="flex flex-col">
           <!-- Id Proveedor -->
-            <FormInput type="number" name="idSupplier" title="idSupplier" placeholder="ID Supplier"/>
+            <FormInput type="number" name="supplierID" title="idSupplier" placeholder="ID Supplier" value={selectedSupplier.supplierID}/>
 
-          <!-- Id Entidad Legal -->
-            <FormInput type="number" name="legalEntityID" title="legalEntityID" placeholder="Id Entidad Legal"/>
-
-            <!-- Id Status -->
-          <FormSelect name="idStatus" title="idStatus" value={selectedSouvenir.statusName} >
+            <!-- Id Entidad Legal -->
+          <FormSelect name="legalEntityID" title="Nombre almacen" isRequired >
             <SelectOption value="" isSelected> -- Selecciona -- </SelectOption>
-            <SelectOption value="alta"> Alta </SelectOption>
-            <SelectOption value="en stock"> En stock </SelectOption>
+            {
+              resultLegal?.map((w) => (
+                <SelectOption value={w.legalEntityID?.toString() ?? ''}>{w.name }</SelectOption>
+              ))
+            }
           </FormSelect>
+
+          <!-- Id Status -->
+          <FormSelect name="statusID" title="Status">
+            <SelectOption value="" isSelected> -- Selecciona -- </SelectOption>
+            {
+              resultStatus?.map((w) => (
+                <SelectOption value={w.statusID?.toString() ?? ''}>{w.statusName}</SelectOption>
+              ))
+            }
+          </FormSelect>
+
         </div>
 
         <!-- Segunda columna -->
         <div class="flex flex-col">
-            <!-- Dirección -->
-            <FormInput type="text" name="address" title="address" placeholder="Dirección" />
 
           <!-- Número fe telefono -->
             <FormInput type="text" name="phoneNumber" title="phoneNumber" placeholder="Número de telefono"/>
