@@ -1,12 +1,12 @@
 ---
 import Form from "@components/ui/Forms/Form.astro";
-import Layout from "../layouts/Layout.astro";
 import FormInput from "@components/ui/Forms/FormInput.astro";
 import SubmitBtn from "@components/ui/Buttons/SubmitBtn.astro";
-import { convertUserDataToJSON } from "@functions/ConvertUserDataToJson";
-import { decryptPasswrd } from "@functions/registerUser";
+import { hashPasswrd } from "@functions/registerUser";
 import type { InputType } from "@customTypes/InputType";
 import { turso } from "src/turso";
+import { generateRandomNumber } from "@functions/generateRandomNumber";
+import LayoutWTOS from "src/layouts/LayoutWTOS.astro";
 
 export interface Inputs {
   name: string;
@@ -16,6 +16,7 @@ export interface Inputs {
   placeholder: string;
 }
 
+const generatedEmployeeNumber = generateRandomNumber(15);
 const session = Astro.cookies.get("userSes");
 
 if (session) {
@@ -28,122 +29,222 @@ if (Astro.request.method === "POST") {
   const formData = await Astro.request.formData();
 
   const employeeID = formData.get("employeeID");
-  const passw = formData.get("passw");
+  const name = formData.get("name");
+  const patName = formData.get("paternalSurname");
+  const matName = formData.get("maternalSurname");
+  const phone = formData.get("phone");
+  const email = formData.get("email");
+  const dateBirth = formData.get("dateOfBirth");
+  const passw = formData.get("passwrd");
+
+  //address info
+  const country = formData.get("country");
+  const state = formData.get("state");
+  const city = formData.get("city");
+  const neighborhood = formData.get("neighborhood");
+  const postalCode = formData.get("postalCode");
+  const street = formData.get("street");
+  const outsideNumb = formData.get("outsideNumb");
 
   //TODO: Do a better UI/UX for register
-  if (typeof passw === "string" && typeof employeeID === "string") {
-    let decUserPasswrd = await decryptPasswrd(passw);
+  if (
+    typeof passw === "string" &&
+    typeof employeeID === "string" &&
+    typeof name === "string" &&
+    typeof patName === "string" &&
+    typeof matName === "string" &&
+    typeof phone === "string" &&
+    typeof email === "string" &&
+    typeof dateBirth === "string" &&
+    typeof country === "string" &&
+    typeof state === "string" &&
+    typeof city === "string" &&
+    typeof neighborhood === "string" &&
+    typeof postalCode === "string" &&
+    typeof street === "string" &&
+    typeof outsideNumb === "string"
+  ) {
+    //add address first
+    await turso.execute(`
+        INSERT INTO Addresses (
+        country,
+        state,
+        city,
+        neighborhood,
+        postalCode,
+        street,
+        outsideNumb
+        ) VALUES (
+          '${country}',
+          '${state}',
+          '${city}',
+          '${neighborhood}',
+          '${postalCode}',
+          '${street}',
+          '${outsideNumb}'
+        );
+      `);
 
-    try {
-      const selection = await turso.execute(
-        `SELECT * FROM Employees WHERE employeeID = ${employeeID}`
+    const addRes = await turso.execute("SELECT max(AddressID) FROM Addresses;");
+    const addressID = addRes.rows[0]["max(AddressID)"];
+
+    const encryptedPasswrd = hashPasswrd(passw);
+    // Insert Employee
+    await turso.execute(`
+      INSERT INTO Employees (
+        employeeID,
+        firstName,
+        paternalLastName,
+        maternalLastName,
+        phoneNumber,
+        email,
+        dateOfBirth,
+        passwrd,
+        addressID,
+        statusID
+      )VALUES (
+        ${employeeID},
+        '${name}',
+        '${patName}',
+        '${matName}',
+        ${phone},
+        '${email}',
+        '${dateBirth}',
+        '${encryptedPasswrd}',
+        ${addressID},
+        10
       );
-      const userSession = convertUserDataToJSON(selection.toJSON());
-
-			console.log(userSession)
-
-      let userInfo = {
-        id: userSession[0].employeeID,
-				name: userSession[0].name,
-				lastName: userSession[0].paternalSurname
-      };
-
-			console.log(userInfo)
-
-			console.log(decryptPasswrd(passw) + " : " + passw)
-
-      if (decUserPasswrd === passw) {
-        Astro.cookies.set("userSes", userInfo);
-
-        return Astro.redirect("/");
-      }
-    } catch (e: any) {
-      console.error(
-        `No se puede logear un usuario con nombre ${employeeID}\n\n${e.message}`
-      );
-    }
+    `);
   }
-  return Astro.redirect("/");
+  return Astro.redirect("/login");
 }
-
-const inputs: Inputs[] = [
-  {
-    name: "employeeID",
-    label: "# Employee ID",
-    type: "number",
-    isRequired: true,
-    placeholder: "982472834824"
-  },
-  {
-    name: "name",
-    label: "Name",
-    type: "text",
-    isRequired: true,
-    placeholder: "John"
-  },
-  {
-    name: "paternalSurname",
-    label: "Paternal Surname",
-    type: "text",
-    isRequired: true,
-    placeholder: "Doe"
-  },
-  {
-    name: "maternalSurname",
-    label: "Maternal Surname",
-    type: "text",
-    isRequired: true,
-    placeholder: "Smith"
-  },
-  {
-    name: "phone",
-    label: "Phone",
-    type: "number",
-    isRequired: true,
-    placeholder: "1234567890"
-  },
-  {
-    name: "email",
-    label: "Email",
-    type: "email",
-    isRequired: true,
-    placeholder: "example@example.com"
-  },
-  {
-    name: "dateOfBirth",
-    label: "Date of Birth",
-    type: "date",
-    isRequired: true,
-    placeholder: "1990-01-01"
-  },
-  {
-    name: "passwrd",
-    label: "Password",
-    type: "password",
-    isRequired: true,
-    placeholder: "123456"
-  }
-];
 ---
 
-<Layout title="Log into you Account">
-  <div class="flex items-center justify-center flex-col mt-10">
+<LayoutWTOS title="Register your Account">
+  <div class="mx-8">
     <Form title="Register">
-      {
-        inputs.map((inp) => (
-          <FormInput
-            name={inp.name}
-            type={inp.type}
-            isRequired
-            placeholder={inp.placeholder}
-          >
-            {inp.label}
-          </FormInput>
-        ))
-      }
-      <div class="flex justify-center items-center min-w-full mt-2">
-        <SubmitBtn> Login </SubmitBtn>
+      <FormInput
+        name="employeeID"
+        type="number"
+        isRequired
+        placeholder="982472834824"
+        value={generatedEmployeeNumber}
+      >
+        # Employee ID
+      </FormInput>
+      <FormInput
+        name="email"
+        type="email"
+        isRequired
+        placeholder="example@example.com"
+      >
+        Email
+      </FormInput>
+  
+      <h3 class="text-xl dark:text-white font-semibold">
+        Employee Information
+      </h3>
+  
+      <div class="flex flex-wrap gap-2">
+        <FormInput name="name" type="text" isRequired placeholder="John">
+          Name
+        </FormInput>
+  
+        <FormInput
+          name="paternalSurname"
+          type="text"
+          isRequired
+          placeholder="Doe"
+        >
+          Paternal Surname
+        </FormInput>
+  
+        <FormInput
+          name="maternalSurname"
+          type="text"
+          isRequired
+          placeholder="Smith"
+        >
+          Maternal Surname
+        </FormInput>
+  
+        <FormInput name="phone" type="number" isRequired placeholder="1234567890">
+          Phone
+        </FormInput>
+  
+        <FormInput
+          name="dateOfBirth"
+          type="date"
+          isRequired
+          placeholder="1990-01-01"
+        >
+          Date of Birth
+        </FormInput>
+      </div>
+  
+      <h3 class="text-xl dark:text-white font-semibold mb-4">
+        Address Information
+      </h3>
+  
+      <div class="flex flex-wrap gap-2">
+        <FormInput name="country" type="text" isRequired placeholder="México">
+          Country
+        </FormInput>
+  
+        <FormInput
+          name="state"
+          type="text"
+          isRequired
+          placeholder="Ciudad de México"
+        >
+          State
+        </FormInput>
+  
+        <FormInput name="city" type="text" isRequired placeholder="Coyoacán">
+          City
+        </FormInput>
+  
+        <FormInput
+          name="neighborhood"
+          type="text"
+          isRequired
+          placeholder="Centro"
+        >
+          Neighborhood
+        </FormInput>
+      </div>
+  
+      <div class="flex flex-wrap gap-2">
+        <FormInput name="postalCode" type="text" isRequired placeholder="04000">
+          Postal Code
+        </FormInput>
+  
+        <FormInput
+          name="street"
+          type="text"
+          isRequired
+          placeholder="Av. Universidad"
+        >
+          Street
+        </FormInput>
+  
+        <FormInput name="outsideNumb" type="number" isRequired placeholder="300">
+          Outside Number
+        </FormInput>
+      </div>
+  
+      <h3 class="text-xl dark:text-white font-semibold mb-4">
+        Account Information
+      </h3>
+  
+      <div class="flex flex-wrap gap-2">
+        <FormInput name="passwrd" type="password" isRequired placeholder="123456">
+          Password
+        </FormInput>
+      </div>
+      <div class="flex justify-end max-w-full mx-auto px-8 flex-wrap gap-2">
+        <SubmitBtn> Register </SubmitBtn>
       </div>
     </Form>
   </div>
-</Layout>
+</LayoutWTOS>

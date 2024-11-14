@@ -6,9 +6,8 @@ export function hashPasswrd(password: string) {
   try {
     const hashedPassword = CryptoJS.AES.encrypt(password, SECRET);
     return hashedPassword.toString();
-
   } catch (error) {
-    console.log("Error while creating password ", error);
+    console.error("Error while creating password ", error);
     throw new Error("Error while creating password");
   };
 }
@@ -20,7 +19,7 @@ export function decryptPasswrd(password: string) {
     return hashedPassword.toString(CryptoJS.enc.Utf8);
 
   } catch (error) {
-    console.log("Error while decrypting password ", error);
+    console.error("Error while decrypting password ", error);
     throw new Error("Error while decrypting password");
   };
 }
