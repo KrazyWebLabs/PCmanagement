@@ -1,7 +1,7 @@
 export type PurchaseData = {
     purchaseID: string;
     warehouseID: number;
-    //currencyID: number;
+    currencyID: number;
     souvenirID: number;
     souvenirName: string;
     price: number;
@@ -15,7 +15,7 @@ export type PurchaseData = {
     state: string;
     city: string;
     deliverTo: string;
-    recepcionDate: Date;
+    purchaseDate: Date;
     discount: number;
     totalChange: number;
     description: string;
@@ -39,7 +39,7 @@ export interface ConvertedData {
     state: string;
     city: string;
     deliverTo: string;
-    recepcionDate: string | null;
+    purchaseDate: string | null;
     discount: string | null;
     totalChange: string | null;
     description: string;

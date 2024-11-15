@@ -1,5 +1,6 @@
 ---
 import Form from "@components/ui/Forms/Form.astro";
+import BackBtn from "../../components/ui/Buttons/BackBtn.astro";
 import FormInput from "@components/ui/Forms/FormInput.astro";
 import FormSelect from "@components/ui/Forms/FormSelect.astro";
 import SelectOption from "@components/ui/Forms/SelectOption.astro";
@@ -39,43 +40,37 @@ if (!data) {
 ---
 
 <Form title="Purchase Order Data">
-  <FormInput name="orderID" type="number" value={generateOrderNumber} placeholder={generateOrderNumber} isRequired isDisabled>
-    Order ID
-  </FormInput>
+  { 
+    !selectedOrder
+    ?
   
   <div class="flex flex-wrap gap-4">
-    <FormSelect name="purchaseID" title="Purchase ID" isRequired>
-      <SelectOption value="" isSelected>-- Select Purchase Order --</SelectOption>
-      {
-        result?.map((order) => (
-          order?.orderID ? (
-            <SelectOption value={order.orderID.toString()}>{order.orderID}</SelectOption>
-          ) : null
-        ))
-      }
-    </FormSelect>
+    <FormInput name="orderID" type="number" value={generateOrderNumber} placeholder={generateOrderNumber} isRequired isDisabled>
+    Order ID
+  </FormInput>
 
-    <FormSelect name="warehouse" title="Warehouse" isDisabled>
+    <FormSelect name="warehouse" title="Warehouse">
       <option value="">Selecciona un Almacen</option>
-      <option value="WH1" selected>1</option>
-      <option value="WH2">2</option>
-      <option value="WH3">3</option>
-      <option value="WH4">4</option>
+      <option value="1" selected>1</option>
+      <option value="2">2</option>
     </FormSelect>
 
-    <FormSelect name="currency" title="Currency" isDisabled>
+    <FormSelect name="currency" title="Currency">
       <option value="">Selecciona un tipo de Moneda</option>
-      <option value="pesos" selected>Pesos</option>
-      <option value="dolares">Dolares</option>
-      <option value="euros">Euros</option>
+      <option value="1" selected>Pesos</option>
+      <option value="2">Dolares</option>
+      <option value="3">Euros</option>
     </FormSelect>
   </div>
 
   <h3 class="text-xl dark:text-white font-semibold mb-4">Supplier Data</h3>
 
   <div class="flex flex-wrap gap-3">
-    <FormSelect name="supplierID" title="Supplier ID" isDisabled>
+    <FormSelect name="supplierID" title="Supplier ID">
       <option value="">Selecciona un Proveedor</option>
+      <option value="1" selected>1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
       {
         result?.map((order) => (
           order?.supplierID ? (
@@ -148,7 +143,132 @@ if (!data) {
 
   <div class="flex flex-wrap gap-1">
     <FormInput name="description" type="text" placeholder="Description">
-      Description
+      Souvenir Description
     </FormInput>
   </div>
+  <div class="flex justify-end max-w-full mx-auto px-8">
+
+  <BackBtn />
+  <button
+  type="submit"
+  class="inline-block px-4 py-2 mr-4 text-white duration-150 font-medium bg-LegacyBlue-600 rounded-lg hover:bg-LegacyBlue-500 active:bg-LegacyBlue-700 md:text-sm capitalize"
+>
+  <slot />
+  <p class="text-lg">Add</p>
+</button>
+</div>
+
+//Termina Add
+:
+//Empieza Update
+
+  <div class="flex flex-wrap gap-4">
+  <FormInput name="orderID" type="number" value={selectedOrder.purchaseID} placeholder={selectedOrder.  purchaseID} isDisabled>
+    Order ID
+  </FormInput>
+
+    <FormSelect name="warehouse" title="Warehouse" isDisabled> 
+      <option value={selectedOrder.warehouseID}>{selectedOrder.warehouseID}</option>
+    </FormSelect>
+
+    <FormSelect name="currency" title="Currency" isDisabled>
+      <option value={selectedOrder.currencyID}>{selectedOrder.currencyID}</option>
+
+    </FormSelect>
+  </div>
+
+  <h3 class="text-xl dark:text-white font-semibold mb-4">Supplier Data</h3>
+
+  <div class="flex flex-wrap gap-3">
+    <FormSelect name="supplierID" title="Supplier ID">
+      <option value={selectedOrder.supplierID}>{selectedOrder.supplierID}</option>
+      {
+        result?.map((order) => (
+          order?.supplierID ? (
+            <SelectOption value={order.supplierID.toString()}>{order.supplierName}</SelectOption>
+          ) : null
+        ))
+      }
+    </FormSelect>
+
+    <FormInput name="supplierName" type="text" placeholder="Name" isDisabled>
+      Supplier Name
+    </FormInput>
+    
+    <FormInput name="rfc" type="text" placeholder="RFC" isDisabled>
+      RFC
+    </FormInput>
+  </div>
+
+  <div class="flex flex-wrap gap-4">
+    <FormInput name="street" type="text" placeholder="Street Name" isDisabled>
+      Street Name
+    </FormInput>
+
+    <FormInput name="neighborhood" type="text" placeholder="Neighborhood" isDisabled>
+      Neighborhood
+    </FormInput>
+    
+    <FormInput name="outsideNumb" type="text" placeholder="Outside Number" isDisabled>
+      Outside Number
+    </FormInput>
+
+    <FormInput name="postalCode" type="number" placeholder="Postal Code" isDisabled>
+      Postal Code
+    </FormInput>
+  </div>
+
+  <div class="flex flex-wrap gap-3">
+    <FormInput name="country" type="text" placeholder="Country" isDisabled>
+      Country
+    </FormInput>
+
+    <FormInput name="state" type="text" placeholder="State" isDisabled>
+      State
+    </FormInput>
+
+    <FormInput name="city" type="text" placeholder="City" isDisabled>
+      City
+    </FormInput>
+  </div>
+
+  <h3 class="text-xl dark:text-white font-semibold mb-4">Other Information</h3>
+
+  <div class="flex flex-wrap gap-4">
+    <FormInput name="deliverTo" type="text" placeholder={selectedOrder.deliverTo} value={selectedOrder.deliverTo} >
+      Deliver To
+    </FormInput>
+    
+    <FormInput name="purchaseDate" type="date" placeholder={selectedOrder.purchaseDate} value={selectedOrder.purchaseDate}>
+      Purchase Date
+    </FormInput>
+
+    <FormInput name="discount" type="number" placeholder={selectedOrder.discount} value={selectedOrder.discount} >
+      Discount
+    </FormInput>
+
+    <FormInput name="totalChange" type="number" placeholder={selectedOrder.totalChange} value={selectedOrder.totalChange} >
+      Total Change
+    </FormInput>
+  </div>
+
+  <div class="flex flex-wrap gap-1">
+    <FormInput name="description" type="text" placeholder={selectedOrder.description} value={selectedOrder.description} >
+      Souvenir Description
+    </FormInput>
+  </div>
+  <div class="flex justify-end max-w-full mx-auto px-8">
+
+  <BackBtn />
+  <button
+  type="submit"
+  class="inline-block px-4 py-2 mr-4 text-white duration-150 font-medium bg-LegacyBlue-600 rounded-lg hover:bg-LegacyBlue-500 active:bg-LegacyBlue-700 md:text-sm capitalize"
+>
+  <slot />
+  <p class="text-lg">Update</p>
+</button>
+</div>
+}
 </Form>
+
+

@@ -7,23 +7,26 @@ import { convertPurchaseDataToJSON } from "@functions/ConvertDataToJSON";
 import SubmitBtn from "@components/ui/Buttons/SubmitBtn.astro";
 
 const { purchaseOrderID } = Astro.params;
-const rows = await turso.execute(`SELECT * FROM PurchaseOrdersData WHERE purchaseOrderID = ${purchaseOrderID}`);
-
+const rows = await turso.execute(`SELECT * FROM PurchaseOrders WHERE purchaseOrderID = ${purchaseOrderID}`);
+console.log(rows.toJSON());
 const result = convertPurchaseDataToJSON(rows.toJSON());
 
 if (Astro.request.method === "POST") {
 
   const formData = await Astro.request.formData();
+  console.log (formData);
 
-  const orderID = formData.get("purchaseOrderID");
-  const supplierID = formData.get("supplierID");
-  const totalAmount = formData.get("totalAmount");
-  const orderDate = formData.get("orderDate");
+  const deliverTo = formData.get("deliverTo");
+  const purchaseDate = formData.get("purchaseDate");
+  const discount = formData.get("discount");
+  const totalChange = formData.get("totalChange");
+  const description = formData.get("description");
+  
 
   await turso.execute(`
-    UPDATE PurchaseOrders
-    SET supplierID = ${supplierID}, totalAmount = ${totalAmount}, orderDate = "${orderDate}"
-    WHERE purchaseOrderID = ${orderID};
+    UPDATE purchaseOrders
+    SET deliverTo = "${deliverTo}", purchaseDate = "${purchaseDate}", discount = ${discount}, totalChange = ${totalChange}, description = "${description}"
+    WHERE purchaseOrderID = ${purchaseOrderID};
   `);
 
   return Astro.redirect("/purchaseOrders");
@@ -33,10 +36,4 @@ if (Astro.request.method === "POST") {
   <h1 class="dark:text-white">Editar Orden de Compra {purchaseOrderID}</h1>
   <PurchaseForm selectedOrder={result[0]} />
 
-  <div class="flex justify-end max-w-full mx-auto px-8">
-    <BackBtn />
-    <SubmitBtn>
-      Update
-    </SubmitBtn>
-  </div>
 </Layout>

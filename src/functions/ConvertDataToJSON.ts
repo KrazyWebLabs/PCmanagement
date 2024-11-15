@@ -1,22 +1,23 @@
-import type _PurchaseOrderID_ from "src/pages/purchaseOrders/[PurchaseOrderID].astro";
+import type _PurchaseOrderID_ from "src/pages/purchaseOrders/[purchaseOrderID].astro";
 import type { PurchaseData } from "src/types/PurchaseData";
 
 export default function convertReceptionDataToJSON(data: DBData): PurchaseData[] {
   return data.rows.map((row: (string | number | Date |null)[]) => {
     return {
-    purchaseID: row[1] as string, // Aseguramos que no sea undefined
+    purchaseID: row[0] as string, // Aseguramos que no sea undefined
 
-    deliverTo: row[2] as string,
-    recepcionDate: row[3] as Date,
-    discount: row[4] as number,
-    totalChange: row[5] as number,
-    description: row[6] as string,
+    deliverTo: row[1] as string,
+    purchaseDate: row[2] as Date,
+    discount: row[3] as number,
+    totalChange: row[4] as number,
+    description: row[5] as string,
     
-    warehouseID: row[7] as number,
-    currencyName: row[8] as string,
+    warehouseID: row[6] as number,
+    currencyName: row[7] as string,
+    currencyID: row[7] as number,
     souvenirID: row[9] as number,
-    supplierID: row[10] as number,
-    supplierName: row [13] as string,
+    supplierID: row[9] as number,
+    supplierName: row [9] as string,
 
     souvenirName: row[5] as string,
     //Hacer un JOIN para obtener el souvenir name
@@ -40,17 +41,18 @@ export default function convertReceptionDataToJSON(data: DBData): PurchaseData[]
 export function convertPurchaseDataToJSON(data: DBData): PurchaseData[] {
   return data.rows.map((row: (string | number | Date | null)[]) => {
     return {
-    purchaseID: row[1] as string,
-    deliverTo: row[17] as string,
-    recepcionDate: row[18] as Date,
-    discount: typeof row[19] === "number" ? row[19] : Number(row[19] ?? 0),
-    totalChange: typeof row[20] === "number" ? row[20] : Number(row[20] ?? 0),
-    description: row[21] as string,
+    purchaseID: row[0] as string,
+    deliverTo: row[1] as string,
+    purchaseDate: row[2] as Date,
+    discount: typeof row[3] === "number" ? row[3] : Number(row[3] ?? 0),
+    totalChange: typeof row[4] === "number" ? row[4] : Number(row[4] ?? 0),
+    description: row[5] as string,
     
-    warehouseID: typeof row[2] === "number" ? row[2] : Number(row[2] ?? 0),
-    currencyName: row[3] as string,
+    warehouseID: typeof row[6] === "number" ? row[6] : Number(row[6] ?? 0),
+    currencyName: row[7] as string,
+    currencyID: row[7] as number,
     souvenirID: typeof row[4] === "number" ? row[4] : Number(row[4] ?? 0),
-    supplierID: typeof row[7] === "number" ? row[7] : Number(row[7] ?? 0),
+    supplierID: typeof row[9] === "number" ? row[9] : Number(row[9] ?? 0),
     supplierName: row [22] as string,
     status: row[9] as string,
     
