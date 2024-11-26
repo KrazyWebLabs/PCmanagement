@@ -24,7 +24,17 @@ if (Astro.request.method === 'POST') {
     const email = formData.get('email');
     const statusID = formData.get('statusID');
 
-    await turso.execute(`UPDATE Suppliers SET legalEntityID = '${legalEntityID}', phoneNumber = '${phoneNumber}', email = '${email}', statusID = ${statusID} WHERE supplierID = ${supplierID}`);
+    let updateFields = [];
+
+    if (legalEntityID) updateFields.push(`legalEntityID = '${legalEntityID}'`);
+    if (phoneNumber) updateFields.push(`phoneNumber = ${phoneNumber}`);
+    if (email) updateFields.push(`email = ${email}`);
+    if (statusID) updateFields.push(`statusID = ${statusID}`);
+
+    if (updateFields.length > 0) {
+      const updateQuery = `UPDATE Suppliers SET ${updateFields.join(', ')} WHERE supplierID = ${supplierID}`;
+      await turso.execute(updateQuery);
+    }
 
     console.log(supplierID);
     console.log(legalEntityID);

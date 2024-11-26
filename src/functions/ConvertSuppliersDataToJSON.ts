@@ -1,6 +1,7 @@
 import type { ConvertedData } from "@customTypes/suppliersData";
 import type { ConvertedLegalData } from "@customTypes/legalEntitieData";
 import type { ConvertedStatusData } from "@customTypes/StatusData";
+import type { ConvertedAddressesData } from "@customTypes/AddressesData";
 
 export function convertSuppliersDataToJSON(data: DBData): ConvertedData[] {
   return data.rows.map((row: (string | number | null)[]) => {
@@ -32,6 +33,22 @@ export function convertStatusDataToJSON(data: DBData): ConvertedStatusData[]{
     return {
       statusID: Number(row[0]),
       statusName: row[1] as string,    
+    };
+  });
+};
+
+export function convertAdressesDataToJSON(data: DBData): ConvertedAddressesData[] {
+  return data.rows.map((row: (string | number | null)[]) => {
+    return {
+        addressID: Number(row[0]),
+        statusName: row[1] as string,  
+        country  : row[2] as string,
+        state  : row[3] as string,
+        city  : row[4] as string,
+        neighborhood  : row[5] as string,
+        postalCode  : row[6] as string,
+        street  : row[7] as string,
+        outsideNumb   : Number(row[8]),    
     };
   });
 };

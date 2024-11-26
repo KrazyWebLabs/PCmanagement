@@ -6,6 +6,11 @@ import SelectOption from "@components/ui/Forms/SelectOption.astro";
 import { convertSuppliersDataToJSON } from "@functions/ConvertSuppliersDataToJSON";
 import { convertStatusDataToJSON } from "@functions/ConvertSuppliersDataToJSON";
 import { convertLegalDataToJSON } from "@functions/ConvertSuppliersDataToJSON";
+import { convertAdressesDataToJSON } from "@functions/ConvertSuppliersDataToJSON";
+import { sequence } from "astro:middleware";
+import { any } from "astro:schema";
+import { array } from "astro:schema";
+import { addIssueToContext } from "astro:schema";
 import { turso } from "src/turso";
 
 const path = Astro.url.pathname.replace(/\/$/, ""); // Elimina el "/" al final si existe.
@@ -26,12 +31,20 @@ let resultLegal;
 let legalData;
 let resultStatus;
 let StatusData;
+let addressesData;
+let resultAddresses;
 
 legalData = await turso.execute("SELECT * FROM LegalEntities")
 
-StatusData = await turso.execute("SELECT * FROM Status")
+StatusData = await turso.execute(`
+  SELECT * 
+  FROM Status 
+  WHERE statusName IN ('Alta')
+`);
 
 souvenirData = await turso.execute("SELECT * FROM Souvenirs")
+
+addressesData = await turso.execute('SELECT * FROM Addresses')
 
 const data = souvenirData.toJSON()
 
@@ -39,16 +52,19 @@ if (!selectedSupplier) {
   result = convertSuppliersDataToJSON(data)
   resultLegal = convertLegalDataToJSON(legalData.toJSON())
   resultStatus = convertStatusDataToJSON(StatusData.toJSON())
+  resultAddresses = convertAdressesDataToJSON(addressesData.toJSON())
 }
 else  {
   result = convertSuppliersDataToJSON(data).filter((p) => p.supplierID !== selectedSupplier.supplierID); 
   resultLegal = convertLegalDataToJSON(legalData.toJSON()).filter((l) => l.legalEntityID  !== selectedSupplier.legalEntityID ); 
   resultStatus = convertStatusDataToJSON(StatusData.toJSON()).filter((s) => s.statusID  !== selectedSupplier.statusID ); 
+  resultAddresses = convertAdressesDataToJSON(addressesData.toJSON()).filter((a) => a.addressID !== selectedSupplier.addressID );
 }
 
 console.log(result);
 console.log(resultLegal);
 console.log(resultStatus);
+console.log(resultAddresses);
 
 ---
 
@@ -64,7 +80,7 @@ console.log(resultStatus);
             <FormInput type="number" name="supplierID" title="idSupplier" placeholder={supplierID} isRequired isDisabled/>
 
           <!-- Id Entidad Legal -->
-          <FormSelect name="legalEntityID" title="Nombre almacen" isRequired >
+          <FormSelect name="legalEntityID" title="Entidad legal" isRequired >
             <SelectOption value="" isSelected> -- Selecciona -- </SelectOption>
             {
               resultLegal?.map((w) => (
@@ -83,6 +99,10 @@ console.log(resultStatus);
             }
           </FormSelect>
           
+          <!-- Dirección -->
+        <FormInput type="text" name="street" title="Calle" placeholder="Calle"/>
+        <FormInput type="text" name="city" title="Ciudad" placeholder="Ciudad"/>
+
         </div>
 
         <!-- Segunda columna -->
@@ -93,6 +113,10 @@ console.log(resultStatus);
 
           <!-- Email -->
           <FormInput type="email" name="email" title="email" placeholder="Email"/>
+
+          <!-- Dirección -->
+        <FormInput type="text" name="postalCode" title="Código Postal" placeholder="Código Postal"/>
+        <FormInput type="text" name="outsideNumb" title="Número Exterior" placeholder="Número Exterior"/>
         </div>
     </div>
 
@@ -109,7 +133,7 @@ console.log(resultStatus);
             <FormInput type="number" name="supplierID" title="idSupplier" placeholder="ID Supplier" value={selectedSupplier.supplierID}/>
 
             <!-- Id Entidad Legal -->
-          <FormSelect name="legalEntityID" title="Nombre almacen" isRequired >
+          <FormSelect name="legalEntityID" title="Entidad Legal" >
             <SelectOption value="" isSelected> -- Selecciona -- </SelectOption>
             {
               resultLegal?.map((w) => (
@@ -128,6 +152,11 @@ console.log(resultStatus);
             }
           </FormSelect>
 
+
+          <!-- Dirección -->
+        <FormInput type="text" name="street" title="Calle" placeholder="Calle"/>
+        <FormInput type="text" name="city" title="Ciudad" placeholder="Ciudad"/>
+
         </div>
 
         <!-- Segunda columna -->
@@ -138,6 +167,10 @@ console.log(resultStatus);
 
           <!-- Email -->
           <FormInput type="text" name="email" title="email" placeholder="Email"/>
+
+          <!-- Dirección -->
+        <FormInput type="text" name="postalCode" title="Código Postal" placeholder="Código Postal"/>
+        <FormInput type="text" name="outsideNumb" title="Número Exterior" placeholder="Número Exterior"/>
         </div>
     </div>
 
