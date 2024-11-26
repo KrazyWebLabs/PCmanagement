@@ -27,7 +27,12 @@ let WarehousesData;
 
 WarehousesData = await turso.execute("SELECT * FROM Warehouses")
 
-StatusData = await turso.execute("SELECT * FROM Status")
+StatusData = await turso.execute(`
+  SELECT * 
+  FROM Status 
+  WHERE statusName IN ('Alta', 'En stock')
+`);
+
 
 souvenirData = await turso.execute("SELECT * FROM Souvenirs")
 
