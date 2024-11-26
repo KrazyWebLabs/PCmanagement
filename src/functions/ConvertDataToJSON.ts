@@ -13,9 +13,8 @@ export default function convertReceptionDataToJSON(data: DBData): PurchaseData[]
     description: row[5] as string,
     
     warehouseID: row[6] as number,
-    currencyName: row[7] as string,
     currencyID: row[7] as number,
-    souvenirID: row[9] as number,
+    souvenirID: row[8] as number,
     supplierID: row[9] as number,
     supplierName: row [9] as string,
 
@@ -32,7 +31,7 @@ export default function convertReceptionDataToJSON(data: DBData): PurchaseData[]
     country: row[14] as string,
     state: row[15] as string,
     city: row[16] as string,
-    status: row[9] as string
+    status: row[10] as string
     //Crear una vista con los campos necesarios para la orden de compra haciendo el JOIN a suppliers, status, souvenirs, legalEntities, adresses. 
     };
   });
@@ -49,12 +48,11 @@ export function convertPurchaseDataToJSON(data: DBData): PurchaseData[] {
     description: row[5] as string,
     
     warehouseID: typeof row[6] === "number" ? row[6] : Number(row[6] ?? 0),
-    currencyName: row[7] as string,
     currencyID: row[7] as number,
-    souvenirID: typeof row[4] === "number" ? row[4] : Number(row[4] ?? 0),
+    souvenirID: typeof row[8] === "number" ? row[8] : Number(row[8] ?? 0),
     supplierID: typeof row[9] === "number" ? row[9] : Number(row[9] ?? 0),
     supplierName: row [22] as string,
-    status: row[9] as string,
+    status: row[10] as string,
     
 
     souvenirName: row[5] as string,

@@ -1,6 +1,8 @@
 export interface ConvertedSupplierData {
     supplierID: number,
-    souvenirID: number,
-    warehouseID: number,
-    currencyID: number,
+    legalEntityID: number,
+    addressID: number,
+    phoneNumber: string,
+    email: string,
+    statusID: number,
   }

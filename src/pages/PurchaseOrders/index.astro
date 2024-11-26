@@ -1,6 +1,7 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import TrashIcon from "../../components/ui/icons/TrashIcon.astro"
+import CheckIcon from "../../components/ui/icons/CheckIcon.astro";
 import EditIcon from "../../components/ui/icons/EditIcon.astro"
 import EditRecord from "../../components/ui/Tables/EditRecord.astro";
 import ItemStatus from "../../components/ui/Tables/ItemStatus.astro";
@@ -8,7 +9,6 @@ import AddRegisterBtn from "../../components/ui/Buttons/AddRegisterBtn.astro";
 import convertPurchaseDataToJSON from "@functions/ConvertDataToJSON";
 
 import { turso } from "src/turso";
-import type { log } from "node_modules/astro/dist/core/logger/core";
 
 const Purchases = [
   {
@@ -69,7 +69,7 @@ const result = convertPurchaseDataToJSON(data);
             <th class="py-3 px-6">Supplier</th>
             <th class="py-3 px-6">Souvenir</th>
             <th class="py-3 px-6">Warehouse</th>
-            <!-- <th class="py-3 px-6">Status</th>-->
+            <th class="py-3 px-6">Status</th>
             <th class="py-3  px-6"></th>
           </tr>
         </thead>
@@ -84,17 +84,26 @@ const result = convertPurchaseDataToJSON(data);
                 <td class="px-6 py-4 whitespace-nowrap dark:text-white capitalize">
                   <ItemStatus  status={item.status} />
                 </td>
+
                 <td class="flex items-center justify-center gap-4 m-2 text-right px-6 whitespace-nowrap">
                   <EditRecord href={`/purchaseOrders/${item.purchaseID}`}>
                     <EditIcon/>
                   </EditRecord>
 
-                  <a
-                    href="prueba"
+                  <a 
+                    href={`/Purchase/delete?orderID=${item.purchaseID}`}
                     class="py-2 px-3 inline-block text-white duration-150 font-medium bg-red-600 rounded-lg hover:bg-red-500 active:bg-red-700 md:text-sm"
                   >
                     <TrashIcon/>
                   </a>
+
+                  <a
+                    href={`/Purchase/accept?orderID=${item.purchaseID}`}
+                    class="py-2 px-3 inline-block text-white duration-150 font-medium bg-green-600 rounded-lg hover:bg-green-500 active:bg-green-700 md:text-sm"
+                  >
+                    <CheckIcon/>
+                  </a>
+
                 </td>
               </tr>
             ))

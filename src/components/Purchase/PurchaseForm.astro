@@ -16,7 +16,7 @@ const { selectedOrder} = Astro.props;
 
 let generateOrderNumber = "";
 let orderData;
-let result: any[];
+let result;
 
 
 orderData = await turso.execute("SELECT * FROM PurchaseOrders");
@@ -25,7 +25,7 @@ const data = orderData?.toJSON();
 
 if (!data) {
   console.error("No data found");
-  result = [];
+  result;
 } else {
   
   if (!selectedOrder) {
@@ -49,33 +49,57 @@ if (!data) {
     Order ID
   </FormInput>
 
-    <FormSelect name="warehouse" title="Warehouse">
-      <option value="">Selecciona un Almacen</option>
-      <option value="1" selected>1</option>
-      <option value="2">2</option>
+  <FormSelect name="warehouse" title="Warehouse ID">
+      <option value="" selected>Selecciona un almacén</option>
+      {
+        result?.map((order) => (
+        <SelectOption value={order.warehouseID.toString()}>{order.warehouseID}</SelectOption>
+        ))
+      }
     </FormSelect>
 
     <FormSelect name="currency" title="Currency">
-      <option value="">Selecciona un tipo de Moneda</option>
-      <option value="1" selected>Pesos</option>
-      <option value="2">Dolares</option>
-      <option value="3">Euros</option>
-    </FormSelect>
+  <option value="" selected>Selecciona un tipo de moneda</option>
+  {
+    result?.map((order) => (
+      order?.currencyID ? (
+        <SelectOption value={order.currencyID.toString()}>{order.currencyID}</SelectOption>
+      ) : null
+    ))
+  }
+</FormSelect>
+
   </div>
+
+<h3 class="text-xl dark:text-white  font-semibold mb-4">Souvenir Data</h3>
+
+<div class="flex flex-wrap gap-3">
+  <FormSelect name="souvenirID" title="Souvenir ID">
+      <option value="" selected>Selecciona un Souvenir</option>
+      {
+        result?.map((order) => (
+        <SelectOption value={order.souvenirID.toString()}>{order.souvenirID}</SelectOption>
+        ))
+      }
+    </FormSelect>
+
+  <FormInput name="souvenirName" type="text" placeholder="Name" isDisabled>
+    Souvenir Name
+  </FormInput>
+  
+  <FormInput name="price" type="number" placeholder="0.00" isDisabled>
+    Price W/IVA
+  </FormInput>
+</div>
 
   <h3 class="text-xl dark:text-white font-semibold mb-4">Supplier Data</h3>
 
   <div class="flex flex-wrap gap-3">
     <FormSelect name="supplierID" title="Supplier ID">
-      <option value="">Selecciona un Proveedor</option>
-      <option value="1" selected>1</option>
-      <option value="2">2</option>
-      <option value="3">3</option>
+      <option value="" selected>Selecciona un Proveedor</option>
       {
         result?.map((order) => (
-          order?.supplierID ? (
-            <SelectOption value={order.supplierID.toString()}>{order.supplierName}</SelectOption>
-          ) : null
+        <SelectOption value={order.supplierID.toString()}>{order.supplierID}</SelectOption>
         ))
       }
     </FormSelect>
@@ -167,15 +191,47 @@ if (!data) {
     Order ID
   </FormInput>
 
-    <FormSelect name="warehouse" title="Warehouse" isDisabled> 
-      <option value={selectedOrder.warehouseID}>{selectedOrder.warehouseID}</option>
-    </FormSelect>
+  <FormSelect name="warehouseID" title="Warehouse ID">
+    <option value={selectedOrder.warehouseID}>{selectedOrder.warehouseID}</option>
+    {
+      result?.map((order) => (
+        order?.warehouseID ? (
+          <SelectOption value={order.warehouseID.toString()}>{order.warehouseID}</SelectOption>
+        ) : null
+      ))
+    }
+  </FormSelect>
 
-    <FormSelect name="currency" title="Currency" isDisabled>
-      <option value={selectedOrder.currencyID}>{selectedOrder.currencyID}</option>
-
-    </FormSelect>
+  <FormSelect name="currency" title="Currency">
+    <option value={selectedOrder.currencyID}>{selectedOrder.currencyID}</option>
+    {
+      result?.map((order) => (
+        order?.currencyID ? (
+          <SelectOption value={order.currencyID.toString()}>{order.currencyID}</SelectOption>
+        ) : null
+      ))
+    }
+  </FormSelect>
   </div>
+
+<h3 class="text-xl dark:text-white font-semibold mb-4">Souvenir Data</h3>
+
+<div class="flex flex-wrap gap-3">
+  <FormSelect name="souvenirID" title="Souvenir ID">
+    <option value={selectedOrder.souvenirID}>{selectedOrder.souvenirID}</option>
+    {
+      result?.map((order) => (
+        order?.souvenirID ? (
+          <SelectOption value={order.souvenirID.toString()}>{order.souvenirID}</SelectOption>
+        ) : null
+      ))
+    }
+  </FormSelect>
+  
+  <FormInput name="price" type="number" placeholder={selectedOrder.price} value={selectedOrder.price} isDisabled>
+    Price W/IVA
+  </FormInput>
+</div>
 
   <h3 class="text-xl dark:text-white font-semibold mb-4">Supplier Data</h3>
 
