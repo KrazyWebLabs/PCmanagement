@@ -19,7 +19,7 @@ if(Astro.request.method === 'POST') {
 
    
 
-  await turso.execute(`INSERT INTO Recepcions (recepcionID, deliverTo, purchaseDate, discount, totalChange, description, purchaseOrderID) VALUES(${receptionID}, "${delTo}", ${repDate}, ${dicount}, ${totChange}, "${descriptions}", ${purchaseID})`)
+  await turso.execute(`INSERT INTO Recepcions (recepcionID, deliverTo, purchaseDate, discount, totalChange, description, purchaseOrderID) VALUES(${receptionID}, '${delTo}', '${repDate}', ${dicount}, ${totChange}, '${descriptions}', ${purchaseID})`)
 
   return Astro.redirect('/reception');
 }

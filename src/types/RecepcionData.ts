@@ -41,7 +41,7 @@ export interface ConvertedData {
     state: string;
     city: string;
     deliverTo: string;
-    recepcionDate: string | null;
+    recepcionDate: Date | null;
     discount: string | null;
     totalChange: string | null;
     description: string;

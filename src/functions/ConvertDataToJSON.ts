@@ -2,13 +2,13 @@ import type { ConvertedData } from "../Types/RecepcionData";
 import type { ConvertedPurchaseData } from "src/Types/PurchaseData";
 
 export default function convertReceptionDataToJSON(data: DBData): ConvertedData[] {
-  return data.rows.map((row: (string | number | null)[]) => {
+  return data.rows.map((row: (string | number | null | Date)[]) => {
     return {
     receptionID: row[0] ? Number(row[0]) : 0, // Aseguramos que no sea undefined
     purchaseID: row[1] as string, // Aseguramos que no sea undefined
 
     deliverTo: row[17] as string,
-    recepcionDate: row[18] as null,
+    recepcionDate: row[18] as Date,
     discount: row[19] as string,
     totalChange: row[20] as string,
     description: row[21] as string,

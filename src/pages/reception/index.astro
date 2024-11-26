@@ -1,6 +1,7 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import TrashIcon from "../../components/ui/icons/TrashIcon.astro";
+import CheckIcon from "../../components/ui/icons/CheckIcon.astro";
 import EditIcon from "../../components/ui/icons/EditIcon.astro";
 import EditRecord from "../../components/ui/Tables/EditRecord.astro";
 import ItemStatus from "../../components/ui/Tables/ItemStatus.astro";
@@ -115,6 +116,12 @@ console.log(result)
                     class="py-2 px-3 inline-block text-white duration-150 font-medium bg-red-600 rounded-lg hover:bg-red-500 active:bg-red-700 md:text-sm"
                   >
                     <TrashIcon/>
+                  </a>
+                  <a
+                    href={`/reception/accept?receptionID=${item.receptionID}`}
+                    class="py-2 px-3 inline-block text-white duration-150 font-medium bg-green-600 rounded-lg hover:bg-green-500 active:bg-green-700 md:text-sm"
+                  >
+                    <CheckIcon/>
                   </a>
                 </td>
               </tr>

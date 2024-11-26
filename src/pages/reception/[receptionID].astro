@@ -24,11 +24,13 @@ if (Astro.request.method === "POST") {
   const deliverTo = formData.get("deliverTo");
   const recepcionDate = formData.get("recepcionDate");
   const discount = formData.get("discount");
-  const totalChange = formData.get("totalChange");
+  const totalChange = formData.get("totalChange"); 
   const description = formData.get("description");
   //const statusName = formData.get("statusName");
   
-  await turso.execute(`UPDATE Recepcions SET deliverTo = "${deliverTo}", discount = ${discount}, description = "${description}" WHERE recepcionID = ${recepcionID};`);
+  await turso.execute(`UPDATE Recepcions 
+  SET deliverTo = '${deliverTo}', discount = ${discount}, description = '${description}' 
+  WHERE recepcionID = ${recepcionID};`);
 
   //let statusText;
   //let recp = 0;

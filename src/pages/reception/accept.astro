@@ -3,7 +3,7 @@ import { turso } from "src/turso";
 
 const receptionID = Astro.url.searchParams.get("receptionID");
 
-await turso.execute(`UPDATE PurchaseOrders SET statusID = 6 WHERE purchaseOrderID = ${receptionID}`);
+await turso.execute(`UPDATE PurchaseOrders SET statusID = 17 WHERE purchaseOrderID = ${receptionID}`);
 
 return Astro.redirect('/reception')
 ---
