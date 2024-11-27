@@ -167,7 +167,7 @@ if (!data) {
 
   <div class="flex flex-wrap gap-1">
     <FormInput name="description" type="text" placeholder="Description">
-      Souvenir Description
+      Description
     </FormInput>
   </div>
   <div class="flex justify-end max-w-full mx-auto px-8">
@@ -241,7 +241,7 @@ if (!data) {
       {
         result?.map((order) => (
           order?.supplierID ? (
-            <SelectOption value={order.supplierID.toString()}>{order.supplierName}</SelectOption>
+            <SelectOption value={order.supplierID.toString()}>{order.supplierID}</SelectOption>
           ) : null
         ))
       }
@@ -310,7 +310,7 @@ if (!data) {
 
   <div class="flex flex-wrap gap-1">
     <FormInput name="description" type="text" placeholder={selectedOrder.description} value={selectedOrder.description} >
-      Souvenir Description
+      Description
     </FormInput>
   </div>
   <div class="flex justify-end max-w-full mx-auto px-8">

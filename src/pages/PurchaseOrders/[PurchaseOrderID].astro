@@ -5,6 +5,7 @@ import PurchaseForm from "@components/Purchase/PurchaseForm.astro";
 import { turso } from "src/turso";
 import { convertPurchaseDataToJSON } from "@functions/ConvertDataToJSON";
 import SubmitBtn from "@components/ui/Buttons/SubmitBtn.astro";
+import { number } from "astro:schema";
 
 const { purchaseOrderID } = Astro.params;
 const rows = await turso.execute(`SELECT * FROM PurchaseOrders WHERE purchaseOrderID = ${purchaseOrderID}`);

@@ -6,7 +6,6 @@ export type PurchaseData = {
     souvenirName: string;
     price: number;
     supplierID: number;
-    supplierName: string;
     streetName: string;
     neighborhood: string;
     outsideNumber: number;
@@ -30,7 +29,6 @@ export interface ConvertedData {
     souvenirName: string;
     price: string | null;
     supplierID: string;
-    supplierName: string;
     streetName: string;
     neighborhood: string;
     outsideNumber: string | null;

@@ -2,6 +2,9 @@
 import {turso} from "src/turso";
 import PurchaseOrderID from "./purchaseOrders/[purchaseOrderID].astro";
 
-const orderID = Astro.url.searchParams.get("orderID");
+const purchaseOrderID = Astro.url.searchParams.get("purchaseOrderID");
 
-await turso.execute( ` UPDATE PurchaseOrders SET statusID = 6 WHERE PurchaseOrderID = ${PurchaseOrderID} `);
+await turso.execute( ` UPDATE PurchaseOrders SET statusID = 17 WHERE PurchaseOrderID = ${PurchaseOrderID} `);
+
+return Astro.redirect('/purchaseOrders')
+---
