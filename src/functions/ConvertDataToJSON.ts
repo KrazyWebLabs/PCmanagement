@@ -1,5 +1,4 @@
 import type { ConvertedData } from "../Types/RecepcionData";
-import type { ConvertedPurchaseData } from "src/Types/PurchaseData";
 
 export default function convertReceptionDataToJSON(data: DBData): ConvertedData[] {
   return data.rows.map((row: (string | number | null | Date)[]) => {
@@ -32,15 +31,12 @@ export default function convertReceptionDataToJSON(data: DBData): ConvertedData[
     state: row[15] as string,
     city: row[16] as string,
 
+    statusID: row[22] as string,
+    bankAccID: row[23] as string, 
     statusName: String(row[9]).toLowerCase()
+    
     };
   });
 }
 
-export function convertPurchaseDataToJSON(data: DBData): ConvertedPurchaseData[] {
-  return data.rows.map((row: (string | number | null)[]) => {
-    return {
-      purchaseID: typeof row[6] === "number" ? row[6] : Number(row[0] ?? 0),
-    };
-  });
-};
+

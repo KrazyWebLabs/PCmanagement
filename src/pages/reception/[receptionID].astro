@@ -9,7 +9,7 @@ import { number } from "astro:schema";
 
 const { receptionID } = Astro.params;
 
-const rows = await turso.execute(`SELECT * FROM ReceptionsData WHERE recepcionID = ${receptionID}`);
+const rows = await turso.execute(`SELECT * FROM ReceptionsData WHERE receptionID = ${receptionID}`);
 
 const result = convertReceptionDataToJSON(rows.toJSON());
 
@@ -26,11 +26,12 @@ if (Astro.request.method === "POST") {
   const discount = formData.get("discount");
   const totalChange = formData.get("totalChange"); 
   const description = formData.get("description");
+  const bankAcc = formData.get("bankAcount");
   //const statusName = formData.get("statusName");
   
-  await turso.execute(`UPDATE Recepcions 
-  SET deliverTo = '${deliverTo}', discount = ${discount}, description = '${description}' 
-  WHERE recepcionID = ${recepcionID};`);
+  await turso.execute(`UPDATE Receptions 
+  SET deliverTo = '${deliverTo}', discount = ${discount}, description = '${description}', bankAccountID = ${bankAcc}, statusID = 7
+  WHERE receptionID = ${recepcionID};`);
 
   //let statusText;
   //let recp = 0;

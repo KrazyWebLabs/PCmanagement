@@ -41,9 +41,10 @@ export interface ConvertedData {
     state: string;
     city: string;
     deliverTo: string;
-    recepcionDate: Date | null;
+    recepcionDate: Date;
     discount: string | null;
     totalChange: string | null;
     description: string;
     statusName: string;
+    bankAccID: string;
 }

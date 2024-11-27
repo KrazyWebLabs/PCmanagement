@@ -5,30 +5,55 @@ import FormSelect from "@components/ui/Forms/FormSelect.astro";
 import SelectOption from "@components/ui/Forms/SelectOption.astro";
 import { generateRandomNumber } from "@functions/generateRandomNumber";
 import convertReceptionDataToJSON from "@functions/ConvertDataToJSON";
+import { convertBankAccDataToJSON } from "@functions/ConvertBankToJSON";
+import { convertPurchaseDataToJSON } from "@functions/ConvertOrderToJSON";
 import { turso } from "src/turso";
 
 interface Props {
   selectedReception?: any;
+  bankAccount?: any;
+  order?: any;
 }
 
 const { selectedReception } = Astro.props;
 
 let generateCardNumber = "";
+
 let receptionData;
+let bankAcc;
+let purchase;
+
 let result;
+let result2;
+let result3;
+
+bankAcc = await turso.execute("SELECT bankAccountID FROM BankAccounts");
+
+purchase = await turso.execute("SELECT purchaseOrderID FROM PurchaseOrders");
 
 receptionData = await turso.execute("SELECT * FROM ReceptionsData");
+
 const data = receptionData?.toJSON()
+
+const data2 = bankAcc?.toJSON()
+
+const data3 = purchase?.toJSON()
+
+
+result2 = convertBankAccDataToJSON(data2)
+result3 = convertPurchaseDataToJSON(data3)
 
 if (!selectedReception) {
   generateCardNumber = generateRandomNumber(5)
   result = convertReceptionDataToJSON(data)
 }
 else  {
-  result = convertReceptionDataToJSON(data).filter((p) => p.receptionID !== selectedReception.receptionID); 
+  result = convertReceptionDataToJSON(data).filter((p) => p.receptionID !== selectedReception.receptionID);
 }
 
-//console.log(result);
+
+
+//console.log(result2);
 
 /*
 <FormSelect name="statusName" title="Status Name" >
@@ -52,7 +77,7 @@ else  {
     <FormSelect name="purchaseID" title="Purchase ID" isRequired>
       <SelectOption value="" isSelected> -- Select Purchase Order -- </SelectOption>
       {
-        result?.map((acc) => (
+        result3?.map((acc) => (
           <SelectOption value={acc.purchaseID.toString()}>{acc.purchaseID}</SelectOption>
         ))
       }
@@ -91,7 +116,7 @@ else  {
 
   <h3 class="text-xl dark:text-white  font-semibold mb-4">Supplier Data</h3>
 
-  <div class="flex flex-wrap gap-2">
+  <div class="flex flex-wrap gap-3">
     <FormSelect name="supplierID" title="Supplier ID" isDisabled>
       <option value="">Selecciona un tipo de cuenta</option>
       <option value="supplierID" selected>1</option>
@@ -100,6 +125,15 @@ else  {
     <FormInput name="supplierEmail" type="text" placeholder="Email" isDisabled>
       Supplier Email
     </FormInput>
+
+    <FormSelect name="bankAcount" title="Bank Account" isRequired>
+      <SelectOption value=""> -- Select Purchase Order -- </SelectOption>
+      {
+        result2?.map((acc) => (
+          <SelectOption value={acc.bankAcc.toString()}>{acc.bankAcc}</SelectOption>
+        ))
+      }
+    </FormSelect>
   </div>
 
   <div class="flex flex-wrap gap-4">
@@ -206,7 +240,7 @@ else  {
 
   <h3 class="text-xl dark:text-white  font-semibold mb-4">Supplier Data</h3>
 
-  <div class="flex flex-wrap gap-2">
+  <div class="flex flex-wrap gap-3">
     <FormSelect name="supplierID" title="Supplier ID" isDisabled>
       <option value="">Selecciona un tipo de cuenta</option>
       <option value={selectedReception.supplierID} selected>{selectedReception.supplierID}</option>
@@ -215,6 +249,16 @@ else  {
     <FormInput name="supplierEmail" type="text" placeholder={selectedReception.supplierEmail} value={selectedReception.supplierEmail} isDisabled>
       Supplier Email
     </FormInput>
+
+    <FormSelect name="bankAcount" title="Bank Account" isRequired>
+      <SelectOption value=""> -- Select Purchase Order -- </SelectOption>
+      <SelectOption value={selectedReception.bankAccID} isSelected>{selectedReception.bankAccID}</SelectOption>
+      {
+        result2?.map((acc) => (
+          <SelectOption value={acc.bankAcc.toString()}>{acc.bankAcc}</SelectOption>
+        ))
+      }
+    </FormSelect>
   </div>
 
   <div class="flex flex-wrap gap-4">

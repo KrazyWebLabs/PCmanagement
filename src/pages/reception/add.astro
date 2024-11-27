@@ -16,10 +16,11 @@ if(Astro.request.method === 'POST') {
   const dicount = formData.get('discount');
   const totChange = formData.get('totalChange');
   const descriptions = formData.get('description');
+  const bankAccont = formData.get('bankAcount');
 
    
 
-  await turso.execute(`INSERT INTO Recepcions (recepcionID, deliverTo, purchaseDate, discount, totalChange, description, purchaseOrderID) VALUES(${receptionID}, '${delTo}', '${repDate}', ${dicount}, ${totChange}, '${descriptions}', ${purchaseID})`)
+  await turso.execute(`INSERT INTO Receptions (receptionID, deliverTo, purchaseDate, discount, totalChange, description, purchaseOrderID, statusID, bankAccountID) VALUES(${receptionID}, '${delTo}', '${repDate}', ${dicount}, ${totChange}, '${descriptions}', ${purchaseID}, 7, ${bankAccont})`)
 
   return Astro.redirect('/reception');
 }
