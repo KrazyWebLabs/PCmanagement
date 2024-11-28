@@ -3,10 +3,22 @@ import BackBtn from "@components/ui/Buttons/BackBtn.astro";
 import Layout from "../../layouts/Layout.astro";
 import { turso } from '../../turso';
 import SubmitBtn from "@components/ui/Buttons/SubmitBtn.astro";
-import AddRegisterBtn from "@components/ui/Buttons/AddRegisterBtn.astro";
 
-// Fetch existing warehouse data
-const { rows } = await turso.execute('SELECT * FROM Warehouses');
+type Status = {
+  statusID: number;
+  statusName: string;
+};
+
+// Fetch the statuses for the dropdown
+const statusResult = await turso.execute('SELECT statusID, statusName FROM Status');
+if (!statusResult.rows || statusResult.rows.length === 0) {
+  throw new Error("No statuses found in the database.");
+}
+
+const statuses: Status[] = statusResult.rows.map((row: any) => ({
+  statusID: row.statusID,
+  statusName: row.statusName,
+}));
 
 // Handle form submission
 if (Astro.request.method === 'POST') {
@@ -20,35 +32,38 @@ if (Astro.request.method === 'POST') {
   const description = formData.get('description');
   const statusID = formData.get('statusID');
 
+  if (!warehouseID || !warehouseName || !statusID) {
+    throw new Error("Missing required fields.");
+  }
+
   await turso.execute(`
     INSERT INTO Warehouses (warehouseID, warehouseName, categoryID, dimensions, capacity, temperature, description, statusID) 
-    VALUES (${warehouseID}, '${warehouseName}', ${categoryID}, ${dimensions}, ${capacity}, ${temperature}, '${description}', ${statusID})
+    VALUES (${warehouseID}, '${warehouseName}', ${categoryID || 'NULL'}, ${dimensions || 'NULL'}, ${capacity || 'NULL'}, ${temperature || 'NULL'}, '${description}', ${statusID})
   `);
 
   return Astro.redirect('/warehouse');
 }
 ---
-
 <Layout title="Dashboard">
   <div class="max-w-6xl mx-auto mt-12 p-8 bg-gray-800 rounded-lg shadow-md">
-    <h1 class="text-3xl font-semibold text-white mb-6">Almacen</h1>
+    <h1 class="text-3xl font-semibold text-white mb-6">Add Warehouse</h1>
     
     <form class="grid grid-cols-2 gap-6" method="POST">
       
       <div class="col-span-2">
         <label for="warehouse-id" class="block text-sm font-medium text-white">Warehouse ID <span class="text-red-500">*</span></label>
-        <input type="number" id="warehouse-id" name="warehouseID" class="mt-1 block w-full px-3 py-2 bg-gray-700 text-white rounded-md focus:ring focus:ring-blue-500" placeholder="Int(10)" value="{rows[0]?.warehouseID || ''}" />
+        <input type="number" id="warehouse-id" name="warehouseID" class="mt-1 block w-full px-3 py-2 bg-gray-700 text-white rounded-md focus:ring focus:ring-blue-500" placeholder="Int(10)" required />
       </div>
 
       <div>
         <label for="warehouse-name" class="block text-sm font-medium text-white">Name <span class="text-red-500">*</span></label>
-        <input type="text" id="warehouse-name" name="warehouseName" class="mt-1 block w-full px-3 py-2 bg-gray-700 text-white rounded-md focus:ring focus:ring-blue-500" placeholder="S(70)" />
+        <input type="text" id="warehouse-name" name="warehouseName" class="mt-1 block w-full px-3 py-2 bg-gray-700 text-white rounded-md focus:ring focus:ring-blue-500" placeholder="S(70)" required />
       </div>
       
       <div>
         <label for="category" class="block text-sm font-medium text-white">Category <span class="text-red-500">*</span></label>
-        <select id="category" name="categoryID" class="mt-1 block w-full px-3 py-2 bg-gray-700 text-white rounded-md focus:ring focus:ring-blue-500">
-          <option value="" disabled selected>Dropdown text</option>
+        <select id="category" name="categoryID" class="mt-1 block w-full px-3 py-2 bg-gray-700 text-white rounded-md focus:ring focus:ring-blue-500" required>
+          <option value="" disabled selected>Select a category</option>
           <option value="1">Souvernirs</option>
           <option value="2">Accesorios de realidad virtual</option>
           <option value="3">Comida</option>
@@ -72,16 +87,18 @@ if (Astro.request.method === 'POST') {
 
       <div class="col-span-2">
         <label for="description" class="block text-sm font-medium text-white">Description <span class="text-red-500">*</span></label>
-        <input type="text" id="description" name="description" class="mt-1 block w-full px-3 py-2 bg-gray-700 text-white rounded-md focus:ring focus:ring-blue-500" placeholder="S(150)" />
+        <input type="text" id="description" name="description" class="mt-1 block w-full px-3 py-2 bg-gray-700 text-white rounded-md focus:ring focus:ring-blue-500" placeholder="S(150)" required />
       </div>
 
       <div>
         <label for="status" class="block text-sm font-medium text-white">Status <span class="text-red-500">*</span></label>
-        <select id="status" name="statusID" class="mt-1 block w-full px-3 py-2 bg-gray-700 text-white rounded-md focus:ring focus:ring-blue-500">
-          <option value="" disabled selected>Dropdown text</option>
-          <option value="1">Activo</option>
-          <option value="2">Inactivo</option>
-          <option value="3">En Mantenimiento</option>
+        <select id="status" name="statusID" class="mt-1 block w-full px-3 py-2 bg-gray-700 text-white rounded-md focus:ring focus:ring-blue-500" required>
+          <option value="" disabled selected>Select a status</option>
+          {statuses.map((status: Status) => (
+            <option value={status.statusID}>
+              {status.statusName}
+            </option>
+          ))}          
         </select>
       </div>
       
