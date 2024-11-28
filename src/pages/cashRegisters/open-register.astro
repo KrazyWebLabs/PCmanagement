@@ -1,19 +1,12 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-
-// Función para manejar el formulario y redirigir a cerrar caja (simulación)
-async function handleFormSubmit(event) {
-  event.preventDefault();
-  // Simulación de redirección
-  window.location.href = '/close-register'; // Cambia esta ruta si es diferente
-}
 ---
 
 <Layout title="Open Register">
   <div class="max-w-6xl mx-auto mt-12 p-8 bg-gray-800 rounded-lg shadow-md">
     <h1 class="text-3xl font-semibold text-white mb-6">Abrir Caja</h1>
 
-    <form class="grid grid-cols-1 gap-6" onsubmit="handleFormSubmit(event)">
+    <form class="grid grid-cols-1 gap-6">
       <!-- Campo de Usuario -->
       <div>
         <label for="username" class="block text-sm font-medium text-white">Usuario <span class="text-red-500">*</span></label>

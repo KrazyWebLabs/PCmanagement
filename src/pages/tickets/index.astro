@@ -9,7 +9,7 @@ const { rows } = await turso.execute('SELECT * FROM Tickets');
 
 // Calcula el total de tickets vendidos y el monto total recaudado
 const totalTickets = rows.length;
-const totalRecaudado = rows.reduce((total, ticket) => total + ticket.payment, 0);
+const totalRecaudado = 0
 
 // Calcula el porcentaje de cada tipo de ticket
 const porcentajeBasico = ((rows.filter(ticket => ticket.ticketType === 1).length / totalTickets) * 100).toFixed(2);
