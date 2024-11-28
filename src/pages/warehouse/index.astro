@@ -45,7 +45,7 @@ try {
       temperature: Number(row.temperature),
       status: String(row.status || "Unknown"), // Handle missing status gracefully
     }));
-    console.log("Mapped Result:", result);
+    //console.log("Mapped Result:", result);
   } else {
     console.warn("No data returned from database.");
   }
