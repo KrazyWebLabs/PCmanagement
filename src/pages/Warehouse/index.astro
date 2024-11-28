@@ -4,6 +4,8 @@ import Layout from "../../layouts/Layout.astro";
 import { turso } from '../../turso';
 import AddRegisterBtn from "@components/ui/Buttons/AddRegisterBtn.astro";
 import TrashIcon from "@components/ui/icons/TrashIcon.astro";
+import EditIcon from "@components/ui/icons/EditIcon.astro";
+import EditRecord from "@components/ui/Tables/EditRecord.astro";
 
 type Warehouse = {
   warehouseID: number;
@@ -69,6 +71,9 @@ const result: Warehouse[] = rows.map((row: any) => ({
                   {item.statusID === 1 ? "Active" : item.statusID === 2 ? "Inactive" : "Maintenance"}
                 </td>
                 <td class="flex items-center justify-center gap-4 m-2 text-right px-6 whitespace-nowrap">
+                  <EditRecord href={`/warehouse/${item.warehouseID}`}>
+                      <EditIcon/>
+                    </EditRecord>
                   <a
                     href={`/warehouse/delete?warehouseID=${item.warehouseID}`}
                     class="py-2 px-3 inline-block text-white duration-150 font-medium bg-red-600 rounded-lg hover:bg-red-500 active:bg-red-700 md:text-sm"
