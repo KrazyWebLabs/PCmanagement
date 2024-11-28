@@ -9,6 +9,7 @@ import WrenchIcon from "@icons/WrenchIcon.astro";
 import ProductIcon from "@icons/ProductIcon.astro";
 import WarehouseIcon from "@icons/WarehouseIcon.astro";
 import ClipboardListIcon from "@icons/ClipboardListIcon.astro";
+import ReceptionIcon from "../icons/ReceptionIcon.astro";
 import SalesIcon from "@icons/SalesIcon.astro";
 
 const session = Astro.cookies.get("userSes")?.json();
@@ -50,6 +51,10 @@ const name = session?.name + " "+ session?.lastName;
       <SideBarLink href="/purchaseOrders">
         <ClipboardListIcon slot="icon" />
         Purchase Order
+      </SideBarLink>
+      <SideBarLink href="/reception">
+        <ReceptionIcon slot="icon" />
+        Reception
       </SideBarLink>
       <SideBarLink href="/sales">
         <SalesIcon slot="icon" />

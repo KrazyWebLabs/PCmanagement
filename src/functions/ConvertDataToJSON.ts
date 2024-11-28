@@ -1,3 +1,45 @@
+import type { ConvertedReceptionData } from "../Types/RecepcionData";
+
+export default function convertReceptionDataToJSON(data: DBData): ConvertedReceptionData[] {
+  return data.rows.map((row: (string | number | null | Date)[]) => {
+    return {
+    receptionID: row[0] ? Number(row[0]) : 0, // Aseguramos que no sea undefined
+    purchaseID: row[1] as string, // Aseguramos que no sea undefined
+
+    deliverTo: row[17] as string,
+    recepcionDate: row[18] as Date,
+    discount: row[19] as string,
+    totalChange: row[20] as string,
+    description: row[21] as string,
+    
+    warehouseID: row[2] as string,
+    currencyName: row[3] as string,
+    souvenirID: row[4] as string,
+    supplierID: row[7] as string,
+    
+
+    souvenirName: row[5] as string,
+    price: row[6] as string,
+
+    supplierEmail: row[8] as string,
+
+    streetName: row[10] as string,
+    neighborhood: row[11] as string,
+    outsideNumber: row[12] as string,
+    postalCode: row[13] as string,
+    country: row[14] as string,
+    state: row[15] as string,
+    city: row[16] as string,
+
+    statusID: row[22] as string,
+    bankAccID: row[23] as string, 
+    statusName: String(row[9]).toLowerCase()
+    
+    };
+  });
+}
+
+
 import type { ConvertedData } from "@customTypes/VipCardData";
 import type { ConvertedCustomerData } from "@customTypes/CustomersData";
 
