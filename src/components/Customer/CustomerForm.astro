@@ -87,7 +87,7 @@ if (!selectedCustomer) {
       <div class="flex flex-col">
 
         <!-- Id Dirección -->
-        <FormInput type="number" name="addressID" title="ID Dirección" placeholder="ID Dirección" placeholder={addressID} isDisabled/>
+        <FormInput type="number" name="addressID" title="ID Dirección"  placeholder={addressID} isRequired/>
 
         <!-- Dirección -->
         <FormInput type="text" name="street" title="Calle" placeholder="Calle" isRequired/>
@@ -156,7 +156,7 @@ if (!selectedCustomer) {
       <div class="flex flex-col">
 
         <!-- Id Dirección -->
-        <FormInput type="number" name="addressID" title="ID Dirección" placeholder={addressID} value={selectedCustomer.addressID} />
+        <FormInput type="number" name="addressID" title="ID Dirección" placeholder={addressID} value={selectedCustomer.addressID} isDisabled/>
         
         <!-- Dirección -->
         <FormInput type="text" name="street" title="Calle" placeholder="Calle" value={selectedCustomer.street} />
