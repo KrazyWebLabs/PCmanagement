@@ -4,7 +4,7 @@ import Layout from "src/layouts/Layout.astro";
 import SupplierForm from "@components/Supplier/SupplierForm.astro";
 import { turso } from "src/turso";
 import SubmitBtn from "@components/ui/Buttons/SubmitBtn.astro";
-import AddRegisterBtn from "@components/ui/Buttons/AddRegisterBtn.astro";
+import { log } from "node_modules/astro/dist/core/logger/core";
 
 if (Astro.request.method === 'POST') {
     // Parse form data
@@ -14,19 +14,36 @@ if (Astro.request.method === 'POST') {
     const legalEntityID = formData.get('legalEntityID');
     const phoneNumber = formData.get('phoneNumber');
     const email = formData.get('email');
+    const street = formData.get('street');
+    const neighborhood  = formData.get('neighborhood');  // Nuevo campo
+    const city = formData.get('city');
+    const state = formData.get('state');  // Nuevo campo
+    const country = formData.get('country');  // Nuevo campo
+    const postalCode = formData.get('postalCode');
+    const outsideNumb = formData.get('outsideNumb');
     const statusID = formData.get('statusID');
 
-    await turso.execute(`INSERT INTO Suppliers (supplierID, legalEntityID, phoneNumber, email, statusID) VALUES(${supplierID}, '${legalEntityID}', '${phoneNumber}', '${email}', ${statusID})`);
+    // Insertar la dirección y obtener el addressID
+    const addressResult = await turso.execute(`
+      INSERT INTO Addresses (street, neighborhood , city, state, country, postalCode, outsideNumb)
+      VALUES ('${street}', '${neighborhood }', '${city}', '${state}', '${country}', '${postalCode}', '${outsideNumb}')
+    `);
 
-    console.log(supplierID);
-    console.log(legalEntityID);
-    console.log(phoneNumber);
-    console.log(email);
-    console.log(statusID);
+    // Obtener el addressID de la dirección recién insertada
+    const addressID = addressResult.lastInsertRowid;
 
-  return Astro.redirect('/suppliers')
+    // Insertar el proveedor con el addressID
+    await turso.execute(`
+        INSERT INTO Suppliers 
+        (supplierID, legalEntityID, phoneNumber, email, statusID, addressID)
+        VALUES (${supplierID}, '${legalEntityID}', '${phoneNumber}', '${email}', ${statusID}, ${addressID})
+    `);
+
+    // Imprimir valores para depuración
+    console.log(neighborhood);
+
+    return Astro.redirect('/suppliers');
 }
-
 ---
 
 <Layout title="Proveedores">

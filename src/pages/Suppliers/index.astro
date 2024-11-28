@@ -12,41 +12,15 @@ import { convertLegalDataToJSON } from "@functions/ConvertSuppliersDataToJSON";
 import { convertAdressesDataToJSON } from "@functions/ConvertSuppliersDataToJSON";
 import { turso } from "src/turso";
 
-
-
-let resultLegal;
-let legalData;
-let resultStatus;
-let StatusData;
-let addressesData;
-let resultAddresses;
-
-const rows = await turso.execute(`
-  SELECT 
-    Suppliers.*,
-    LegalEntities.name AS legalEntityName,
-    Status.statusName AS statusName,
-    Addresses.street,
-    Addresses.city,
-    Addresses.state,
-    Addresses.postalCode
-  FROM Suppliers
-  JOIN LegalEntities ON Suppliers.legalEntityID = LegalEntities.legalEntityID
-  JOIN Status ON Suppliers.statusID = Status.statusID
-  LEFT JOIN Addresses ON Suppliers.addressID = Addresses.addressID
+const rows = await turso.execute(`SELECT Suppliers.*, Status.statusName AS statusName, Addresses.*, LegalEntities.*
+FROM Suppliers
+JOIN Status ON Suppliers.statusID = Status.statusID
+JOIN Addresses ON Suppliers.addressID = Addresses.addressID
+JOIN LegalEntities  ON Suppliers.legalEntityID  = LegalEntities.legalEntityID;
 `);
 
-legalData = await turso.execute('SELECT * FROM LegalEntities')
-addressesData = await turso.execute('SELECT * FROM Addresses')
-StatusData = await turso.execute("SELECT * FROM Status")
-
 const data = rows.toJSON();
-
 const result = convertSuppliersDataToJSON(data);
-
-resultLegal = convertLegalDataToJSON(legalData.toJSON());
-resultStatus = convertStatusDataToJSON(StatusData.toJSON())
-resultAddresses = convertAdressesDataToJSON(addressesData.toJSON())
 
 console.log(result)
 ---
@@ -68,9 +42,17 @@ console.log(result)
           <thead class="dark:bg-gray-400/20 dark:text-white bg-gray-50 text-gray-600 font-medium border-b">
             <tr>
               <th class="py-3 px-6 text-left">ID Proveedor</th>
-              <th class="py-3 px-6 text-left">ID Entidad Legal</th>
+              <th class="py-3 px-6 text-left">Entidad Legal</th>
               <th class="py-3 px-6 text-left">Teléfono</th>
               <th class="py-3 px-6 text-left">Correo Electrónico</th>
+              <th class="py-3 px-6 text-left">ID Direccion</th>
+              <th class="py-3 px-6 text-left">País</th>
+              <th class="py-3 px-6 text-left">Estado</th>
+              <th class="py-3 px-6 text-left">Ciudad</th>
+              <th class="py-3 px-6 text-left">Colonia</th>
+              <th class="py-3 px-6 text-left">Código Postal</th>
+              <th class="py-3 px-6 text-left">Calle</th>
+              <th class="py-3 px-6 text-left">Número Exterior</th>
               <th class="py-3 px-6 text-left">Estado</th>
               <th class="py-3 px-6 text-right"></th>
             </tr>
@@ -83,6 +65,14 @@ console.log(result)
                   <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.legalText}</td>
                   <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.phoneNumber}</td>
                   <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.email}</td>
+                  <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.addressID}</td>
+                  <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.country}</td>
+                  <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.state}</td>
+                  <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.city}</td>
+                  <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.neighborhood}</td>
+                  <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.postalCode}</td>
+                  <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.street}</td>
+                  <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.outsideNumb}</td>
                   <td class="px-6 py-4 whitespace-nowrap dark:text-white capitalize">
                     <ItemStatus  status={item.statusID} />
                   </td>

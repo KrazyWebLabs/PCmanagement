@@ -6,45 +6,81 @@ import { turso } from "src/turso";
 import SubmitBtn from "@components/ui/Buttons/SubmitBtn.astro";
 import { convertSuppliersDataToJSON } from "@functions/ConvertSuppliersDataToJSON";
 
-const { supplierID  } = Astro.params;
+const { supplierID } = Astro.params;
 
-const rows = await turso.execute(`SELECT * FROM Suppliers WHERE supplierID  = ${supplierID }`);
-console.log(rows.toJSON()); 
-
+const rows = await turso.execute(`
+  SELECT s.*, a.*, l.*
+  FROM Suppliers s
+  JOIN Addresses a ON s.addressID = a.addressID
+  JOIN LegalEntities l ON s.legalEntityID = l.legalEntityID
+  WHERE s.supplierID = ${supplierID}
+`);
+console.log(rows.toJSON());
 
 const result = convertSuppliersDataToJSON(rows.toJSON());
 
 if (Astro.request.method === 'POST') {
-    // Parse form data
-    const formData = await Astro.request.formData();
+  // Parsear los datos del formulario
+  const formData = await Astro.request.formData();
+  console.log("Datos del formulario recibidos:", formData);
 
-    const supplierID = formData.get('supplierID');
-    const legalEntityID = formData.get('legalEntityID');
-    const phoneNumber = formData.get('phoneNumber');
-    const email = formData.get('email');
-    const statusID = formData.get('statusID');
+  const supplierID = formData.get('supplierID');
+  const legalEntityID = formData.get('legalEntityID');
+  const phoneNumber = formData.get('phoneNumber');
+  const email = formData.get('email');
 
-    let updateFields = [];
+  // Datos de la dirección
+  const street = formData.get('street');
+  const neighborhood = formData.get('neighborhood'); // Nuevo campo
+  const city = formData.get('city');
+  const state = formData.get('state'); // Nuevo campo
+  const country = formData.get('country'); // Nuevo campo
+  const postalCode = formData.get('postalCode');
+  const outsideNumb = formData.get('outsideNumb');
+  const statusID = formData.get('statusID');
+  const addressID = formData.get('addressID');
 
-    if (legalEntityID) updateFields.push(`legalEntityID = '${legalEntityID}'`);
-    if (phoneNumber) updateFields.push(`phoneNumber = ${phoneNumber}`);
-    if (email) updateFields.push(`email = ${email}`);
-    if (statusID) updateFields.push(`statusID = ${statusID}`);
+  console.log("Campos recibidos para actualizar:");
+  console.log({ supplierID, legalEntityID, phoneNumber, email, street, neighborhood, city, state, country, postalCode, outsideNumb, statusID, addressID });
 
-    if (updateFields.length > 0) {
-      const updateQuery = `UPDATE Suppliers SET ${updateFields.join(', ')} WHERE supplierID = ${supplierID}`;
-      await turso.execute(updateQuery);
-    }
+  let addressUpdateFields = [];
+  if (street) addressUpdateFields.push(`street = '${street}'`);
+  if (neighborhood) addressUpdateFields.push(`neighborhood = '${neighborhood}'`);
+  if (city) addressUpdateFields.push(`city = '${city}'`);
+  if (state) addressUpdateFields.push(`state = '${state}'`);
+  if (country) addressUpdateFields.push(`country = '${country}'`);
+  if (postalCode) addressUpdateFields.push(`postalCode = '${postalCode}'`);
+  if (outsideNumb) addressUpdateFields.push(`outsideNumb = '${outsideNumb}'`);
 
-    console.log(supplierID);
-    console.log(legalEntityID);
-    console.log(phoneNumber);
-    console.log(email);
-    console.log(statusID);
+  // Actualizar la dirección si se han proporcionado datos
+  if (addressUpdateFields.length > 0) {
+    const addressUpdateQuery = `
+      UPDATE Addresses
+      SET ${addressUpdateFields.join(', ')}
+      WHERE addressID = ${addressID}
+    `;
+    console.log("Consulta de actualización de dirección:", addressUpdateQuery);
+    await turso.execute(addressUpdateQuery);
+  }
 
-  return Astro.redirect('/suppliers')
+  let updateFields = [];
+  if (legalEntityID) updateFields.push(`legalEntityID = '${legalEntityID}'`);
+  if (phoneNumber) updateFields.push(`phoneNumber = ${phoneNumber}`);
+  if (email) updateFields.push(`email = ${email}`);
+  if (statusID) updateFields.push(`statusID = ${statusID}`);
+
+  if (updateFields.length > 0) {
+    const updateQuery = `
+      UPDATE Suppliers
+      SET ${updateFields.join(', ')}
+      WHERE supplierID = ${supplierID}
+    `;
+    console.log("Consulta de actualización de proveedor:", updateQuery);
+    await turso.execute(updateQuery);
+  }
+
+  return Astro.redirect('/suppliers');
 }
-
 ---
 
 <Layout title="Editar">

@@ -7,14 +7,22 @@ export function convertSuppliersDataToJSON(data: DBData): ConvertedData[] {
   return data.rows.map((row: (string | number | null)[]) => {
     return {
         supplierID: Number(row[0]),
-        legalEntityID: Number(row[10]),
-        legalText: String(row[1]).toLowerCase(),
+        legalEntityID: Number(row[16]),
+        legalText: String(row[17]),
         addressID: Number(row[2]),
         address: row[2] as string,         // Dirección (nombre o detalles)
         phoneNumber: row[3] as string,
         email: row[4] as string,
-        statusID: String(row[7]).toLowerCase(),
-        statusName: String(row[5]).toLowerCase(),     
+        country: row[8] as string,
+        state: row[9] as string,
+        city: row[10] as string,
+        neighborhood: row[11] as string,
+        postalCode: row[12] as string,
+        street: row[13] as string,
+        outsideNumb: typeof row[14] === "number" ? row[14] : Number(row[14] ?? 0),
+        // Asegúrate de que el statusID y el statusName estén bien mapeados
+        statusID: String(row[6]).toLowerCase(),
+        statusName: String(row[6]).toLowerCase(), // Cambié este índice
     };
   });
 };
