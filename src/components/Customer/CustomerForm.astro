@@ -156,7 +156,7 @@ if (!selectedCustomer) {
       <div class="flex flex-col">
 
         <!-- Id Dirección -->
-        <FormInput type="number" name="addressID" title="ID Dirección" placeholder={addressID} value={selectedCustomer.addressID} isDisabled/>
+        <FormInput type="number" name="addressID" title="ID Dirección" placeholder={addressID} value={selectedCustomer.addressID} isRequired/>
         
         <!-- Dirección -->
         <FormInput type="text" name="street" title="Calle" placeholder="Calle" value={selectedCustomer.street} />
