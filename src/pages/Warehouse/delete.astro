@@ -1,9 +1,0 @@
----
-import { turso } from "src/turso";
-
-const warehouseID = Astro.url.searchParams.get("warehouseID");
-
-await turso.execute(`DELETE FROM Warehouses WHERE warehouseID = ${warehouseID}`);
-
-return Astro.redirect('/warehouse');
----
