@@ -1,4 +1,4 @@
-import type { ConvertedPurchaseData } from "src/Types/PurchaseData";
+import type { ConvertedPurchaseData } from "@customTypes/PurchaseData";
 
 export function convertPurchaseDataToJSON(data: DBData): ConvertedPurchaseData[] {
     return data.rows.map((row: (string | number | null)[]) => {

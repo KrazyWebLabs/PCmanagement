@@ -9,7 +9,6 @@ if (Astro.request.method === 'POST') {
   // Parse form data
   const formData = await Astro.request.formData();
   const cardNumber = formData.get('cardNumber');
-  const email = formData.get('email');
   const accNumber = formData.get('accountNumber');
 
   await turso.execute(`INSERT INTO VIPCards (vipCardID,customerID, statusID) VALUES(${cardNumber},${accNumber}, 7)`)

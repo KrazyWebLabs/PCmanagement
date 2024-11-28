@@ -1,4 +1,6 @@
-import type { ConvertedReceptionData } from "../Types/RecepcionData";
+import type { ConvertedReceptionData } from "@customTypes/RecepcionData";
+import type { ConvertedData } from "@customTypes/VipCardData";
+import type { ConvertedCustomerData } from "@customTypes/CustomersData";
 
 export default function convertReceptionDataToJSON(data: DBData): ConvertedReceptionData[] {
   return data.rows.map((row: (string | number | null | Date)[]) => {
@@ -38,10 +40,6 @@ export default function convertReceptionDataToJSON(data: DBData): ConvertedRecep
     };
   });
 }
-
-
-import type { ConvertedData } from "@customTypes/VipCardData";
-import type { ConvertedCustomerData } from "@customTypes/CustomersData";
 
 export function convertVIPcardDataToJSON(data: DBData): ConvertedData[] {
   return data.rows.map((row: (string | number | null)[]) => {

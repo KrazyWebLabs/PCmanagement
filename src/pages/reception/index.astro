@@ -10,56 +10,6 @@ import convertReceptionDataToJSON from "../../functions/ConvertDataToJSON";
 
 import { turso } from 'src/turso';
 
-
-
-const Recipes = [
-  {
-    receptionID: "123",
-    supplier: "Souvernirs 2",
-    souvenir: "Souvenir 2",
-    rfc: "11123321",
-    name: "Platos",
-    direccion: "40 Norte 123",
-    postalCode: "72203",
-    city: "Puebla",
-    coin: "Pesos",
-    chain: "2",
-    warehouse: "Souvenirs 1",
-    description: "Platos con diseño grabados",
-    status: "recepcionada",
-  },
-  {
-    receptionID: "125",
-    supplier: "Souvernirs 3",
-    souvenir: "Souvenir 3",
-    rfc: "11123321",
-    name: "Platos",
-    direccion: "40 Norte 123",
-    postalCode: "72203",
-    city: "Puebla",
-    coin: "Pesos",
-    chain: "2",
-    warehouse: "Souvenirs 1",
-    description: "Platos con diseño grabados",
-    status: "en proceso",
-  },
-  {
-    receptionID: "124",
-    supplier: "Souvernirs 4",
-    souvenir: "Souvenir 4",
-    rfc: "11123321",
-    name: "Platos",
-    direccion: "40 Norte 123",
-    postalCode: "72203",
-    city: "Puebla",
-    coin: "Pesos",
-    chain: "2",
-    warehouse: "Souvenirs 1",
-    description: "Platos con diseño grabados",
-    status: "cancelada",
-  },
-];
-
 const rows = await turso.execute('SELECT * FROM ReceptionsData');
 
 
