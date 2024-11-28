@@ -30,7 +30,7 @@ if (Astro.request.method === "POST") {
   //const statusName = formData.get("statusName");
   
   await turso.execute(`UPDATE Receptions 
-  SET deliverTo = '${deliverTo}', discount = ${discount}, description = '${description}', bankAccountID = ${bankAcc}, statusID = 7
+  SET deliverTo = '${deliverTo}', discount = ${discount}, description = '${description}', totalChange = ${totalChange}, bankAccountID = ${bankAcc}, statusID = 7
   WHERE receptionID = ${recepcionID};`);
 
   //let statusText;
