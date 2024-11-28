@@ -1,11 +1,13 @@
-export type PurchaseData = {
-    purchaseID: string;
+export type RecepcionData = {
+    receptionID: number;
+    purchaseID: number;
     warehouseID: number;
-    currencyID: number;
+    currencyname: string;
     souvenirID: number;
     souvenirName: string;
     price: number;
     supplierID: number;
+    supplierEmail: string;
     streetName: string;
     neighborhood: string;
     outsideNumber: number;
@@ -14,21 +16,23 @@ export type PurchaseData = {
     state: string;
     city: string;
     deliverTo: string;
-    purchaseDate: Date;
+    recepcionDate: Date;
     discount: number;
     totalChange: number;
     description: string;
-    status: string;
+    statusName: string;
 }
 
-export interface ConvertedData {
+export interface ConvertedReceptionData {
+    receptionID: number;
     purchaseID: string;
-    warehouseID: string;
-    currencyID: string;
-    souvenirID: string;
+    warehouseID: string | null;
+    currencyName: string | null;
+    souvenirID: string | null;
     souvenirName: string;
     price: string | null;
-    supplierID: string;
+    supplierID: string | null;
+    supplierEmail: string;
     streetName: string;
     neighborhood: string;
     outsideNumber: string | null;
@@ -37,13 +41,10 @@ export interface ConvertedData {
     state: string;
     city: string;
     deliverTo: string;
-    purchaseDate: string | null;
+    recepcionDate: Date;
     discount: string | null;
     totalChange: string | null;
     description: string;
-    status: string;
-}
-
-export interface ConvertedPurchaseData {
-    purchaseID: number,
+    statusName: string;
+    bankAccID: string;
 }
