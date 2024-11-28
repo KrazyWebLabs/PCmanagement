@@ -1,0 +1,97 @@
+---
+import BackBtn from "@components/ui/Buttons/BackBtn.astro";
+import Layout from "../../layouts/Layout.astro";
+import { turso } from '../../turso';
+import AddRegisterBtn from "@components/ui/Buttons/AddRegisterBtn.astro";
+import TrashIcon from "@components/ui/icons/TrashIcon.astro";
+import EditIcon from "@components/ui/icons/EditIcon.astro";
+import EditRecord from "@components/ui/Tables/EditRecord.astro";
+
+type Warehouse = {
+  warehouseID: number;
+  warehouseName: string;
+  categoryID: number;
+  dimensions: number;
+  capacity: number;
+  temperature: number;
+  statusID: number;
+};
+
+// Fetch warehouse data and map it to the Warehouse type
+const { rows } = await turso.execute('SELECT * FROM Warehouses');
+const result: Warehouse[] = rows.map((row: any) => ({
+  warehouseID: row.warehouseID,
+  warehouseName: row.warehouseName,
+  categoryID: row.categoryID,
+  dimensions: row.dimensions,
+  capacity: row.capacity,
+  temperature: row.temperature,
+  statusID: row.statusID
+}));
+
+---
+<Layout title="Warehouse Dashboard">
+  <div class="max-w-screen-xl mx-auto px-4 md:px-8">
+    <div class="items-start justify-between md:flex">
+      <div class="max-w-lg">
+        <h3 class="text-gray-800 text-xl font-bold sm:text-2xl dark:text-gray-300">
+          Warehouses
+        </h3>
+      </div>
+      <div class="mt-3 md:mt-0">
+        <AddRegisterBtn/>
+      </div>
+    </div>
+    <div class="mt-6 shadow-sm border rounded-lg overflow-x-auto">
+      <table class="w-full table-auto text-sm text-left">
+        <thead class="dark:bg-gray-400/20 dark:text-white bg-gray-50 text-gray-600 font-medium border-b">
+          <tr>
+            <th class="py-3 px-6">Warehouse ID</th>
+            <th class="py-3 px-6">Name</th>
+            <th class="py-3 px-6">Category</th>
+            <th class="py-3 px-6">Dimensions</th>
+            <th class="py-3 px-6">Capacity</th>
+            <th class="py-3 px-6">Temperature</th>
+            <th class="py-3 px-6">Status</th>
+            <th class="py-3 px-6">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="text-gray-600 divide-y">
+          {
+            result.map((item: Warehouse) => (
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.warehouseID}</td>
+                <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.warehouseName}</td>
+                <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.categoryID}</td>
+                <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.dimensions}</td>
+                <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.capacity}</td>
+                <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.temperature}</td>
+                <td class="px-6 py-4 whitespace-nowrap dark:text-white">
+                  <!-- Replace ItemStatus with actual status handling or remove it -->
+                  {item.statusID === 1 ? "Active" : item.statusID === 2 ? "Inactive" : "Maintenance"}
+                </td>
+                <td class="flex items-center justify-center gap-4 m-2 text-right px-6 whitespace-nowrap">
+                  <EditRecord href={`/warehouse/${item.warehouseID}`}>
+                      <EditIcon/>
+                    </EditRecord>
+                  <a
+                    href={`/warehouse/delete?warehouseID=${item.warehouseID}`}
+                    class="py-2 px-3 inline-block text-white duration-150 font-medium bg-red-600 rounded-lg hover:bg-red-500 active:bg-red-700 md:text-sm"
+                  >
+                    <TrashIcon/>
+                  </a>
+                </td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
+  <div class="col-span-2 flex justify-end space-x-2">
+    <BackBtn>
+      Back
+    </BackBtn>
+  </div>
+</Layout>
