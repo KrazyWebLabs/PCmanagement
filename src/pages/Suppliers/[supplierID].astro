@@ -15,7 +15,6 @@ const rows = await turso.execute(`
   JOIN LegalEntities l ON s.legalEntityID = l.legalEntityID
   WHERE s.supplierID = ${supplierID}
 `);
-console.log(rows.toJSON());
 
 const result = convertSuppliersDataToJSON(rows.toJSON());
 
@@ -40,9 +39,7 @@ if (Astro.request.method === 'POST') {
   const statusID = formData.get('statusID');
   const addressID = formData.get('addressID');
 
-  console.log("Campos recibidos para actualizar:");
-  console.log({ supplierID, legalEntityID, phoneNumber, email, street, neighborhood, city, state, country, postalCode, outsideNumb, statusID, addressID });
-
+  
   let addressUpdateFields = [];
   if (street) addressUpdateFields.push(`street = '${street}'`);
   if (neighborhood) addressUpdateFields.push(`neighborhood = '${neighborhood}'`);
@@ -59,7 +56,6 @@ if (Astro.request.method === 'POST') {
       SET ${addressUpdateFields.join(', ')}
       WHERE addressID = ${addressID}
     `;
-    console.log("Consulta de actualización de dirección:", addressUpdateQuery);
     await turso.execute(addressUpdateQuery);
   }
 
@@ -75,7 +71,6 @@ if (Astro.request.method === 'POST') {
       SET ${updateFields.join(', ')}
       WHERE supplierID = ${supplierID}
     `;
-    console.log("Consulta de actualización de proveedor:", updateQuery);
     await turso.execute(updateQuery);
   }
 

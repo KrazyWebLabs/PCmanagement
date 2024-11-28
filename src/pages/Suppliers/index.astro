@@ -22,7 +22,6 @@ JOIN LegalEntities  ON Suppliers.legalEntityID  = LegalEntities.legalEntityID;
 const data = rows.toJSON();
 const result = convertSuppliersDataToJSON(data);
 
-console.log(result)
 ---
 
 <Layout title="Suppliers">

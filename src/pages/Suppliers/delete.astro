@@ -5,7 +5,5 @@ const supplierID = Astro.url.searchParams.get("supplierID");
 
 await turso.execute(`UPDATE Suppliers SET statusID = 11 WHERE supplierID = ${supplierID}`);
 
-console.log("supplierID from URL:", supplierID);
-
 return Astro.redirect('/suppliers')
 ---
