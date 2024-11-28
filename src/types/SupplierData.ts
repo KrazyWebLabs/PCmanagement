@@ -5,4 +5,5 @@ export interface ConvertedSupplierData {
     phoneNumber: string,
     email: string,
     statusID: number,
+    supplierName: string
   }

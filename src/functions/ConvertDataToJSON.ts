@@ -1,43 +1,46 @@
 import type { ConvertedReceptionData } from "@customTypes/RecepcionData";
 import type { ConvertedData } from "@customTypes/VipCardData";
 import type { ConvertedCustomerData } from "@customTypes/CustomersData";
-import type { PurchaseData } from "src/types/PurchaseData";
+import type { ConvertedPurchaseData } from "src/types/PurchaseData";
+import type { ConvertedWarehouseData } from "@customTypes/Warehouse";
+import type { ConvertedCurrencyData } from "@customTypes/Currency";
+import type { ConvertedSouvenirData } from "@customTypes/SouvenirData";
+import type { ConvertedSupplierData } from "@customTypes/SupplierData";
 
 export default function convertReceptionDataToJSON(data: DBData): ConvertedReceptionData[] {
   return data.rows.map((row: (string | number | null | Date)[]) => {
     return {
-    receptionID: row[0] ? Number(row[0]) : 0, // Aseguramos que no sea undefined
-    purchaseID: row[1] as string, // Aseguramos que no sea undefined
+      receptionID: row[0] ? Number(row[0]) : 0, // Aseguramos que no sea undefined
+      purchaseID: row[1] as string, // Aseguramos que no sea undefined
 
-    deliverTo: row[17] as string,
-    recepcionDate: row[18] as Date,
-    discount: row[19] as string,
-    totalChange: row[20] as string,
-    description: row[21] as string,
-    
-    warehouseID: row[2] as string,
-    currencyName: row[3] as string,
-    souvenirID: row[4] as string,
-    supplierID: row[7] as string,
-    
+      deliverTo: row[17] as string,
+      recepcionDate: row[18] as Date,
+      discount: row[19] as string,
+      totalChange: row[20] as string,
+      description: row[21] as string,
+      
+      warehouseID: row[2] as string,
+      currencyName: row[3] as string,
+      souvenirID: row[4] as string,
+      supplierID: row[7] as string,
+      
 
-    souvenirName: row[5] as string,
-    price: row[6] as string,
+      souvenirName: row[5] as string,
+      price: row[6] as string,
 
-    supplierEmail: row[8] as string,
+      supplierEmail: row[8] as string,
 
-    streetName: row[10] as string,
-    neighborhood: row[11] as string,
-    outsideNumber: row[12] as string,
-    postalCode: row[13] as string,
-    country: row[14] as string,
-    state: row[15] as string,
-    city: row[16] as string,
+      streetName: row[10] as string,
+      neighborhood: row[11] as string,
+      outsideNumber: row[12] as string,
+      postalCode: row[13] as string,
+      country: row[14] as string,
+      state: row[15] as string,
+      city: row[16] as string,
 
-    statusID: row[22] as string,
-    bankAccID: row[23] as string, 
-    statusName: String(row[9]).toLowerCase()
-    
+      statusID: row[22] as string,
+      bankAccID: row[23] as string, 
+      statusName: String(row[9]).toLowerCase()  
     };
   });
 }
@@ -71,35 +74,81 @@ export function convertCustomersDataToJSON(data: DBData): ConvertedCustomerData[
   });
 };
 
-export function convertPurchaseDataToJSON(data: DBData): PurchaseData[] {
-  return data.rows.map((row: (string | number | Date | null)[]) => {
+export function convertWarehouseDataToJSON(data: DBData): ConvertedWarehouseData[] {
+  return data.rows.map((row: (string | number | null)[]) => {
     return {
-    purchaseID: row[0] as string,
-    deliverTo: row[1] as string,
-    purchaseDate: row[2] as Date,
-    discount: typeof row[3] === "number" ? row[3] : Number(row[3] ?? 0),
-    totalChange: typeof row[4] === "number" ? row[4] : Number(row[4] ?? 0),
-    description: row[21] as string,
-    
-    warehouseID: typeof row[6] === "number" ? row[6] : Number(row[6] ?? 0),
-    currencyID: row[7] as number,
-    souvenirID: typeof row[8] === "number" ? row[8] : Number(row[8] ?? 0),
-    supplierID: typeof row[9] === "number" ? row[9] : Number(row[9] ?? 0),
-    status: row[10] as string,
-    
-
-    souvenirName: row[5] as string,
-    price: typeof row[6] === "number" ? row[6] : Number(row[6] ?? 0),
-
-    streetName: row[10] as string,
-    neighborhood: row[11] as string,
-    outsideNumber: typeof row[12] === "number" ? row[12] : Number(row[12] ?? 0),
-    postalCode: row[13] as string,
-    country: row[14] as string,
-    state: row[15] as string,
-    city: row[16] as string,
-
-    Status: String(row[10]).toLowerCase()
+      warehouseID: Number(row[0]),
+      warehouseName: row[1] as string,
+      warehouseAddress: row[2] as string,
+      categoryID: Number(row[3]),
+      dimensions: Number(row[4]),
+      capacity: Number(row[5]),
+      temperature: Number(row[6]),
+      description: row[7] as string,
+      statusID: Number(row[8]),
     };
   });
 };
+
+export function convertCurrencyDataToJSON(data: DBData): ConvertedCurrencyData[] {
+  return data.rows.map((row: (string | number | null)[]) => {
+    return {
+      currencyID: Number(row[0]),
+      currencyName: row[1] as string,
+      exchangeRate: Number(row[2]),
+      description: row[3] as string,
+    };
+  });
+};
+
+export function convertSouvenirDataToJSON(data: DBData): ConvertedSouvenirData[] {
+  return data.rows.map((row: (string | number | null)[]) => {
+    return {
+      souvenirID: Number(row[0]),
+      souvenirName: row[1] as string,
+      priceWithoutIVA: Number(row[2]),
+      IVA: Number(row[3]),
+      description: row[4] as string,
+      warehouseID: Number(row[5]),
+      statusID: Number(row[6]),
+    };
+  });
+};
+
+export function convertSupplierDataToJSON(data: DBData): ConvertedSupplierData[] {
+  return data.rows.map((row: (string | number | null)[]) => {
+    return {
+      supplierID: Number(row[0]),
+      legalEntityID: Number(row[1]),
+      addressID: Number(row[2]),
+      phoneNumber: row[3] as string,
+      email: row[4] as string,
+      statusID: Number(row[5]),
+      supplierName: row[6] as string
+    };
+  });
+};
+
+export function convertPurchaseDataToJSON(data: DBData): ConvertedPurchaseData[] {
+  return data.rows.map((row: (string | number | Date | null)[]) => {
+    return {
+      purchaseID: Number(row[0]),
+      deliverTo: row[1] ? String(row[1]) : "unknown",
+      purchaseDate: typeof row[2] === "string" ? row[2] : "invalid date",
+      discount: Number(row[3]),
+      totalChange: Number(row[4]),
+      description: row[5] ? String(row[5]) : "no description",
+      warehouseID: Number(row[6]),
+      warehouseName: row[7] ? String(row[7]) : "unknown warehouse",
+      currencyID: Number(row[8]),
+      currencyName: row[9] ? String(row[9]) : "unknown currency",
+      souvenirID: row[10] !== null ? Number(row[10]) : -1,
+      souvenirName: row[11] ? String(row[11]) : "unknown souvenir",
+      productQty: Number(row[16]),
+      supplierID: Number(row[12]),
+      supplierName: row[13] ? String(row[13]) : "unknown supplier",
+      statusID: row[14] !== null ? Number(row[14]) : -1,
+      statusName: row[15] ? String(row[15]).toLowerCase() : "unknown status",
+    };
+  });
+}

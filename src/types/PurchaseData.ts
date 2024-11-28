@@ -45,5 +45,21 @@ export interface ConvertedData {
 }
 
 export interface ConvertedPurchaseData {
-    purchaseID: number,
+    purchaseID: number;
+    deliverTo: string;
+    purchaseDate: string;
+    discount: number;
+    totalChange: number;
+    description: string;
+    warehouseID: number;
+    warehouseName: string; // Nuevo campo
+    currencyID: number;
+    currencyName: string; // Nuevo campo
+    souvenirID: number;
+    productQty: number;
+    souvenirName: string; // Nuevo campo
+    supplierID: number;
+    supplierName: string; // Nuevo campo
+    statusID: number; // Nuevo campo
+    statusName: string; // Nuevo campo
 }
