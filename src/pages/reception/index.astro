@@ -1,8 +1,8 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import TrashIcon from "../../components/ui/icons/TrashIcon.astro";
-import CheckIcon from "../../components/ui/icons/CheckIcon.astro";
-import EditIcon from "../../components/ui/icons/EditIcon.astro";
+import TrashIcon from "@icons/TrashIcon.astro";
+import CheckIcon from "@icons/CheckIcon.astro";
+import EditIcon from "@icons/EditIcon.astro";
 import EditRecord from "../../components/ui/Tables/EditRecord.astro";
 import ItemStatus from "../../components/ui/Tables/ItemStatus.astro";
 import AddRegisterBtn from "../../components/ui/Buttons/AddRegisterBtn.astro";
@@ -33,7 +33,7 @@ const result = convertReceptionDataToJSON(data);
         <AddRegisterBtn/>
       </div>
     </div>
-    <div class="mt-6 shadow-sm border rounded-lg overflow-x-auto">
+    <div class="mt-6 shadow-sm border rounded-lg overflow-x-auto backdrop-blur-sm">
       <table class="w-full table-auto text-sm text-left">
         <thead class="dark:bg-gray-400/20 dark:text-white bg-gray-50 text-gray-600 font-medium border-b">
           <tr>
