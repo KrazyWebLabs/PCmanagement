@@ -10,15 +10,15 @@ import { convertCustomerDataToJSON } from "@functions/ConvertCustomerDataToJson"
 import { convertStatusDataToJSON } from "@functions/ConvertCustomerDataToJson"
 import { turso } from "src/turso";
 
-let resultStatus;
-let StatusData;
 
-const rows = await turso.execute(`SELECT Customers.*, Status.statusName AS statusName FROM Customers JOIN Status ON Customers.statusID = Status.statusID`);
-StatusData = await turso.execute("SELECT * FROM Status");
+const rows = await turso.execute(`SELECT Customers.*, Status.statusName AS statusName, Addresses.* 
+FROM Customers
+JOIN Status ON Customers.statusID = Status.statusID
+JOIN Addresses ON Customers.addressID = Addresses.addressID;
+`);
 
 const data = rows.toJSON();
 const result = convertCustomerDataToJSON(data);
-resultStatus = convertStatusDataToJSON(StatusData.toJSON())
 
 console.log(result);
 
@@ -48,6 +48,14 @@ console.log(result);
               <th class="py-3 px-6 text-left">Teléfono</th>
               <th class="py-3 px-6 text-left">Correo Electrónico</th>
               <th class="py-3 px-6 text-left">RFC</th>
+              <th class="py-3 px-6 text-left">ID Direccion</th>
+              <th class="py-3 px-6 text-left">País</th>
+              <th class="py-3 px-6 text-left">Estado</th>
+              <th class="py-3 px-6 text-left">Ciudad</th>
+              <th class="py-3 px-6 text-left">Colonia</th>
+              <th class="py-3 px-6 text-left">Código Postal</th>
+              <th class="py-3 px-6 text-left">Calle</th>
+              <th class="py-3 px-6 text-left">Número Exterior</th>
               <th class="py-3 px-6 text-left">Estado</th>
               <th class="py-3 px-6 text-right"></th>
             </tr>
@@ -64,8 +72,16 @@ console.log(result);
                   <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.phoneNumber}</td>
                   <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.Email}</td>
                   <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.RFC}</td>
+                  <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.addressID}</td>
+                  <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.country}</td>
+                  <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.state}</td>
+                  <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.city}</td>
+                  <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.neighborhood}</td>
+                  <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.postalCode}</td>
+                  <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.street}</td>
+                  <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.outsideNumb}</td>
                   <td class="px-6 py-4 whitespace-nowrap dark:text-white capitalize">
-                    <ItemStatus status={item.status} />
+                    <ItemStatus status={item.statusName} />
                   </td>
                   <td class="flex items-center justify-center gap-4 m-2 text-right px-6 whitespace-nowrap">
                     <EditRecord href={`/customers/${item.customerID}`}>
