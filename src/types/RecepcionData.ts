@@ -23,7 +23,7 @@ export type RecepcionData = {
     statusName: string;
 }
 
-export interface ConvertedData {
+export interface ConvertedReceptionData {
     receptionID: number;
     purchaseID: string;
     warehouseID: string | null;
