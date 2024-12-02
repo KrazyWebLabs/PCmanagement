@@ -1,12 +1,12 @@
 ---
-import Form from "@components/ui/Forms/Form.astro";
-import Layout from "../layouts/Layout.astro";
-import FormInput from "@components/ui/Forms/FormInput.astro";
+import Form from "@form/Form.astro";
+import FormInput from "@form/FormInput.astro";
 import SubmitBtn from "@components/ui/Buttons/SubmitBtn.astro";
 import { convertUserDataToJSON } from "@functions/ConvertUserDataToJson";
 import { decryptPasswrd } from "@functions/registerUser";
 import type { InputType } from "@customTypes/InputType";
 import { turso } from "src/turso";
+import LayoutWTOS from "src/layouts/LayoutWTOS.astro";
 
 export interface Inputs {
   name: string;
@@ -29,28 +29,21 @@ if (Astro.request.method === "POST") {
 
   const employeeID = formData.get("employeeID");
   const passw = formData.get("passw");
-
-  //TODO: Do a better UI/UX for register
-  if (typeof passw === "string" && typeof employeeID === "string") {
-    let decUserPasswrd = await decryptPasswrd(passw);
-
+  
+  if (typeof passw === "string" && typeof employeeID === "string") {  
     try {
       const selection = await turso.execute(
         `SELECT * FROM Employees WHERE employeeID = ${employeeID}`
       );
       const userSession = convertUserDataToJSON(selection.toJSON());
 
-			console.log(userSession)
+      let decUserPasswrd = decryptPasswrd(userSession[0].passwrd);
 
       let userInfo = {
         id: userSession[0].employeeID,
 				name: userSession[0].name,
 				lastName: userSession[0].paternalSurname
       };
-
-			console.log(userInfo)
-
-			console.log(decryptPasswrd(passw) + " : " + passw)
 
       if (decUserPasswrd === passw) {
         Astro.cookies.set("userSes", userInfo);
@@ -84,8 +77,8 @@ const inputs: Inputs[] = [
 ];
 ---
 
-<Layout title="Log into you Account">
-  <div class="flex items-center justify-center flex-col mt-10">
+<LayoutWTOS title="Log into you Account">
+  <div class="flex items-center justify-center flex-col mt-36 max-w-screen-xl mx-auto px-4 md:px-8 md:flex">
     <Form title="Log In">
       {
         inputs.map((inp) => (
@@ -103,5 +96,8 @@ const inputs: Inputs[] = [
         <SubmitBtn> Login </SubmitBtn>
       </div>
     </Form>
+    <div class="dark:text-white">
+      ¿No tienes una cuenta? <a href="/register" class="text-LegacyBlue-600">¡registrate!</a>
+    </div>
   </div>
-</Layout>
+</LayoutWTOS>
