@@ -3,7 +3,6 @@ import { turso } from "src/turso";
 
 const souvenirID = Astro.url.searchParams.get("souvenirID");
 
-console.log(souvenirID)
 
 // Ahora eliminar el registro en la tabla Souvenirs
 await turso.execute(`UPDATE Souvenirs SET statusID = 11 WHERE souvenirID = ${souvenirID}`);

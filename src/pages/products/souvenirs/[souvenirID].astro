@@ -10,7 +10,6 @@ import statusTextToId from "@functions/statusTextToId";
 const { souvenirID } = Astro.params;
 
 const rows = await turso.execute(`SELECT * FROM Souvenirs WHERE souvenirID = ${souvenirID}`);
-console.log(rows.toJSON()); 
 
 const result = convertSouvenirsDataToJSON(rows.toJSON());
 
@@ -40,14 +39,6 @@ if (Astro.request.method === 'POST') {
     const updateQuery = `UPDATE Souvenirs SET ${updateFields.join(', ')} WHERE souvenirID = ${souvenirID}`;
     await turso.execute(updateQuery);
   }
-
-  console.log(souvenirID);
-  console.log(souvenirName);
-  console.log(priceWithoutIVA);
-  console.log(IVA);
-  console.log(description);
-  console.log(warehouseID);
-  console.log(statusID);
 
   return Astro.redirect('/products/souvenirs');
 }

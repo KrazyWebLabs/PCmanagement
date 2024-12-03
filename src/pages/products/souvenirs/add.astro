@@ -20,14 +20,6 @@ if (Astro.request.method === 'POST') {
 
   await turso.execute(`INSERT INTO Souvenirs (souvenirID, souvenirName, priceWithoutIVA, IVA, description, warehouseID, statusID) VALUES(${souvenirID}, '${souvenirName}', ${priceWithoutIVA}, ${IVA}, '${description}', ${warehouseID}, ${statusID})`);
 
-  console.log(souvenirID);
-  console.log(souvenirName);
-  console.log(priceWithoutIVA);
-  console.log(IVA);
-  console.log(description);
-  console.log(warehouseID);
-  console.log(statusID);
-
   return Astro.redirect('/products/souvenirs')
 }
 

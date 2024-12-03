@@ -15,8 +15,6 @@ const rows = await turso.execute('SELECT * FROM SouvernirsData;');
 const data = rows.toJSON()
 
 const result = convertSouvenirsDataToJSON(data);
-
-console.log(result)
 ---
 
 <Layout title="Souvenirs">
