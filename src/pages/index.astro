@@ -1,8 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { turso } from '../turso'
 
-const { rows } = await turso.execute('SELECT * FROM Persons')
 const session = Astro.cookies.get("userSes");
 
 if (!session) {
@@ -11,5 +9,39 @@ if (!session) {
 ---
 
 <Layout title="Dashboard">
-	<h1 class="text-black">Hello world</h1>
+	<div class="flex max-w-screen-xl min-h-[80vh] mx-auto px-4 md:px-8 justify-center items-center flex-col">
+		<h2 class="text-gray-800 text-4xl font-extrabold sm:text-7xl dark:text-white">
+			Welcome 
+		</h2>
+		<div class="typewriter flex justify-center items-center flex-col">
+			<h3 class="text-gray-800 text-xl font-bold sm:text-xl dark:text-gray-200 mt-5">
+				to the future of the legacy
+			</h3>
+		</div>
+		<p class="text-gray-800 text-xl sm:text-lg dark:text-gray-400 m-10 px-32 text-justify">
+			Our mission is to bring history to life by offering visitors the unique opportunity to engage in virtual conversations with important personalities of the past and provide the visitor with a connection through the lens of their MBTI personality type.
+		</p>
+  </div>
 </Layout>
+<style>
+	.typewriter h3 {
+	overflow: hidden; /* Ensures the content is not revealed until the animation */
+	border-right: .15em solid #2245e3; /* The typwriter cursor */
+	white-space: nowrap; /* Keeps the content on a single line */
+	animation: 
+		typing 3.5s steps(30, end),
+		blink-caret .5s step-end infinite;
+}
+
+/* The typing effect */
+@keyframes typing {
+	from { width: 0 }
+	to { width: 100% }
+}
+
+/* The typewriter cursor effect */
+@keyframes blink-caret {
+	from, to { border-color: transparent }
+	50% { border-color: #2245e3 }
+}
+</style>
