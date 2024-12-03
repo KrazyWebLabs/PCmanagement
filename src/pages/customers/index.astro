@@ -20,8 +20,6 @@ JOIN Addresses ON Customers.addressID = Addresses.addressID;
 const data = rows.toJSON();
 const result = convertCustomerDataToJSON(data);
 
-console.log(result);
-
 ---
 
 <Layout title="Customers">

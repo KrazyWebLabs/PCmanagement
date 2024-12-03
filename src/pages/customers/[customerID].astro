@@ -15,7 +15,6 @@ const rows = await turso.execute(`
   JOIN Addresses a ON c.addressID = a.addressID
   WHERE c.customerID = ${customerID}
 `);
-console.log(rows.toJSON()); 
 
 const result = convertCustomerDataToJSON(rows.toJSON());
 
@@ -82,24 +81,6 @@ if (Astro.request.method === 'POST') {
     `;
     await turso.execute(customerUpdateQuery);
   }
-
-  // Imprimir los valores para depuración
-  console.log(firstName);
-  console.log(paternalLastName);
-  console.log(maternalLastName);
-  console.log(CURP);
-  console.log(phoneNumber);
-  console.log(Email);
-  console.log(RFC);
-  console.log(statusID);
-  console.log(street);
-  console.log(neighborhood);
-  console.log(city);
-  console.log(state);
-  console.log(country);
-  console.log(postalCode);
-  console.log(outsideNumb);
-  console.log(addressID);
 
   return Astro.redirect('/customers');
 }

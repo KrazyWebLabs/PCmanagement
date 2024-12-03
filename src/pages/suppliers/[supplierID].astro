@@ -21,7 +21,6 @@ const result = convertSuppliersDataToJSON(rows.toJSON());
 if (Astro.request.method === 'POST') {
   // Parsear los datos del formulario
   const formData = await Astro.request.formData();
-  console.log("Datos del formulario recibidos:", formData);
 
   const supplierID = formData.get('supplierID');
   const legalEntityID = formData.get('legalEntityID');

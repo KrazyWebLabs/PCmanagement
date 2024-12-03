@@ -39,9 +39,6 @@ if (Astro.request.method === 'POST') {
         VALUES (${supplierID}, '${legalEntityID}', '${phoneNumber}', '${email}', ${statusID}, ${addressID})
     `);
 
-    // Imprimir valores para depuración
-    console.log(neighborhood);
-
     return Astro.redirect('/suppliers');
 }
 ---
