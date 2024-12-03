@@ -6,6 +6,9 @@ import type { ConvertedWarehouseData } from "@customTypes/Warehouse";
 import type { ConvertedCurrencyData } from "@customTypes/Currency";
 import type { ConvertedSouvenirData } from "@customTypes/SouvenirData";
 import type { ConvertedSupplierData } from "@customTypes/SupplierData";
+import type { ConvertedEmployeeData } from "@customTypes/EmployeesData";
+import type { ConvertedVRAMSData, ConvertedVRASData } from "@customTypes/VRASData";
+import type { ConvertedReportedIssueData } from "@customTypes/ReportedIssuesData";
 
 export default function convertReceptionDataToJSON(data: DBData): ConvertedReceptionData[] {
   return data.rows.map((row: (string | number | null | Date)[]) => {
@@ -152,3 +155,50 @@ export function convertPurchaseDataToJSON(data: DBData): ConvertedPurchaseData[]
     };
   });
 }
+
+export function convertEmployeesDataToJSON(data: DBData): ConvertedEmployeeData [] {
+  return data.rows.map((row: (string | number | Date | null)[]) => {
+    return {
+      curpID: Number(row[0]),
+      employeeID: Number(row[1]),
+      fullName: row[2] ? String(row[2]) : "unknown",
+    };
+  });
+}
+
+export function convertReportedIssuesDataToJSON(data: DBData): ConvertedReportedIssueData [] {
+  return data.rows.map((row: (string | number | Date | null)[]) => {
+    return {
+      reportedIssueID: Number(row[0]),
+      reportedIssue: row[1] ? String(row[1]) : "unknown",
+      description: row[2] ? String(row[2]) : "unknown",
+    };
+  });
+}
+
+export function convertVRASDataToJSON(data: DBData): ConvertedVRASData [] {
+  return data.rows.map((row: (string | number | Date | null)[]) => {
+    return {
+      serialNumbID: Number(row[0]),
+      model: row[1] ? String(row[1]) : "unknown",
+    };
+  });
+}
+
+export function convertFullVRAMToJSON(data: DBData): ConvertedVRAMSData [] {
+  return data.rows.map((row: (string | number | Date | null)[]) => {
+    return {
+      vraMaintenanceID: Number(row[0]),
+      employeeName: row[1] ? String(row[1]) : "unknown",
+      maintenanceDate: row[2] as Date,
+      maintenanceTime: row[3] ? String(row[3]) : "unknown",
+      maintenanceObservations: row[4] ? String(row[4]) : "unknown",
+      maintenanceStatus: row[5] ? String(row[5]) : "unknown",
+      vraMaintenanceDetailID: Number(row[6]),
+      vraName: row[7] ? String(row[7]) : "unknown",
+      urgencyLevel: row[8] ? String(row[8]) : "unknown",
+      reportedIssue: row[9] ? String(row[9]) : "unknown",
+    };
+  });
+}
+
