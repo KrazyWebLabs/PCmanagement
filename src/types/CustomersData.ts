@@ -18,3 +18,6 @@ export interface ConvertedCustomerData {
   statusID: string;
   statusName: string;
 }
+export interface ConvertedECustomerData {
+  customerID: number;
+}

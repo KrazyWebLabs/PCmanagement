@@ -5,7 +5,7 @@ import FormSelect from "@form/FormSelect.astro";
 import SelectOption from "@form/SelectOption.astro";
 import CapFrstLetter from "@functions/CapFrstLetter"
 import { generateRandomNumber } from "@functions/generateRandomNumber";
-import { convertCustomersDataToJSON } from "@functions/ConvertDataToJSON"
+import { convertCustomerDataToJSON } from "@functions/ConvertCustomerDataToJson"
 import { getStatus } from "@functions/getStatus"
 import { turso } from "src/turso";
 
@@ -24,11 +24,11 @@ const data = bankAccNumbers?.toJSON()
 
 if (!selectedCard) {
   generatedCardNumber = generateRandomNumber(15)
-  result = convertCustomersDataToJSON(data)
+  result = convertCustomerDataToJSON(data)
 }
 else {
   statusWTOSelectedStatus = getStatus(selectedCard.status);
-  result = convertCustomersDataToJSON(data).filter((p) => p.customerID !== selectedCard.customerID);
+  result = convertCustomerDataToJSON(data).filter((p) => p.customerID !== selectedCard.customerID);
 }
 ---
 

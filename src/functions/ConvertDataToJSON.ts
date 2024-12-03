@@ -69,14 +69,6 @@ export function convertVIPcardDataToJSON(data: DBData): ConvertedData[] {
   });
 };
 
-export function convertCustomersDataToJSON(data: DBData): ConvertedCustomerData[] {
-  return data.rows.map((row: (string | number | null)[]) => {
-    return {
-      customerID: typeof row[6] === "number" ? row[6] : Number(row[0] ?? 0),
-    };
-  });
-};
-
 export function convertWarehouseDataToJSON(data: DBData): ConvertedWarehouseData[] {
   return data.rows.map((row: (string | number | null)[]) => {
     return {
