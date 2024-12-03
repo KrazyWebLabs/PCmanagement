@@ -2,7 +2,10 @@ export function getStatus(status?: string): Array<string> {
   const statuses = [
     "cancelada",
     "en tramite",
-    "vigente"
+    "vigente",
+    "baja",
+    "en stock",
+    "alta"
   ];
 
   if (!status) return statuses

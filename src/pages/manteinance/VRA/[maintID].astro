@@ -10,8 +10,6 @@ const { maintID } = Astro.params;
 
 const VRAMaintenances = await turso.execute(`SELECT * FROM FullVRAM WHERE vraMaintenanceID = ${maintID}`);
 let result = convertFullVRAMToJSON(VRAMaintenances.toJSON());
-
-console.log(result)
 ---
 
 <Layout title="Edit">
