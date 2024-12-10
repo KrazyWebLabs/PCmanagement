@@ -10,11 +10,6 @@ interface Props {
 
 const { title } = Astro.props;
 
-const session = Astro.cookies.get("userSes");
-
-if (!session) {
-  return Astro.redirect("/404");
-}
 ---
 
 <!doctype html>
