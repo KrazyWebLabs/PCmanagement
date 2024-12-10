@@ -1,6 +1,58 @@
-import { defineDb } from 'astro:db';
+import { column, defineDb, defineTable, NOW } from 'astro:db';
+
+const Area = defineTable({
+  columns: {
+    id: column.number({ unique: true}),
+    name: column.text({ default: "Sala -" }),
+    _createdAt: column.date({ default: NOW })
+  }
+})
+
+const Major = defineTable({
+  columns: {
+    id: column.number({ unique: true}),
+    name: column.text({ default: "Ing de Software" }),
+    _createdAt: column.date({ default: NOW })
+  }
+})
+
+const User = defineTable({
+  columns: {
+    id: column.number({ unique: true}),
+    fullName: column.text({ default: "John Doe" }),
+    majorID: column.number(),
+    _createdAt: column.date({ default: NOW })
+  },
+  foreignKeys: [
+    {
+      columns: ["majorID"],
+      references: () => [Major.columns.id],
+    },
+  ],
+})
+
+const PC = defineTable({
+  columns: {
+    id: column.number({ unique: true,}),
+    name: column.text({ default: "PC" }),
+    areaID: column.number(),
+    userID: column.number({ optional: true }),
+    _createdAt: column.date({ default: NOW })
+  },
+  foreignKeys: [
+    {
+      columns: ["areaID"],
+      references: () => [Area.columns.id],
+    },
+  ],
+})
 
 // https://astro.build/db/config
 export default defineDb({
-  tables: {}
+  tables: {
+    Area,
+    Major,
+    User,
+    PC
+  }
 });
