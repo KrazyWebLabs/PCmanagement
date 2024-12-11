@@ -4,9 +4,10 @@ import TrashIcon from "@icons/TrashIcon.astro"
 import EditIcon from "@icons/EditIcon.astro"
 import EditRecord from "@components/ui/Tables/EditRecord.astro";
 import ItemStatus from "@components/ui/Tables/ItemStatus.astro";
-import formatDate from "@functions/FormatDate";
 import AddRegisterBtn from "@components/ui/Buttons/AddRegisterBtn.astro";
 import { db, PC, Status, Area, User, eq } from "astro:db";
+import CheckIcon from "@components/ui/icons/CheckIcon.astro";
+import ClipboardListIcon from "@components/ui/icons/ClipboardListIcon.astro";
 
 const result = await db.select().from(PC)
   .innerJoin(Status, eq(Status.id, PC.statusID))
@@ -53,6 +54,19 @@ const result = await db.select().from(PC)
                   }
                 </td>
                 <td class="flex items-center justify-center gap-4 m-2 text-right px-6 whitespace-nowrap">
+                  <a
+                    href={`/pc/fix?pcID=${item.PC?.id}`}
+                    class="py-2 px-3 inline-block text-white duration-150 font-medium bg-yellow-500 rounded-lg hover:bg-yellow-400 active:bg-yellow-600 md:text-sm"
+                  >
+                    <ClipboardListIcon/>
+                  </a>
+                  <a
+                    href={`/pc/free?pcID=${item.PC?.id}`}
+                    class="py-2 px-3 inline-block text-white duration-150 font-medium bg-green-600 rounded-lg hover:bg-green-500 active:bg-green-700 md:text-sm"
+                  >
+                    <CheckIcon/>
+                  </a>
+                  
                   <EditRecord href={`/pc/${item.PC?.id}`}>
                     <EditIcon/>
                   </EditRecord>

@@ -5,16 +5,15 @@ import SubmitBtn from "@components/ui/Buttons/SubmitBtn.astro";
 import LayoutWTOS from "src/layouts/LayoutWTOS.astro";
 import FormSelect from "@components/ui/Forms/FormSelect.astro";
 import SelectOption from "@components/ui/Forms/SelectOption.astro";
+import searchPC from "@functions/SearchPC";
+import { verifyUser, userHasSession } from "@functions/verifyUser";
+import type { InputFieldArr } from "@customTypes/InputType";
+import { db } from "astro:db";
+import { Area } from "astro:db";
+import { PC } from "astro:db";
+import { eq } from "astro:db";
 
-export interface Inputs {
-  name: string;
-  label: string;
-
-  isRequired: boolean;
-  placeholder: string;
-}
-
-const inputs: Inputs[] = [
+const inputs: InputFieldArr[] = [
   {
     name: "userID",
     label: "Matrícula",
@@ -23,6 +22,71 @@ const inputs: Inputs[] = [
     placeholder: "20104769",
   },
 ];
+
+const areas = await db.select().from(Area)
+let pcName;
+let area;
+
+if (Astro.request.method === 'POST') {
+  // Parse form data
+  const formData = await Astro.request.formData();
+  const userID = formData.get('userID');
+  const fareaID = formData.get('areaID');
+
+  if (typeof userID === 'string' && typeof fareaID === 'string') {
+    if (await verifyUser(Number(userID))){
+      if (await userHasSession(Number(userID))) {
+        await db.update(PC)
+          .set({
+            statusID: 1,
+            userID: null
+          })
+          .where(eq(PC.userID, Number(userID)))
+          return new Response(
+            `<script>
+              alert("La sesion de ${userID} ha sido terminada");
+              window.location.href = "/";
+            </script>`,
+            {
+              headers: { "Content-Type": "text/html" },
+            }
+          );
+      }
+      else {
+        try {
+          const search = await searchPC(Number(fareaID))
+          const { id, name, areaID } = search[0]
+          
+          pcName = name;
+          area = areas.find(room => room.id === areaID)?.name
+  
+          await db.update(PC)
+          .set({
+            statusID: 3,
+            userID: Number(userID)
+          })
+          .where(eq(PC.id, id))
+  
+          return Astro.redirect(`/assigned?pcName=${pcName}&area=${area}&userID=${userID}`)
+        } catch (e: any) {
+          console.error(`No se puede asignar un PC a ${userID}\n\nError: ${e.message}`);
+          return new Response(
+            `<script>
+              alert("No se puede asignar un PC a ${userID}");
+              window.location.href = "/";
+            </script>`,
+            {
+              headers: { "Content-Type": "text/html" },
+            }
+          );
+        }
+      }
+    }
+    else{
+      return Astro.redirect('/register')
+    }
+	}
+}
 ---
 
 <LayoutWTOS title="Asignación de PC">
@@ -40,11 +104,13 @@ const inputs: Inputs[] = [
           </FormInput>
         ))
       }
-	   <FormSelect title="Selecciona Sala" name="area">
-		<SelectOption isSelected value="">Asesoria</SelectOption>
-		{
-		  
-		}
+	   <FormSelect title="Selecciona Sala" name="areaID">
+		  <SelectOption isSelected value="">--Selecciona una Sala--</SelectOption>
+		  {
+        areas?.map((area) => (
+          <SelectOption value={area.id.toString()}>{area.name}</SelectOption>
+        ))
+		  }
 	  </FormSelect>
       <div class="flex justify-center items-center min-w-full mt-2">
         <SubmitBtn> Buscar </SubmitBtn>

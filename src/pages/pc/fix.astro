@@ -4,7 +4,8 @@ import { PC, eq, db } from "astro:db";
 const pcID = Astro.url.searchParams.get("pcID");
 
 await db.update(PC).set({
-    statusID: 2
+    statusID: 4,
+    userID: null
   })
   .where(eq(PC.id, Number(pcID)))
 
