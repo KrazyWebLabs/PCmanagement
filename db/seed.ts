@@ -2,8 +2,11 @@ import { Area, db, Major, PC, User, Status } from 'astro:db';
 
 export default async function seed() {
 	await db.insert(Area).values([
-    { id: 1, name: "Sala 1" },
-    { id: 2, name: "Sala 2" },
+    { id: 1, name: "Asesoría" },
+    { id: 2, name: "Sala 1" },
+    { id: 3, name: "Sala MAC" },
+    { id: 4, name: "Sala 3" },
+    { id: 5, name: "Sala 4" },
   ]);
 	
   await db.insert(Status).values([
@@ -19,8 +22,8 @@ export default async function seed() {
   ])
   
 	await db.insert(User).values([
-    { id: 1, fullName: "Gabriel Osorio", majorID: 1,},
-    { id: 2, fullName: "Edgar Torres", majorID: 1,},
+    { id: 20106746, fullName: "Gabriel Osorio", majorID: 1,},
+    { id: 20109625, fullName: "Edgar Torres", majorID: 1,},
   ])
 	
 	await db.insert(PC).values([

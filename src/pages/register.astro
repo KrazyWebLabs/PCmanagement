@@ -5,7 +5,53 @@ import SubmitBtn from "@components/ui/Buttons/SubmitBtn.astro";
 import LayoutWTOS from "src/layouts/LayoutWTOS.astro";
 import FormSelect from "@components/ui/Forms/FormSelect.astro";
 import SelectOption from "@components/ui/Forms/SelectOption.astro";
+import { db } from "astro:db";
+import { User } from "astro:db";
+import { isDbError } from "astro:db";
+import { Major } from "astro:db";
+import { verifyUser, userHasSession } from "@functions/verifyUser";
 
+let major = await db.select().from(Major);
+let user = await db.select().from(User);
+console.log(user);
+
+if (Astro.request.method === 'POST') {
+  // Parse form data
+  const formData = await Astro.request.formData();
+  const userID = formData.get('userID');
+  const fullName = formData.get('fullName');
+  const majorID = formData.get('major');
+
+
+  if (typeof userID === 'string' && typeof fullName === 'string' && typeof majorID === 'string') {
+
+    if (await verifyUser(Number(userID)))
+		try {
+
+
+      // Mensaje de éxito
+      return new Response(
+        `<script>
+          alert("Registro exitoso");
+          window.location.href = "/";
+        </script>`,
+        {
+          headers: { "Content-Type": "text/html" },
+        }
+      );
+
+		} catch (e) {
+			if (isDbError(e)) {
+				console.error(`El usuario con matricula ${userID} ya existe\n\n${e.message}`);
+    	} else {
+				console.error('Se ha producido un error inesperado', e);
+			}
+		}
+	}
+
+  
+  return Astro.redirect('/register')
+}
 ---
 
 <LayoutWTOS title="Registro Nuevo Usuario">
@@ -28,10 +74,12 @@ import SelectOption from "@components/ui/Forms/SelectOption.astro";
       </div>
   
       <div class="flex flex-wrap gap-2">
-        <FormSelect title="Selecciona Carrera" name="major" isRequired={true}>
+        <FormSelect title="Selecciona Carrera" name="major" isRequired>
           <SelectOption value="">-- Selecciona La Carrera --</SelectOption>
           {
-            
+            major?.map((major) => (
+            <SelectOption value={major.id.toString()}>{major.name}</SelectOption>
+          ))
           }
           </FormSelect>
       </div>
@@ -40,4 +88,28 @@ import SelectOption from "@components/ui/Forms/SelectOption.astro";
       </div>
     </Form>
   </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Validar y transformar el input de userID
+      const userIDInput = document.querySelector('input[name="userID"]') as HTMLInputElement | null;
+      if (userIDInput) {
+        userIDInput.addEventListener('input', () => {
+          userIDInput.value = userIDInput.value.replace(/[^a-zA-Z0-9]/g, ''); // Solo texto y números
+        });
+      }
+  
+      // Validar y transformar el input de fullName
+      const fullNameInput = document.querySelector('input[name="fullName"]') as HTMLInputElement | null;
+      if (fullNameInput) {
+        fullNameInput.addEventListener('input', () => {
+          // Solo letras y espacios
+          fullNameInput.value = fullNameInput.value.replace(/[^a-zA-Z\s]/g, '');
+          // Convertir a mayúsculas
+          fullNameInput.value = fullNameInput.value.toUpperCase();
+        });
+      }
+    });
+  </script>
+  
 </LayoutWTOS>
