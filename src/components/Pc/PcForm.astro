@@ -1,0 +1,69 @@
+---
+import Form from "@form/Form.astro";
+import FormInput from "@form/FormInput.astro";
+import FormSelect from "@form/FormSelect.astro";
+import SelectOption from "@form/SelectOption.astro";
+import CapFrstLetter from "@functions/CapFrstLetter";
+
+
+interface Props {
+  selectedPC?: any;
+}
+
+const selectedPC = {
+    pcID: "PC001",
+    areaID: "Sala Mac",
+    userID: "20109625",
+    pcName: "PC01",
+    status: "active",
+  };
+---
+
+<Form title="Alta de Nueva PC">
+  {
+    !selectedPC 
+    ?
+        <FormInput name="pcID" type="number" isRequired>
+          ID de la PC
+        </FormInput>
+        
+        <FormSelect name="areaID" isRequired title="Sala">
+          <SelectOption value="" isSelected>--Selecciona la Sala---</SelectOption>
+          {
+
+          }
+        </FormSelect>
+
+        <FormInput name="pcName" type="text" placeholder="PC01" isRequired>
+          Nombre de la PC
+        </FormInput>
+
+        <FormSelect name="status" title="Status" isRequired>
+          <SelectOption value="" isSelected>--Selecciona el Status---</SelectOption>
+
+        </FormSelect>
+    :
+      
+    <FormInput name="pcID" type="number" isRequired>
+          ID de la PC
+        </FormInput>
+        
+        <FormSelect name="areaID" isRequired title="Sala">
+          <SelectOption value="" isSelected>--Selecciona la Sala---</SelectOption>
+          {
+
+          }
+        </FormSelect>
+
+        <FormInput name="pcName" type="text" placeholder="PC01" isRequired>
+          Nombre de la PC
+        </FormInput>
+
+        <FormSelect name="status" title="Status" isRequired>
+          <SelectOption value="" isSelected>--Selecciona el Status---</SelectOption>
+
+        </FormSelect>
+
+        <slot/>
+  }
+</Form>

@@ -1,0 +1,29 @@
+---
+import BackBtn from "@components/ui/Buttons/BackBtn.astro";
+import Layout from "../../layouts/Layout.astro";
+import PcForm from "@components/Pc/PcForm.astro";
+import SubmitBtn from "@components/ui/Buttons/SubmitBtn.astro";
+
+if (Astro.request.method === 'POST') {
+  // Parse form data
+  const formData = await Astro.request.formData();
+  const cardNumber = formData.get('cardNumber');
+  const accNumber = formData.get('accountNumber');
+
+
+  return Astro.redirect('/pc')
+}
+
+
+---
+
+<Layout title="vipcard">
+  <PcForm>
+    <div class="flex justify-end max-w-full mx-auto px-8">
+      <BackBtn />
+      <SubmitBtn>
+        Agregar
+      </SubmitBtn>
+    </div>
+  </PcForm>
+</Layout>
