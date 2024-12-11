@@ -4,66 +4,93 @@ import FormInput from "@form/FormInput.astro";
 import FormSelect from "@form/FormSelect.astro";
 import SelectOption from "@form/SelectOption.astro";
 import CapFrstLetter from "@functions/CapFrstLetter";
-
+import getNextId from "@functions/getNextID";
+import { Status } from "astro:db";
+import { db, PC, Area } from "astro:db";
 
 interface Props {
   selectedPC?: any;
 }
+const { selectedPC } = Astro.props;
 
-const selectedPC = {
-    pcID: "PC001",
-    areaID: "Sala Mac",
-    userID: "20109625",
-    pcName: "PC01",
-    status: "active",
-  };
+let nextID;
+let areas = await db.select().from(Area);
+let statuses = await db.select().from(Status);
+let updatedAreas; 
+let updatedStatuses; 
+
+function removeById<T extends { id: number }>(array: T[], idToRemove: number): T[] {
+  return array.filter(item => item.id !== idToRemove);
+}
+
+
+if (!selectedPC){
+  nextID = getNextId(await db.select().from(PC))
+} else{
+  updatedAreas = removeById(areas, selectedPC.PC?.areaID);
+  updatedStatuses = removeById(statuses, selectedPC.PC?.statusID);
+}
 ---
 
-<Form title="Alta de Nueva PC">
+<Form title={!selectedPC? "Alta de Nueva PC": `Editar ${selectedPC.PC?.name}`}>
   {
     !selectedPC 
     ?
-        <FormInput name="pcID" type="number" isRequired>
-          ID de la PC
-        </FormInput>
+      <FormInput name="pcID" type="number" isRequired value={nextID}>
+        ID de la PC
+      </FormInput>
         
-        <FormSelect name="areaID" isRequired title="Sala">
-          <SelectOption value="" isSelected>--Selecciona la Sala---</SelectOption>
-          {
+      <FormSelect name="areaID" isRequired title="Sala">
+        <SelectOption value="" isSelected>--Selecciona la Sala---</SelectOption>
+        {
+          areas?.map((area) => (
+            <SelectOption value={area.id.toString()}>{area.name}</SelectOption>
+          ))
+        }
+      </FormSelect>
 
-          }
-        </FormSelect>
+      <FormInput name="pcName" type="text" placeholder="PC01" isRequired>
+        Nombre de la PC
+      </FormInput>
 
-        <FormInput name="pcName" type="text" placeholder="PC01" isRequired>
-          Nombre de la PC
-        </FormInput>
-
-        <FormSelect name="status" title="Status" isRequired>
-          <SelectOption value="" isSelected>--Selecciona el Status---</SelectOption>
-
-        </FormSelect>
+      <FormSelect name="statusID" title="Status">
+        <SelectOption value="1" isSelected>Libre</SelectOption>
+      </FormSelect>
     :
       
-    <FormInput name="pcID" type="number" isRequired>
+      <FormInput name="pcID" type="number" isDisabled value={selectedPC.PC?.id}>
           ID de la PC
-        </FormInput>
+      </FormInput>
+
+      <input type="hidden" value={selectedPC.PC?.id} name="pcID">
         
-        <FormSelect name="areaID" isRequired title="Sala">
-          <SelectOption value="" isSelected>--Selecciona la Sala---</SelectOption>
+      <FormSelect name="areaID" title="Sala">
+        <SelectOption value="">--Selecciona la Sala---</SelectOption>
+        <SelectOption value={selectedPC.PC?.areaID} isSelected>{selectedPC.Area?.name}</SelectOption>
+        {
+          updatedAreas?.map((area) => (
+            <SelectOption value={area.id.toString()}>{area.name}</SelectOption>
+          ))
+        }
+      </FormSelect>
+
+      <FormInput name="pcName" type="text" placeholder="PC01" value={selectedPC.PC?.name}>
+        Nombre de la PC
+      </FormInput>
+
+      <FormSelect name="statusID" title="Status" isRequired>
+        <SelectOption value="" isSelected>--Selecciona el Status---</SelectOption>
+        <SelectOption value={selectedPC.Status?.id} isSelected>
           {
-
+            CapFrstLetter(selectedPC.Status?.name)
           }
-        </FormSelect>
-
-        <FormInput name="pcName" type="text" placeholder="PC01" isRequired>
-          Nombre de la PC
-        </FormInput>
-
-        <FormSelect name="status" title="Status" isRequired>
-          <SelectOption value="" isSelected>--Selecciona el Status---</SelectOption>
-
-        </FormSelect>
-
-        <slot/>
+        </SelectOption>
+        {
+          updatedStatuses?.map((status) => (
+            <SelectOption value={status.id.toString()}>{CapFrstLetter(status.name)}</SelectOption>
+          ))
+        }
+      </FormSelect>
   }
+<slot/>
 </Form>

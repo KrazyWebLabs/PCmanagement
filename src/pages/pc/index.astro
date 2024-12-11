@@ -4,8 +4,13 @@ import TrashIcon from "@icons/TrashIcon.astro"
 import EditIcon from "@icons/EditIcon.astro"
 import EditRecord from "@components/ui/Tables/EditRecord.astro";
 import ItemStatus from "@components/ui/Tables/ItemStatus.astro";
+import formatDate from "@functions/FormatDate";
 import AddRegisterBtn from "@components/ui/Buttons/AddRegisterBtn.astro";
-const result = [];
+import { db, PC, Status, Area, User, eq } from "astro:db";
+
+const result = await db.select().from(PC)
+  .innerJoin(Status, eq(Status.id, PC.statusID))
+  .innerJoin(Area, eq(Area.id, PC.areaID))
 ---
 
 <Layout title="PC's">
@@ -26,8 +31,9 @@ const result = [];
           <tr>
             <th class="py-3 px-6">Sala</th>
             <th class="py-3 px-6">PC</th>
-            <th class="py-3 px-6">Usuario</th>
+            <th class="py-3 px-6"># Usuario</th>
             <th class="py-3 px-6">Status</th>
+            <th class="py-3 px-6">Creado En</th>
             <th class="py-3 px-6"></th>
           </tr>
         </thead>
@@ -35,19 +41,24 @@ const result = [];
           {
             result.map((item) => (
               <tr>
-                <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.area}</td>
-                <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.pcName}</td>
-                <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.userName}</td>
+                <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.Area?.name}</td>
+                <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.PC?.name}</td>
+                <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.PC?.userID}</td>
                 <td class="px-6 py-4 whitespace-nowrap dark:text-white capitalize">
-                  <ItemStatus  status={item.status} />
+                  <ItemStatus  status={item.Status?.name ? item.Status?.name : ""} />
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap dark:text-white capitalize">
+                  {
+                    new Date(item.PC._createdAt).toString().split('GMT')[0].trim()
+                  }
                 </td>
                 <td class="flex items-center justify-center gap-4 m-2 text-right px-6 whitespace-nowrap">
-                  <EditRecord href={`/pc/${item.pcID}`}>
+                  <EditRecord href={`/pc/${item.PC?.id}`}>
                     <EditIcon/>
                   </EditRecord>
 
                   <a
-                    href={`/pc/delete?pcID=${item.pcID}`}
+                    href={`/pc/delete?pcID=${item.PC?.id}`}
                     class="py-2 px-3 inline-block text-white duration-150 font-medium bg-red-600 rounded-lg hover:bg-red-500 active:bg-red-700 md:text-sm"
                   >
                     <TrashIcon/>

@@ -8,6 +8,14 @@ const Area = defineTable({
   }
 })
 
+const Status = defineTable({
+  columns: {
+    id: column.number({ unique: true}),
+    name: column.text(),
+    _createdAt: column.date({ default: NOW })
+  }
+})
+
 const Major = defineTable({
   columns: {
     id: column.number({ unique: true}),
@@ -37,6 +45,7 @@ const PC = defineTable({
     name: column.text({ default: "PC" }),
     areaID: column.number(),
     userID: column.number({ optional: true }),
+    statusID: column.number({ default: 1 }),
     _createdAt: column.date({ default: NOW })
   },
   foreignKeys: [
@@ -51,6 +60,7 @@ const PC = defineTable({
 export default defineDb({
   tables: {
     Area,
+    Status,
     Major,
     User,
     PC
