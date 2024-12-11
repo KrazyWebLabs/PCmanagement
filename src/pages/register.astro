@@ -9,11 +9,9 @@ import { db } from "astro:db";
 import { User } from "astro:db";
 import { isDbError } from "astro:db";
 import { Major } from "astro:db";
-import { verifyUser, userHasSession } from "@functions/verifyUser";
+import { verifyUser } from "@functions/verifyUser";
 
 let major = await db.select().from(Major);
-let user = await db.select().from(User);
-console.log(user);
 
 if (Astro.request.method === 'POST') {
   // Parse form data
@@ -24,22 +22,35 @@ if (Astro.request.method === 'POST') {
 
 
   if (typeof userID === 'string' && typeof fullName === 'string' && typeof majorID === 'string') {
-
-    if (await verifyUser(Number(userID)))
-		try {
-
-
-      // Mensaje de éxito
+    if (await verifyUser(Number(userID))){
+			console.error(`El usuario con matricula ${userID} ya existe`);
+      
       return new Response(
         `<script>
-          alert("Registro exitoso");
+          alert("El usuario ${userID} ya existe.");
+          window.location.href = "/register";
+        </script>`,
+        {
+          headers: { "Content-Type": "text/html" },
+        }
+      );
+    }
+		try {
+      await db.insert(User).values({
+			  id: Number(userID),
+			  fullName: fullName,
+			  majorID: Number(majorID),
+      });
+      
+      return new Response(
+        `<script>
+          alert("El usuario ${userID} ha sido registrado.");
           window.location.href = "/";
         </script>`,
         {
           headers: { "Content-Type": "text/html" },
         }
       );
-
 		} catch (e) {
 			if (isDbError(e)) {
 				console.error(`El usuario con matricula ${userID} ya existe\n\n${e.message}`);

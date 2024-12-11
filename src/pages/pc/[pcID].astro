@@ -13,13 +13,12 @@ if (typeof pcID !== "string") {
 }
 
 const result = await db.select().from(PC)
-  .where(eq(PC.id, pcID))
+  .where(eq(PC.id, Number(pcID)))
   .innerJoin(Status, eq(Status.id, PC.statusID))
   .innerJoin(Area, eq(Area.id, PC.areaID))
 
 if (Astro.request.method === "POST") {
   // Parse form data
-  console.log("pepe");
   const formData = await Astro.request.formData();
 
   const pcID = formData.get("pcID");
@@ -32,22 +31,19 @@ if (Astro.request.method === "POST") {
       await db.update(PC).set({
         areaID: Number(areaID)
       })
-      .where(eq(PC.id, pcID))
-      console.log("es diferente el area");
+      .where(eq(PC.id, Number(pcID)))
     }
     if (String(result[0].PC.name) != pcName) {
       await db.update(PC).set({
         name: pcName
       })
-      .where(eq(PC.id, pcID))
-      console.log("es diferente el nombre");
+      .where(eq(PC.id, Number(pcID)))
     }
     if (String(result[0].PC.statusID) != statusID) {
       await db.update(PC).set({
         statusID: Number(statusID)
       })
-      .where(eq(PC.id, pcID))
-      console.log("es diferente el status")
+      .where(eq(PC.id, Number(pcID)))
     };
   }
 
