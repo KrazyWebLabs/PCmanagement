@@ -17,13 +17,13 @@ export default async function seed() {
   ]);
 
   await db.insert(Major).values([
-    { id: 1, name: "Ing. de software" },
-    { id: 2, name: "Ing. mecatronica" },
+    { id: 1, name: "Ingeniería de software" },
+    { id: 2, name: "Ingeniería mecatronica" },
   ])
   
 	await db.insert(User).values([
-    { id: 20106746, fullName: "Gabriel Osorio", majorID: 1,},
-    { id: 20109625, fullName: "Edgar Torres", majorID: 1,},
+    { id: 20106746, fullName: "Jorge Gabriel García Osorio", majorID: 1,},
+    { id: 20109625, fullName: "Edgar Torres Nuñez", majorID: 1,},
   ])
 	
 	await db.insert(PC).values([

@@ -19,7 +19,7 @@ const Status = defineTable({
 const Major = defineTable({
   columns: {
     id: column.number({ unique: true}),
-    name: column.text({ default: "Ing de Software" }),
+    name: column.text({ default: "Ingeniería de Software" }),
     _createdAt: column.date({ default: NOW })
   }
 })

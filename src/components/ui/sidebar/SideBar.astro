@@ -1,6 +1,7 @@
 ---
 import SideBarLink from "./SideBarLink.astro";
 import PcIcon from "@icons/PcIcon.astro";
+import ReportIcon from "../icons/ReportIcon.astro";
 import Divider from "../Divider.astro";
 import DashBoardIcon from "@icons/DashBoardIcon.astro";
 
@@ -23,6 +24,13 @@ const name = session?.name + " "+ session?.lastName;
       <SideBarLink href="/pc">
         <PcIcon slot="icon" />
         PC's
+      </SideBarLink>
+
+      <Divider />
+
+      <SideBarLink href="/">
+        <ReportIcon slot="icon" />
+        Reportes
       </SideBarLink>
     </nav>
     <!--  
