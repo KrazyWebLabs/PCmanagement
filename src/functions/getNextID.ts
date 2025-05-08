@@ -1,4 +1,4 @@
-export default function getNextId<T extends { id: number }>(array: T[]): number {
+export default function getNextId<T extends { id: number }>(array: any[]): number {
   if (array.length === 0) {
     return 1; // Retorna 1 si el array está vacío
   }

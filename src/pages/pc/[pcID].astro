@@ -3,7 +3,7 @@ import BackBtn from "@components/ui/Buttons/BackBtn.astro";
 import Layout from "../../layouts/Layout.astro";
 import PcForm from "@components/Pc/PcForm.astro";
 import SubmitBtn from "@components/ui/Buttons/SubmitBtn.astro";
-import { db, eq, PC, Status, Area } from "astro:db";
+import { turso } from "src/turso";
 
 const { pcID } = Astro.params;
 
@@ -12,11 +12,27 @@ if (typeof pcID !== "string") {
   throw new Error("El id debe ser una cadena de texto");
 }
 
-const result = await db.select().from(PC)
-  .where(eq(PC.id, Number(pcID)))
-  .innerJoin(Status, eq(Status.id, PC.statusID))
-  .innerJoin(Area, eq(Area.id, PC.areaID))
+const { rows: result } = await turso.execute(`
+  SELECT 
+    pc.id AS pc_id,
+    pc.name AS pc_name,
+    pc.statusID AS pc_status_id,
+    pc.areaID AS pc_area_id,
+    pc.userID AS pc_user_id,
 
+    st.id AS status_id,
+    st.name AS status_name,
+
+    a.id AS area_id,
+    a.name AS area_name
+
+  FROM PC pc
+  INNER JOIN Status st ON st.id = pc.statusID
+  INNER JOIN Area a ON a.id = pc.areaID
+  WHERE pc.id = ${pcID};
+`)
+
+console.log(result[0]);
 if (Astro.request.method === "POST") {
   // Parse form data
   const formData = await Astro.request.formData();
@@ -27,23 +43,32 @@ if (Astro.request.method === "POST") {
   const statusID = formData.get("statusID");
 
   if (typeof pcID === 'string' && typeof areaID === 'string' && typeof pcName === 'string'){
-    if (String(result[0].PC.areaID) != areaID) {
-      await db.update(PC).set({
-        areaID: Number(areaID)
-      })
-      .where(eq(PC.id, Number(pcID)))
+    if (String(result[0].pc_area_id) != areaID) {
+      await turso.execute(
+        `
+          UPDATE PC 
+          SET areaID = ${areaID}
+          WHERE id = ${pcID} AND areaID = ${result[0].pc_area_id};
+        `
+      )
     }
-    if (String(result[0].PC.name) != pcName) {
-      await db.update(PC).set({
-        name: pcName
-      })
-      .where(eq(PC.id, Number(pcID)))
+    if (String(result[0].pc_name) != pcName) {
+      await turso.execute(
+        `
+          UPDATE PC 
+          SET name = ${pcName}
+          WHERE id = ${pcID} AND name = ${result[0].pc_name};
+        `
+      )
     }
-    if (String(result[0].PC.statusID) != statusID) {
-      await db.update(PC).set({
-        statusID: Number(statusID)
-      })
-      .where(eq(PC.id, Number(pcID)))
+    if (String(result[0].pc_status_id) != statusID) {
+      await turso.execute(
+        `
+          UPDATE PC 
+          SET statusID = ${statusID}
+          WHERE id = ${pcID} AND statusID = ${result[0].pc_area_id};
+        `
+      )
     };
   }
 

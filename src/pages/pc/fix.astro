@@ -1,13 +1,14 @@
 ---
-import { PC, eq, db } from "astro:db";
+import { turso } from "src/turso";
 
 const pcID = Astro.url.searchParams.get("pcID");
 
-await db.update(PC).set({
-    statusID: 4,
-    userID: null
-  })
-  .where(eq(PC.id, Number(pcID)))
+await turso.execute(`
+  UPDATE PC
+  SET statusID = 4,
+    userID = null
+  WHERE id == ${pcID}
+`)
 
 return Astro.redirect('/pc')
 ---

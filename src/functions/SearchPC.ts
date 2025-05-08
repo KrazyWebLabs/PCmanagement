@@ -1,12 +1,6 @@
-import { and, db, eq, PC } from "astro:db";
+import { turso } from '../turso'
 
 export default async function searchPC(areaID: number){
-  const pcs = await db.select().from(PC).where(
-    and(
-      eq(PC.statusID, 1),
-      eq(PC.areaID, areaID)
-    )
-  )
-
-  return pcs;
+  const { rows } = await turso.execute(`SELECT * FROM PC WHERE statusID == 1 AND areaID == ${areaID}`)
+  return rows;
 }

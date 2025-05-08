@@ -8,10 +8,9 @@ import SelectOption from "@components/ui/Forms/SelectOption.astro";
 import searchPC from "@functions/SearchPC";
 import { verifyUser, userHasSession } from "@functions/verifyUser";
 import type { InputFieldArr } from "@customTypes/InputType";
-import { db } from "astro:db";
-import { Area } from "astro:db";
-import { PC } from "astro:db";
-import { eq } from "astro:db";
+import { turso } from "src/turso";
+import { NOW } from "astro:db";
+import getDate from "@functions/GetDate";
 
 const inputs: InputFieldArr[] = [
   {
@@ -23,53 +22,59 @@ const inputs: InputFieldArr[] = [
   },
 ];
 
-const areas = await db.select().from(Area)
+const { rows } = await turso.execute(`SELECT * FROM Area`);
+const areas = rows;
 let pcName;
 let area;
 
-if (Astro.request.method === 'POST') {
+if (Astro.request.method === "POST") {
   // Parse form data
   const formData = await Astro.request.formData();
-  const userID = formData.get('userID');
-  const fareaID = formData.get('areaID');
+  const userID = formData.get("userID");
+  const fareaID = formData.get("areaID");
+  const fecha = getDate();
 
-  if (typeof userID === 'string' && typeof fareaID === 'string') {
-    if (await verifyUser(Number(userID))){
+  if (typeof userID === "string" && typeof fareaID === "string") {
+    if (await verifyUser(Number(userID))) {
       if (await userHasSession(Number(userID))) {
-        await db.update(PC)
-          .set({
-            statusID: 1,
-            userID: null
-          })
-          .where(eq(PC.userID, Number(userID)))
-          return new Response(
-            `<script>
+        await turso.execute(`
+          UPDATE PC SET statusID = 1, userID = NULL WHERE userID == ${userID};
+        `);
+        await turso.execute(`
+          UPDATE AssignmentRegister 
+          SET statusID = 1,
+              userID = ${userID},
+              _updatedAt = '${fecha}'
+          WHERE userID = ${userID} AND statusID = 3;
+        `);
+
+        return new Response(
+          `<script>
               alert("La sesion de ${userID} ha sido terminada");
               window.location.href = "/";
             </script>`,
-            {
-              headers: { "Content-Type": "text/html" },
-            }
-          );
-      }
-      else {
+          {
+            headers: { "Content-Type": "text/html" },
+          }
+        );
+      } else {
         try {
-          const search = await searchPC(Number(fareaID))
-          const { id, name, areaID } = search[0]
-          
+          const search = await searchPC(Number(fareaID));
+          const { id, name, areaID } = search[0];
+
           pcName = name;
-          area = areas.find(room => room.id === areaID)?.name
-  
-          await db.update(PC)
-          .set({
-            statusID: 3,
-            userID: Number(userID)
-          })
-          .where(eq(PC.id, id))
-  
-          return Astro.redirect(`/assigned?pcName=${pcName}&area=${area}&userID=${userID}`)
+          area = areas.find((room) => room.id === areaID)?.name;
+          await turso.execute(
+            `UPDATE PC SET statusID = 3, userID = ${userID} WHERE id = ${id};`
+          );
+
+          return Astro.redirect(
+            `/assigned?pcName=${pcName}&area=${area}&userID=${userID}`
+          );
         } catch (e: any) {
-          console.error(`No se puede asignar un PC a ${userID}\n\nError: ${e.message}`);
+          console.error(
+            `No se puede asignar un PC a ${userID}\n\nError: ${e.message}`
+          );
           return new Response(
             `<script>
               alert("No se puede asignar un PC a ${userID}");
@@ -81,16 +86,17 @@ if (Astro.request.method === 'POST') {
           );
         }
       }
+    } else {
+      return Astro.redirect("/register");
     }
-    else{
-      return Astro.redirect('/register')
-    }
-	}
+  }
 }
 ---
 
 <LayoutWTOS title="Asignación de PC">
-  <div class="flex items-center justify-center flex-col mt-36 max-w-screen-xl mx-auto px-4 md:px-8 md:flex">
+  <div
+    class="flex items-center justify-center flex-col mt-36 max-w-screen-xl mx-auto px-4 md:px-8 md:flex"
+  >
     <Form title="Asignación de PC">
       {
         inputs.map((inp) => (
@@ -104,21 +110,24 @@ if (Astro.request.method === 'POST') {
           </FormInput>
         ))
       }
-	   <FormSelect title="Selecciona Sala" name="areaID">
-		  <SelectOption isSelected value="">--Selecciona una Sala--</SelectOption>
-		  {
-        areas?.map((area) => (
-          <SelectOption value={area.id.toString()}>{area.name}</SelectOption>
-        ))
-		  }
-	  </FormSelect>
+      <FormSelect title="Selecciona Sala" name="areaID">
+        <SelectOption isSelected value="">--Selecciona una Sala--</SelectOption>
+        {
+          areas?.map((area) => (
+            <SelectOption value={area.id ? area.id?.toString() : ""}>
+              {area.name}
+            </SelectOption>
+          ))
+        }
+      </FormSelect>
       <div class="flex justify-center items-center min-w-full mt-2">
         <SubmitBtn> Buscar </SubmitBtn>
       </div>
     </Form>
     <div class="dark:text-white">
-      ¿No estas registrado? <a href="/register" class="text-LegacyBlue-600">¡Registrate!</a>
+      ¿No estas registrado? <a href="/register" class="text-LegacyBlue-600"
+        >¡Registrate!</a
+      >
     </div>
   </div>
 </LayoutWTOS>
-

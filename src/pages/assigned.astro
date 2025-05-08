@@ -1,35 +1,87 @@
 ---
-import { User } from "astro:db";
-import { PC, eq, db } from "astro:db";
+import { isDbError } from "astro:db";
 import Layout from "src/layouts/Layout.astro";
+import { turso } from "src/turso";
 
 const pcName = Astro.url.searchParams.get("pcName");
 const area = Astro.url.searchParams.get("area");
 const userID = Astro.url.searchParams.get("userID");
+const fecha = new Date().toLocaleString("es-MX", {
+  timeZone: "America/Mexico_City",
+});
 
-const user = await db.select().from(User).where(eq(User.id, Number(userID)))
+const { rows } = await turso.execute(
+  "SELECT MAX(id) as maxID FROM AssignmentRegister"
+);
+const nextID = Number(rows[0].maxID ?? 0) + 1;
 
-const { fullName } = user[0]
+const { rows: user } = await turso.execute(
+  `SELECT * FROM User WHERE id = ${Number(userID)}`
+);
+const { rows: areaSel } = await turso.execute(
+  `SELECT * FROM Area WHERE name = '${String(area)}'`
+);
+const { rows: pc } = await turso.execute(
+  `SELECT * FROM PC WHERE name = '${String(pcName)}'`
+);
+
+if (
+  typeof pcName === "string" &&
+  typeof area === "string" &&
+  typeof userID === "string"
+) {
+  // Insert data from the form to the User and upload it to the DB
+  try {
+    await turso.execute(`
+      INSERT INTO AssignmentRegister (id, areaID, userID, pcID, statusID, _createdAt)
+      VALUES (
+        ${Number(nextID)},
+        ${Number(areaSel[0].id)},
+        ${Number(user[0].id)},
+        ${Number(pc[0].id)},
+        3,
+        '${fecha}'
+      )
+    `);
+  } catch (e: any) {
+    if (isDbError(e)) {
+      console.error(
+        `No se puede insertar un registro con nombre ${pcName}\n\n${e.message}`
+      );
+    } else {
+      console.error(`Se ha producido un error inesperado\n\n${e.message}`);
+    }
+  }
+}
+
+const { fullName } = user[0];
 ---
+
 <Layout title="Has sido asignad@!">
-  <div class="flex items-center justify-center flex-col mt-36 max-w-screen-xl mx-auto px-4 md:px-8 md:flex">
-    <h2 class="text-5xl dark:text-white font-bold mb-4">{ fullName }</h2>
+  <div
+    class="flex items-center justify-center flex-col mt-36 max-w-screen-xl mx-auto px-4 md:px-8 md:flex"
+  >
+    <h2 class="text-5xl dark:text-white font-bold mb-4">{fullName}</h2>
     <p class="text-xl dark:text-gray-300 font-bold mb-4">
       Se te asignó:
-      <p class="text-5xl border border-LegacyBlue-500 rounded-lg p-4 dark:text-white font-bold mb-4">
-        { pcName }
+      <p
+        class="text-5xl border border-LegacyBlue-500 rounded-lg p-4 dark:text-white font-bold mb-4"
+      >
+        {pcName}
       </p>
     </p>
     <p class="text-xl dark:text-gray-300 font-bold mb-4">
       En:
-      <p class="text-5xl border border-LegacyBlue-500 rounded-lg p-4 dark:text-white font-bold mb-4">
-        { area }
+      <p
+        class="text-5xl border border-LegacyBlue-500 rounded-lg p-4 dark:text-white font-bold mb-4"
+      >
+        {area}
       </p>
     </p>
   </div>
 </Layout>
 <script type="module" is:inline>
   setTimeout(() => {
-    location.href ="/";;
+    location.href = "/";
   }, 10000); // 5000 milisegundos = 5 segundos
 </script>

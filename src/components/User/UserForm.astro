@@ -1,0 +1,111 @@
+---
+import Form from "@form/Form.astro";
+import FormInput from "@form/FormInput.astro";
+import FormSelect from "@components/ui/Forms/FormSelect.astro";
+import SelectOption from "@components/ui/Forms/SelectOption.astro";
+import CapFrstLetter from "@functions/CapFrstLetter";
+import { db, Major, Status } from "astro:db";
+import { turso } from "src/turso";
+
+interface Props {
+  selectedUser?: any;
+}
+
+const { selectedUser } = Astro.props;
+
+let { rows:majors } = await turso.execute("SELECT * FROM Major")
+let { rows: statuses } = await turso.execute("SELECT * FROM Status")
+let updatedStatuses; 
+let updatedMajors; 
+
+function removeById<T extends { id: number, name?: string }>(array: any[], idToRemove: number): T[] {
+  return array.filter(item => item.id !== idToRemove);
+}
+
+if (selectedUser){
+  updatedStatuses = removeById(statuses, selectedUser.user_status_id);
+  updatedMajors = removeById(majors, selectedUser.user_major_id);
+}
+---
+
+<Form title={!selectedUser? "Registro de Estudiante": `Editar ${selectedUser.user_full_name}`}>
+  {
+    !selectedUser
+    ?
+    <FormInput
+        name="userID"
+        type="number"
+        isRequired
+        placeholder="20104669"
+      >
+        # Matrícula
+      </FormInput>
+
+  
+      <div class="flex flex-wrap gap-2">
+        <FormInput name="fullName" type="text" isRequired placeholder="Bryan Arturo Barraza García">
+          Nombre Completo
+        </FormInput>
+      </div>
+  
+      <div class="flex flex-wrap gap-2">
+        <FormSelect title="Selecciona Carrera" name="major" isRequired>
+          <SelectOption value="">-- Selecciona La Carrera --</SelectOption>
+          {
+            majors?.map((major) => (
+            <SelectOption value={major.id ? major.id.toString() : ""}>{major.name}</SelectOption>
+          ))
+          }
+          </FormSelect>
+      </div>
+    :
+      
+    <FormInput
+        name="id"
+        type="number"
+        isRequired
+        placeholder="20104669"
+        isDisabled
+        value={selectedUser.user_id}
+      >
+        # Matrícula
+      </FormInput>
+      <input type="hidden" value={selectedUser.user_id} name="userID">
+  
+      <div class="flex flex-wrap gap-2">
+        <FormInput name="fullName" type="text" isRequired placeholder="Bryan Arturo Barraza García" value={selectedUser.user_full_name}>
+          Nombre Completo
+        </FormInput>
+      </div>
+  
+      <div class="flex flex-wrap gap-2">
+        <FormSelect title="Selecciona Carrera" name="major" isRequired>
+          <SelectOption value="" isSelected>-- Selecciona La Carrera --</SelectOption>
+          <SelectOption value={selectedUser.major_id} isSelected>
+            {
+              CapFrstLetter(selectedUser.major_name)
+            }
+          </SelectOption>
+            {
+              updatedMajors?.map((major) => (
+                <SelectOption value={major.id.toString()}>{major.name}</SelectOption>
+              ))
+            }
+          </FormSelect>
+      </div>
+      <FormSelect name="statusID" title="Status" isRequired>
+        <SelectOption value="" isSelected>--Selecciona el Status---</SelectOption>
+        <SelectOption value={selectedUser.status_id} isSelected>
+          {
+            CapFrstLetter(selectedUser.status_name)
+          }
+        </SelectOption>
+        {
+          updatedStatuses?.map((status) => (
+            <SelectOption value={status.id.toString()}>{CapFrstLetter(status.name ? status.name : "")}</SelectOption>
+          ))
+        }
+      </FormSelect>
+  }
+<slot/>
+</Form>

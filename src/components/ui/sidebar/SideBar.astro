@@ -4,6 +4,7 @@ import PcIcon from "@icons/PcIcon.astro";
 import ReportIcon from "../icons/ReportIcon.astro";
 import Divider from "../Divider.astro";
 import DashBoardIcon from "@icons/DashBoardIcon.astro";
+import StudentsIcon from "../icons/StudentsIcon.astro";
 
 const session = Astro.cookies.get("userSes")?.json();
 const name = session?.name + " "+ session?.lastName;
@@ -24,6 +25,10 @@ const name = session?.name + " "+ session?.lastName;
       <SideBarLink href="/pc">
         <PcIcon slot="icon" />
         PC's
+      </SideBarLink>
+      <SideBarLink href="/student">
+        <StudentsIcon slot="icon" />
+        Alumnos
       </SideBarLink>
 
       <Divider />

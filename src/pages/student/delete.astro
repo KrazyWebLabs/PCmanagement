@@ -1,0 +1,13 @@
+---
+import { turso } from "src/turso";
+
+const userID = Astro.url.searchParams.get("userID");
+
+await turso.execute(`
+  UPDATE User
+  SET statusID = 2
+  WHERE id == ${userID}
+`)
+
+return Astro.redirect('/student')
+---

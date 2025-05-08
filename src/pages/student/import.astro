@@ -1,0 +1,81 @@
+---
+import { isDbError } from "astro:db";
+import Layout from "../../layouts/Layout.astro";
+import readExcelFile from "@functions/readExcelFile";
+import Form from "@form/Form.astro";
+import FormInput from "@form/FormInput.astro";
+import SubmitBtn from "@components/ui/Buttons/SubmitBtn.astro";
+import { turso } from "src/turso";
+import getDate from "@functions/GetDate";
+import searchMajor from "@functions/SearchMajor";
+
+export interface Users {
+  matricula: number;
+  nombre: string;
+  carrera: string;
+}
+let message;
+
+
+if (Astro.request.method === "POST") {
+  const formData = await Astro.request.formData();
+  const date = getDate()
+  const excel = formData.get("excelFile") as File;
+
+  const data = await readExcelFile(excel);
+
+  console.log(typeof data);
+  if (typeof data === "object") {
+    // Insert data from the form to the User and upload it to the DB
+    for (const item of data) {
+      const majorData  =  await searchMajor(item.carrera)
+
+      try {
+        message = `Insertando ${item.matricula}: ${item.nombre},`;
+        console.log(message);
+        await turso.execute(`
+        INSERT INTO User (id, fullname, majorID, majorName, _createdAt)
+          VALUES (
+            ${item.matricula},
+            '${item.nombre}',
+            ${majorData[0].id},
+            '${majorData[0].name}',
+            '${date}'
+          )
+      `)
+      } catch (e) {
+        if (isDbError(e)) {
+          console.error(
+            `No se puede insertar el usuario: ${item.nombre}\n\n${e.message}`
+          );
+        } else {
+          console.error("Se ha producido un error inesperado", e);
+        }
+      }
+    }
+
+    return Astro.redirect("/student");
+  }
+}
+---
+
+<Layout title="Importar">
+  <Form title="Importar Alumnos">
+    <FormInput name="excelFile" type="file" isRequired>
+      Archivo (.xlsx)
+    </FormInput>
+    <SubmitBtn>
+      Importar
+    </SubmitBtn>
+    <div class="flex justify-center items-center">
+      <h3 id="statusMessage" class="dark:text-white">
+        {message}
+      </h3>
+    </div>
+  </Form>
+</Layout>
+<script type="module">
+  const statusEl = document.getElementById("statusMessage");
+
+  statusEl.textContent = message
+</script>

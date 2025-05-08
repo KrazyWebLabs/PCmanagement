@@ -7,6 +7,7 @@ import CapFrstLetter from "@functions/CapFrstLetter";
 import getNextId from "@functions/getNextID";
 import { Status } from "astro:db";
 import { db, PC, Area } from "astro:db";
+import { turso } from "src/turso";
 
 interface Props {
   selectedPC?: any;
@@ -14,25 +15,26 @@ interface Props {
 const { selectedPC } = Astro.props;
 
 let nextID;
-let areas = await db.select().from(Area);
-let statuses = await db.select().from(Status);
+let { rows:areas } = await turso.execute("SELECT * FROM Area")
+let { rows:statuses } = await turso.execute("SELECT * FROM Status")
 let updatedAreas; 
 let updatedStatuses; 
 
-function removeById<T extends { id: number }>(array: T[], idToRemove: number): T[] {
+function removeById<T extends { id: number, name?: string}>(array: any[], idToRemove: number): T[] {
   return array.filter(item => item.id !== idToRemove);
 }
 
 
 if (!selectedPC){
-  nextID = getNextId(await db.select().from(PC))
+  const { rows:pcs } = await turso.execute("SELECT MAX(id) as maxID FROM PC");
+  nextID = Number(pcs[0].maxID ?? 0) + 1;
 } else{
-  updatedAreas = removeById(areas, selectedPC.PC?.areaID);
-  updatedStatuses = removeById(statuses, selectedPC.PC?.statusID);
+  updatedAreas = removeById(areas, selectedPC.pc_area_id);
+  updatedStatuses = removeById(statuses, selectedPC.pc_status_id);
 }
 ---
 
-<Form title={!selectedPC? "Alta de Nueva PC": `Editar ${selectedPC.PC?.name}`}>
+<Form title={!selectedPC? "Alta de Nueva PC": `Editar ${selectedPC.pc_name}`}>
   {
     !selectedPC 
     ?
@@ -44,7 +46,7 @@ if (!selectedPC){
         <SelectOption value="" isSelected>--Selecciona la Sala---</SelectOption>
         {
           areas?.map((area) => (
-            <SelectOption value={area.id.toString()}>{area.name}</SelectOption>
+            <SelectOption value={area.id ? area.id.toString() : ""}>{area.name}</SelectOption>
           ))
         }
       </FormSelect>
@@ -58,7 +60,7 @@ if (!selectedPC){
       </FormSelect>
     :
       
-      <FormInput name="pcID" type="number" isDisabled value={selectedPC.PC?.id}>
+      <FormInput name="pcID" type="number" isDisabled value={selectedPC.pc_id}>
           ID de la PC
       </FormInput>
 
@@ -66,7 +68,7 @@ if (!selectedPC){
         
       <FormSelect name="areaID" title="Sala">
         <SelectOption value="">--Selecciona la Sala---</SelectOption>
-        <SelectOption value={selectedPC.PC?.areaID} isSelected>{selectedPC.Area?.name}</SelectOption>
+        <SelectOption value={selectedPC.pc_area_id} isSelected>{selectedPC.area_name}</SelectOption>
         {
           updatedAreas?.map((area) => (
             <SelectOption value={area.id.toString()}>{area.name}</SelectOption>
@@ -74,7 +76,7 @@ if (!selectedPC){
         }
       </FormSelect>
 
-      <FormInput name="pcName" type="text" placeholder="PC01" value={selectedPC.PC?.name}>
+      <FormInput name="pcName" type="text" placeholder="PC01" value={selectedPC.pc_name}>
         Nombre de la PC
       </FormInput>
 
@@ -82,12 +84,12 @@ if (!selectedPC){
         <SelectOption value="" isSelected>--Selecciona el Status---</SelectOption>
         <SelectOption value={selectedPC.Status?.id} isSelected>
           {
-            CapFrstLetter(selectedPC.Status?.name)
+            CapFrstLetter(selectedPC.status_name)
           }
         </SelectOption>
         {
           updatedStatuses?.map((status) => (
-            <SelectOption value={status.id.toString()}>{CapFrstLetter(status.name)}</SelectOption>
+            <SelectOption value={status.id.toString()}>{CapFrstLetter(status.name ? status.name :"")}</SelectOption>
           ))
         }
       </FormSelect>
