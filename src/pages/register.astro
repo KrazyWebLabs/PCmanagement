@@ -1,17 +1,13 @@
 ---
-import Form from "@form/Form.astro";
-import FormInput from "@form/FormInput.astro";
+import BackBtn from "@components/ui/Buttons/BackBtn.astro";
 import SubmitBtn from "@components/ui/Buttons/SubmitBtn.astro";
-import LayoutWTOS from "src/layouts/LayoutWTOS.astro";
-import FormSelect from "@components/ui/Forms/FormSelect.astro";
-import SelectOption from "@components/ui/Forms/SelectOption.astro";
-import { db } from "astro:db";
-import { User } from "astro:db";
 import { isDbError } from "astro:db";
-import { Major } from "astro:db";
+import UserForm from "@components/User/UserForm.astro";
 import { verifyUser } from "@functions/verifyUser";
+import getDate from "@functions/GetDate";
+import { turso } from "src/turso";
+import Layout from "src/layouts/Layout.astro";
 
-let major = await db.select().from(Major);
 
 if (Astro.request.method === 'POST') {
   // Parse form data
@@ -19,7 +15,7 @@ if (Astro.request.method === 'POST') {
   const userID = formData.get('userID');
   const fullName = formData.get('fullName');
   const majorID = formData.get('major');
-
+  const date = getDate()
 
   if (typeof userID === 'string' && typeof fullName === 'string' && typeof majorID === 'string') {
     if (await verifyUser(Number(userID))){
@@ -36,11 +32,15 @@ if (Astro.request.method === 'POST') {
       );
     }
 		try {
-      await db.insert(User).values({
-			  id: Number(userID),
-			  fullName: fullName,
-			  majorID: Number(majorID),
-      });
+      await turso.execute(`
+        INSERT INTO User (id, fullname, majorID, _createdAt)
+          VALUES (
+            ${userID},
+            '${fullName}',
+            ${majorID},
+            '${date}'
+          )
+      `)
       
       return new Response(
         `<script>
@@ -61,66 +61,17 @@ if (Astro.request.method === 'POST') {
 	}
 
   
-  return Astro.redirect('/register')
+  return Astro.redirect('/student')
 }
 ---
 
-<LayoutWTOS title="Registro Nuevo Usuario">
-  <div class="mx-8">
-    <Form title="Alta de Nuevo Usuario">
-      <FormInput
-        name="userID"
-        type="number"
-        isRequired
-        placeholder="20104669"
-      >
-        # Matrícula
-      </FormInput>
-
-  
-      <div class="flex flex-wrap gap-2">
-        <FormInput name="fullName" type="text" isRequired placeholder="Bryan Arturo Barraza García">
-          Nombre Completo
-        </FormInput>
-      </div>
-  
-      <div class="flex flex-wrap gap-2">
-        <FormSelect title="Selecciona Carrera" name="major" isRequired>
-          <SelectOption value="">-- Selecciona La Carrera --</SelectOption>
-          {
-            major?.map((major) => (
-            <SelectOption value={major.id.toString()}>{major.name}</SelectOption>
-          ))
-          }
-          </FormSelect>
-      </div>
-      <div class="flex justify-end max-w-full mx-auto px-8 flex-wrap gap-2">
-        <SubmitBtn> Registrar </SubmitBtn>
-      </div>
-    </Form>
-  </div>
-
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      // Validar y transformar el input de userID
-      const userIDInput = document.querySelector('input[name="userID"]') as HTMLInputElement | null;
-      if (userIDInput) {
-        userIDInput.addEventListener('input', () => {
-          userIDInput.value = userIDInput.value.replace(/[^a-zA-Z0-9]/g, ''); // Solo texto y números
-        });
-      }
-  
-      // Validar y transformar el input de fullName
-      const fullNameInput = document.querySelector('input[name="fullName"]') as HTMLInputElement | null;
-      if (fullNameInput) {
-        fullNameInput.addEventListener('input', () => {
-          // Solo letras y espacios
-          fullNameInput.value = fullNameInput.value.replace(/[^a-zA-Z\s]/g, '');
-          // Convertir a mayúsculas
-          fullNameInput.value = fullNameInput.value.toUpperCase();
-        });
-      }
-    });
-  </script>
-  
-</LayoutWTOS>
+<Layout title="Alta Usuario">
+  <UserForm>
+    <div class="flex justify-end max-w-full mx-auto px-8">
+      <BackBtn />
+      <SubmitBtn>
+        Agregar
+      </SubmitBtn>
+    </div>
+  </UserForm>
+</Layout>
