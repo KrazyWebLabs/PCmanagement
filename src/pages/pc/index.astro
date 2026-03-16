@@ -16,8 +16,7 @@ const { rows: result } = await turso.execute(`
     pc.statusID AS pc_status_id,
     pc.areaID AS pc_area_id,
     pc.userID AS pc_user_id,
-    pc._createdAt AS pc_createdAt,
-
+    
     st.id AS status_id,
     st.name AS status_name,
 
@@ -62,7 +61,6 @@ const { rows: result } = await turso.execute(`
             <th class="py-3 px-6">PC</th>
             <th class="py-3 px-6"># Usuario</th>
             <th class="py-3 px-6">Status</th>
-            <th class="py-3 px-6">Creado En</th>
             <th class="py-3 px-6"></th>
           </tr>
         </thead>
@@ -86,7 +84,7 @@ const { rows: result } = await turso.execute(`
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap dark:text-white capitalize">
                   {
-                    item.pc_createdAt
+                    //item.pc_createdAt
                   }
                 </td>
                 <td class="flex items-center justify-center gap-4 m-2 text-right px-6 whitespace-nowrap">

@@ -8,6 +8,13 @@ export async function verifyUser(userID: number){
   return true
 }
 
+export async function verifyProfessor(userID: string){
+  const { rows } = await turso.execute(`SELECT * FROM Professors WHERE id == '${userID}'`)
+
+  if (rows.length === 0) return false
+  return true
+}
+
 export async function userHasSession(userID: number){
   const { rows } = await turso.execute(`SELECT * FROM PC WHERE userID == ${userID}`)
 

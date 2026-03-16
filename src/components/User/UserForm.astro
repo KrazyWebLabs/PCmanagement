@@ -11,6 +11,9 @@ interface Props {
   selectedUser?: any;
 }
 
+const path = new URL(Astro.url).pathname; 
+const isProfessor = path == "/professor/add" 
+
 const { selectedUser } = Astro.props;
 
 let { rows:majors } = await turso.execute("SELECT * FROM Major")
@@ -26,15 +29,21 @@ if (selectedUser){
   updatedStatuses = removeById(statuses, selectedUser.user_status_id);
   updatedMajors = removeById(majors, selectedUser.user_major_id);
 }
+
+const title = isProfessor
+  ? "Registro de Profesores"
+  : !selectedUser
+    ? "Registro de Estudiante"
+    : `Editar ${selectedUser.user_full_name}`;
 ---
 
-<Form title={!selectedUser? "Registro de Estudiante": `Editar ${selectedUser.user_full_name}`}>
+<Form title={title}>
   {
     !selectedUser
     ?
-    <FormInput
+      <FormInput
         name="userID"
-        type="number"
+        type={!isProfessor ? "number" : "text" }
         isRequired
         placeholder="20104669"
       >
@@ -47,20 +56,20 @@ if (selectedUser){
           Nombre Completo
         </FormInput>
       </div>
-  
+
       <div class="flex flex-wrap gap-2">
-        <FormSelect title="Selecciona Carrera" name="major" isRequired>
-          <SelectOption value="">-- Selecciona La Carrera --</SelectOption>
-          {
-            majors?.map((major) => (
-            <SelectOption value={major.id ? major.id.toString() : ""}>{major.name}</SelectOption>
-          ))
-          }
-          </FormSelect>
+        {!isProfessor && (
+            <FormSelect title="Selecciona Carrera" name="major" isRequired>
+              <SelectOption value="">-- Selecciona La Carrera --</SelectOption>
+              {majors?.map((major) => (
+                <SelectOption value={major.id?.toString() ?? ""}>{major.name}</SelectOption>
+              ))}
+            </FormSelect>
+        )}
       </div>
     :
       
-    <FormInput
+      <FormInput
         name="id"
         type="number"
         isRequired
@@ -107,5 +116,5 @@ if (selectedUser){
         }
       </FormSelect>
   }
-<slot/>
+  <slot/>
 </Form>

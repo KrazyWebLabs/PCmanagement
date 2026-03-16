@@ -15,9 +15,21 @@ const { rows } = await turso.execute(
 );
 const nextID = Number(rows[0].maxID ?? 0) + 1;
 
-const { rows: user } = await turso.execute(
-  `SELECT * FROM User WHERE id = ${Number(userID)}`
-);
+// Detectar si es profesor o estudiante
+let user: any[] = [];
+if (typeof userID === "string" && userID.toLowerCase().startsWith("e")) {
+  const { rows: prof } = await turso.execute(
+    `SELECT * FROM Professors WHERE id = '${userID}'`
+  );
+  user = prof;
+} else if (typeof userID === "string") {
+  const { rows: stud } = await turso.execute(
+    `SELECT * FROM User WHERE id = ${Number(userID)}`
+  );
+  user = stud;
+}
+
+// Obtener área y pc
 const { rows: areaSel } = await turso.execute(
   `SELECT * FROM Area WHERE name = '${String(area)}'`
 );
@@ -28,16 +40,16 @@ const { rows: pc } = await turso.execute(
 if (
   typeof pcName === "string" &&
   typeof area === "string" &&
-  typeof userID === "string"
+  typeof userID === "string" &&
+  user.length > 0
 ) {
-  // Insert data from the form to the User and upload it to the DB
   try {
     await turso.execute(`
       INSERT INTO AssignmentRegister (id, areaID, userID, pcID, statusID, _createdAt)
       VALUES (
         ${Number(nextID)},
         ${Number(areaSel[0].id)},
-        ${Number(user[0].id)},
+        '${user[0].id}',
         ${Number(pc[0].id)},
         3,
         '${fecha}'
@@ -54,14 +66,15 @@ if (
   }
 }
 
-const { fullName } = user[0];
+// Obtener nombre (estudiante usa fullName, profesor usa fullname)
+const displayName = user[0]?.fullName ?? user[0]?.fullname ?? "Usuario";
 ---
 
 <Layout title="Has sido asignad@!">
   <div
     class="flex items-center justify-center flex-col mt-36 max-w-screen-xl mx-auto px-4 md:px-8 md:flex"
   >
-    <h2 class="text-5xl dark:text-white font-bold mb-4">{fullName}</h2>
+    <h2 class="text-5xl dark:text-white font-bold mb-4">{displayName}</h2>
     <p class="text-xl dark:text-gray-300 font-bold mb-4">
       Se te asignó:
       <p
@@ -83,5 +96,5 @@ const { fullName } = user[0];
 <script type="module" is:inline>
   setTimeout(() => {
     location.href = "/";
-  }, 10000); // 5000 milisegundos = 5 segundos
+  }, 2500); // 5000 milisegundos = 5 segundos
 </script>

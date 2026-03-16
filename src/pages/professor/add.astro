@@ -4,7 +4,7 @@ import Layout from "../../layouts/Layout.astro";
 import SubmitBtn from "@components/ui/Buttons/SubmitBtn.astro";
 import { isDbError } from "astro:db";
 import UserForm from "@components/User/UserForm.astro";
-import { verifyUser } from "@functions/verifyUser";
+import { verifyProfessor } from "@functions/verifyUser";
 import getDate from "@functions/GetDate";
 import { turso } from "src/turso";
 
@@ -12,19 +12,18 @@ import { turso } from "src/turso";
 if (Astro.request.method === 'POST') {
   // Parse form data
   const formData = await Astro.request.formData();
-  const userID = formData.get('userID');
+  const profID = formData.get('userID');
   const fullName = formData.get('fullName');
-  const majorID = formData.get('major');
   const date = getDate()
 
-  if (typeof userID === 'string' && typeof fullName === 'string' && typeof majorID === 'string') {
-    if (await verifyUser(Number(userID))){
-			console.error(`El usuario con matricula ${userID} ya existe`);
+  if (typeof profID === 'string' && typeof fullName === 'string') {
+    if (await verifyProfessor(profID)){
+			console.error(`El usuario con matricula ${profID} ya existe`);
       
       return new Response(
         `<script>
-          alert("El usuario ${userID} ya existe.");
-          window.location.href = "/register";
+          alert("El usuario ${profID} ya existe.");
+          window.location.href = "/professor/add";
         </script>`,
         {
           headers: { "Content-Type": "text/html" },
@@ -32,40 +31,35 @@ if (Astro.request.method === 'POST') {
       );
     }
 		try {
-      await turso.execute(`
-        INSERT INTO User (id, fullname, majorID, _createdAt)
-          VALUES (
-            ${userID},
-            '${fullName}',
-            ${majorID},
-            '${date}'
-          )
-      `)
-      
+      await turso.execute({
+        sql: `INSERT INTO Professors (id, fullname, _createdAt) VALUES (?, ?, ?)`,
+        args: [profID, fullName, date],
+      });
+
       return new Response(
         `<script>
-          alert("El usuario ${userID} ha sido registrado.");
+          alert("El usuario ${profID} ha sido registrado.");
           window.location.href = "/";
         </script>`,
         {
           headers: { "Content-Type": "text/html" },
         }
       );
-		} catch (e) {
-			if (isDbError(e)) {
-				console.error(`El usuario con matricula ${userID} ya existe\n\n${e.message}`);
-    	} else {
-				console.error('Se ha producido un error inesperado', e);
-			}
+    } catch (e) {
+      if (isDbError(e)) {
+        console.error(`El usuario con matricula ${profID} ya existe\n\n${e.message}`);
+      } else {
+        console.error('Se ha producido un error inesperado', e);
+      }
 		}
 	}
 
   
-  return Astro.redirect('/student')
+  return Astro.redirect('/professor')
 }
 ---
 
-<Layout title="Alta Usuario">
+<Layout title="Alta Profesor">
   <UserForm>
     <div class="flex justify-end max-w-full mx-auto px-8">
       <BackBtn />

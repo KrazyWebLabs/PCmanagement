@@ -13,19 +13,13 @@ const { rows:result } = await turso.execute(`
     u.id AS user_id,
     u.fullName AS user_full_name,
     u.statusID AS user_status_id,
-    u.majorID AS user_major_id,
-    u.majorName AS user_major_name,
     u._createdAt,
 
     st.id AS status_id,
-    st.name AS status_name,
+    st.name AS status_name
 
-    m.id AS major_id,
-    m.name AS major_name
-
-  FROM User u
+  FROM Professors u
   INNER JOIN Status st ON st.id = u.statusID
-  INNER JOIN Major m ON m.id = u.majorID
 `)
 ---
 
@@ -39,7 +33,6 @@ const { rows:result } = await turso.execute(`
       </div>
       <div class="mt-3 md:mt-0">
         <AddRegisterBtn/>
-        <ImportBtn/>
       </div>
     </div>
     <div class="mt-6 shadow-sm border rounded-lg overflow-x-auto backdrop-blur-sm">
@@ -48,7 +41,6 @@ const { rows:result } = await turso.execute(`
           <tr>
             <th class="py-3 px-6"># Matricula</th>
             <th class="py-3 px-6">Nombre Completo</th>
-            <th class="py-3 px-6">Carrera</th>
             <th class="py-3 px-6">Fecha de Registro</th>
             <th class="py-3 px-6">Status</th>
             <th class="py-3 px-6"></th>
@@ -60,7 +52,6 @@ const { rows:result } = await turso.execute(`
               <tr>
                 <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.user_id}</td>
                 <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.user_full_name}</td>
-                <td class="px-6 py-4 whitespace-nowrap dark:text-white">{item.user_major_name}</td>
                 <td class="px-6 py-4 whitespace-nowrap dark:text-white capitalize">
                   {
                     item._createdAt
@@ -70,13 +61,11 @@ const { rows:result } = await turso.execute(`
                   <ItemStatus  status={item.status_name ? item.status_name.toString() : ""} />
                 </td>
                 <td class="flex items-center justify-center gap-4 m-2 text-right px-6 whitespace-nowrap">
-                  
-                  <EditRecord href={`/student/${item.user_id}`}>
-                    <EditIcon/>
-                  </EditRecord>
-
+                    {/* <EditRecord href={`/student/${item.user_id}`}>
+                      <EditIcon/>
+                    </EditRecord> */}
                   <a
-                    href={`/student/delete?userID=${item.user_id}`}
+                    href={`/professor/delete?userID=${item.user_id}`}
                     class="py-2 px-3 inline-block text-white duration-150 font-medium bg-red-600 rounded-lg hover:bg-red-500 active:bg-red-700 md:text-sm"
                   >
                     <TrashIcon/>
