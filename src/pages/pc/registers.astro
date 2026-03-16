@@ -1,0 +1,111 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import TrashIcon from "@icons/TrashIcon.astro";
+import EditIcon from "@icons/EditIcon.astro";
+import EditRecord from "@components/ui/Tables/EditRecord.astro";
+import ItemStatus from "@components/ui/Tables/ItemStatus.astro";
+import AddRegisterBtn from "@components/ui/Buttons/AddRegisterBtn.astro";
+import { db, PC, Status, Area, eq } from "astro:db";
+import CheckIcon from "@components/ui/icons/CheckIcon.astro";
+import ClipboardListIcon from "@components/ui/icons/ClipboardListIcon.astro";
+import { AssignmentRegister } from "astro:db";
+import { User } from "astro:db";
+import { turso } from "src/turso";
+
+const { rows: result } = await turso.execute(
+  `
+    SELECT 
+    ar.id AS assignment_id,
+    ar.statusID AS assignment_status_id,
+    ar.userID AS assignment_user_id,
+    ar.areaID AS assignment_area_id,
+    ar.pcID AS assignment_pc_id,
+    ar._createdAt AS assignment_createdAt,
+    ar._updatedAt AS assignment_updatedAt,
+
+    st.id AS status_id,
+    st.name AS status_name,
+
+    u.id AS user_id,
+    u.fullName AS user_full_name,
+
+    a.id AS area_id,
+    a.name AS area_name,
+
+    pc.id AS pc_id,
+    pc.name AS pc_name
+
+  FROM AssignmentRegister ar
+  INNER JOIN Status st ON st.id = ar.statusID
+  INNER JOIN User u ON u.id = ar.userID
+  INNER JOIN Area a ON a.id = ar.areaID
+  INNER JOIN PC pc ON pc.id = ar.pcID;
+`
+);
+---
+
+<Layout title="PC's">
+  <div class="max-w-screen-xl mx-auto px-4 md:px-8">
+    <div class="items-start justify-between md:flex">
+      <div class="max-w-lg">
+        <h3
+          class="text-gray-800 text-xl font-bold sm:text-4xl dark:text-gray-300"
+        >
+          Registro de asignaciones
+        </h3>
+      </div>
+    </div>
+    <div
+      class="mt-6 shadow-sm border rounded-lg overflow-x-auto backdrop-blur-sm"
+    >
+      <table class="w-full table-auto text-sm text-left">
+        <thead
+          class="dark:bg-gray-400/20 dark:text-white bg-gray-50 text-gray-600 font-medium border-b"
+        >
+          <tr>
+            <th class="py-3 px-6">Sala</th>
+            <th class="py-3 px-6">PC</th>
+            <th class="py-3 px-6"># Usuario</th>
+            <th class="py-3 px-6">Status</th>
+            <th class="py-3 px-6">Entrada</th>
+            <th class="py-3 px-6">Salida</th>
+          </tr>
+        </thead>
+        <tbody class="text-gray-600 divide-y">
+          {
+            result.map((item) => (
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap dark:text-white">
+                  {item.area_name}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap dark:text-white">
+                  <a href={`/pc/${item.pc_id}`} class="underline text-blue-400 hover:text-blue-500">
+                    {item.pc_name}
+                  </a>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap dark:text-white">
+                  <a href={`/student/${item.user_id}`} class="underline text-blue-400 hover:text-blue-500">
+                    {item.user_id}
+                  </a>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap dark:text-white capitalize">
+                  <ItemStatus
+                    status={item.status_name ? String(item.status_name) : ""}
+                  />
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap dark:text-white capitalize">
+                  {item.assignment_createdAt}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap dark:text-white capitalize">
+                  {item.assignment_updatedAt
+                    ? item.assignment_updatedAt
+                    : "Fecha no disponible"}
+                </td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</Layout>

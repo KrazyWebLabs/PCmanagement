@@ -1,0 +1,71 @@
+---
+import BackBtn from "@components/ui/Buttons/BackBtn.astro";
+import Layout from "../../layouts/Layout.astro";
+import SubmitBtn from "@components/ui/Buttons/SubmitBtn.astro";
+import { isDbError } from "astro:db";
+import UserForm from "@components/User/UserForm.astro";
+import { verifyProfessor } from "@functions/verifyUser";
+import getDate from "@functions/GetDate";
+import { turso } from "src/turso";
+
+
+if (Astro.request.method === 'POST') {
+  // Parse form data
+  const formData = await Astro.request.formData();
+  const profID = formData.get('userID');
+  const fullName = formData.get('fullName');
+  const date = getDate()
+
+  if (typeof profID === 'string' && typeof fullName === 'string') {
+    if (await verifyProfessor(profID)){
+			console.error(`El usuario con matricula ${profID} ya existe`);
+      
+      return new Response(
+        `<script>
+          alert("El usuario ${profID} ya existe.");
+          window.location.href = "/professor/add";
+        </script>`,
+        {
+          headers: { "Content-Type": "text/html" },
+        }
+      );
+    }
+		try {
+      await turso.execute({
+        sql: `INSERT INTO Professors (id, fullname, _createdAt) VALUES (?, ?, ?)`,
+        args: [profID, fullName, date],
+      });
+
+      return new Response(
+        `<script>
+          alert("El usuario ${profID} ha sido registrado.");
+          window.location.href = "/";
+        </script>`,
+        {
+          headers: { "Content-Type": "text/html" },
+        }
+      );
+    } catch (e) {
+      if (isDbError(e)) {
+        console.error(`El usuario con matricula ${profID} ya existe\n\n${e.message}`);
+      } else {
+        console.error('Se ha producido un error inesperado', e);
+      }
+		}
+	}
+
+  
+  return Astro.redirect('/professor')
+}
+---
+
+<Layout title="Alta Profesor">
+  <UserForm>
+    <div class="flex justify-end max-w-full mx-auto px-8">
+      <BackBtn />
+      <SubmitBtn>
+        Agregar
+      </SubmitBtn>
+    </div>
+  </UserForm>
+</Layout>

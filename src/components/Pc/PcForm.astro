@@ -1,0 +1,98 @@
+---
+import Form from "@form/Form.astro";
+import FormInput from "@form/FormInput.astro";
+import FormSelect from "@form/FormSelect.astro";
+import SelectOption from "@form/SelectOption.astro";
+import CapFrstLetter from "@functions/CapFrstLetter";
+import getNextId from "@functions/getNextID";
+import { Status } from "astro:db";
+import { db, PC, Area } from "astro:db";
+import { turso } from "src/turso";
+
+interface Props {
+  selectedPC?: any;
+}
+const { selectedPC } = Astro.props;
+
+let nextID;
+let { rows:areas } = await turso.execute("SELECT * FROM Area")
+let { rows:statuses } = await turso.execute("SELECT * FROM Status")
+let updatedAreas; 
+let updatedStatuses; 
+
+function removeById<T extends { id: number, name?: string}>(array: any[], idToRemove: number): T[] {
+  return array.filter(item => item.id !== idToRemove);
+}
+
+
+if (!selectedPC){
+  const { rows:pcs } = await turso.execute("SELECT MAX(id) as maxID FROM PC");
+  nextID = Number(pcs[0].maxID ?? 0) + 1;
+} else{
+  updatedAreas = removeById(areas, selectedPC.pc_area_id);
+  updatedStatuses = removeById(statuses, selectedPC.pc_status_id);
+}
+---
+
+<Form title={!selectedPC? "Alta de Nueva PC": `Editar ${selectedPC.pc_name}`}>
+  {
+    !selectedPC 
+    ?
+      <FormInput name="pcID" type="number" isRequired value={nextID}>
+        ID de la PC
+      </FormInput>
+        
+      <FormSelect name="areaID" isRequired title="Sala">
+        <SelectOption value="" isSelected>--Selecciona la Sala---</SelectOption>
+        {
+          areas?.map((area) => (
+            <SelectOption value={area.id ? area.id.toString() : ""}>{area.name}</SelectOption>
+          ))
+        }
+      </FormSelect>
+
+      <FormInput name="pcName" type="text" placeholder="PC01" isRequired>
+        Nombre de la PC
+      </FormInput>
+
+      <FormSelect name="statusID" title="Status">
+        <SelectOption value="1" isSelected>Libre</SelectOption>
+      </FormSelect>
+    :
+      
+      <FormInput name="pcID" type="number" isDisabled value={selectedPC.pc_id}>
+          ID de la PC
+      </FormInput>
+
+      <input type="hidden" value={selectedPC.PC?.id} name="pcID">
+        
+      <FormSelect name="areaID" title="Sala">
+        <SelectOption value="">--Selecciona la Sala---</SelectOption>
+        <SelectOption value={selectedPC.pc_area_id} isSelected>{selectedPC.area_name}</SelectOption>
+        {
+          updatedAreas?.map((area) => (
+            <SelectOption value={area.id.toString()}>{area.name}</SelectOption>
+          ))
+        }
+      </FormSelect>
+
+      <FormInput name="pcName" type="text" placeholder="PC01" value={selectedPC.pc_name}>
+        Nombre de la PC
+      </FormInput>
+
+      <FormSelect name="statusID" title="Status" isRequired>
+        <SelectOption value="" isSelected>--Selecciona el Status---</SelectOption>
+        <SelectOption value={selectedPC.Status?.id} isSelected>
+          {
+            CapFrstLetter(selectedPC.status_name)
+          }
+        </SelectOption>
+        {
+          updatedStatuses?.map((status) => (
+            <SelectOption value={status.id.toString()}>{CapFrstLetter(status.name ? status.name :"")}</SelectOption>
+          ))
+        }
+      </FormSelect>
+  }
+<slot/>
+</Form>

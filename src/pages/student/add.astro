@@ -1,0 +1,77 @@
+---
+import BackBtn from "@components/ui/Buttons/BackBtn.astro";
+import Layout from "../../layouts/Layout.astro";
+import SubmitBtn from "@components/ui/Buttons/SubmitBtn.astro";
+import { isDbError } from "astro:db";
+import UserForm from "@components/User/UserForm.astro";
+import { verifyUser } from "@functions/verifyUser";
+import getDate from "@functions/GetDate";
+import { turso } from "src/turso";
+
+
+if (Astro.request.method === 'POST') {
+  // Parse form data
+  const formData = await Astro.request.formData();
+  const userID = formData.get('userID');
+  const fullName = formData.get('fullName');
+  const majorID = formData.get('major');
+  const date = getDate()
+
+  if (typeof userID === 'string' && typeof fullName === 'string' && typeof majorID === 'string') {
+    if (await verifyUser(Number(userID))){
+			console.error(`El usuario con matricula ${userID} ya existe`);
+      
+      return new Response(
+        `<script>
+          alert("El usuario ${userID} ya existe.");
+          window.location.href = "/register";
+        </script>`,
+        {
+          headers: { "Content-Type": "text/html" },
+        }
+      );
+    }
+		try {
+      await turso.execute(`
+        INSERT INTO User (id, fullname, majorID, _createdAt)
+          VALUES (
+            ${userID},
+            '${fullName}',
+            ${majorID},
+            '${date}'
+          )
+      `)
+      
+      return new Response(
+        `<script>
+          alert("El usuario ${userID} ha sido registrado.");
+          window.location.href = "/";
+        </script>`,
+        {
+          headers: { "Content-Type": "text/html" },
+        }
+      );
+		} catch (e) {
+			if (isDbError(e)) {
+				console.error(`El usuario con matricula ${userID} ya existe\n\n${e.message}`);
+    	} else {
+				console.error('Se ha producido un error inesperado', e);
+			}
+		}
+	}
+
+  
+  return Astro.redirect('/student')
+}
+---
+
+<Layout title="Alta Usuario">
+  <UserForm>
+    <div class="flex justify-end max-w-full mx-auto px-8">
+      <BackBtn />
+      <SubmitBtn>
+        Agregar
+      </SubmitBtn>
+    </div>
+  </UserForm>
+</Layout>

@@ -1,47 +1,147 @@
 ---
-import Layout from '../layouts/Layout.astro';
+import Form from "@form/Form.astro";
+import FormInput from "@form/FormInput.astro";
+import SubmitBtn from "@components/ui/Buttons/SubmitBtn.astro";
+import FormSelect from "@components/ui/Forms/FormSelect.astro";
+import SelectOption from "@components/ui/Forms/SelectOption.astro";
+import searchPC from "@functions/SearchPC";
+import { verifyUser, userHasSession, verifyProfessor } from "@functions/verifyUser";
+import type { InputFieldArr } from "@customTypes/InputType";
+import { turso } from "src/turso";
+import getDate from "@functions/GetDate";
+import Layout from "src/layouts/Layout.astro";
 
-const session = Astro.cookies.get("userSes");
+const inputs: InputFieldArr[] = [
+  {
+    name: "userID",
+    label: "Matrícula",
+    type: "text",
+    isRequired: true,
+    placeholder: "20104769",
+  },
+];
 
-if (!session) {
-  return Astro.redirect("/404");
+const { rows } = await turso.execute(`SELECT * FROM Area`);
+const areas = rows;
+
+if (Astro.request.method === "POST") {
+  const formData = await Astro.request.formData();
+  const userIDRaw = formData.get("userID");
+  const fareaID = formData.get("areaID");
+  const fecha = getDate();
+
+  if (typeof userIDRaw === "string" && typeof fareaID === "string") {
+    const userIDStr = userIDRaw.trim();
+    let numericUserID: number | null = null;
+    let isProfessorID = false;
+
+    // Detectar si es un ID de profesor que empieza con "E"
+    if (userIDStr.toLowerCase().startsWith("e")) {
+      isProfessorID = true;
+    } else {
+      numericUserID = Number(userIDStr);
+    }
+
+    // Verificar si el usuario existe
+    const isUser = numericUserID !== null ? await verifyUser(numericUserID) : false;
+    const isProfessor = isProfessorID || await verifyProfessor(userIDStr);
+
+    if (!isUser && !isProfessor) {
+      return Astro.redirect("/register");
+    }
+
+    const assignedID = numericUserID !== null ? numericUserID : `'${userIDStr}'`;
+
+    // Liberar sesión si el usuario ya tiene un PC asignado
+    if (numericUserID !== null ? await userHasSession(numericUserID) : false) {
+      await turso.execute(`
+        UPDATE PC SET statusID = 1, userID = NULL WHERE userID == ${numericUserID};
+      `);
+      await turso.execute(`
+        UPDATE AssignmentRegister 
+        SET statusID = 1,
+            userID = ${numericUserID},
+            _updatedAt = '${fecha}'
+        WHERE userID = ${numericUserID} AND statusID = 3;
+      `);
+
+      return new Response(
+        `<script>
+          alert("La sesión de ${userIDStr} ha sido terminada. Ahora puedes asignarte otra PC.");
+          window.location.href = "/";
+        </script>`,
+        { headers: { "Content-Type": "text/html" } }
+      );
+    }
+
+    // Asignación de PC
+    try {
+      const search = await searchPC(Number(fareaID));
+      const { id, name, areaID } = search[0];
+      const pcName = name;
+      const area = areas.find((room) => room.id === areaID)?.name;
+
+      await turso.execute(`
+        UPDATE PC SET statusID = 3, userID = ${assignedID} WHERE id = ${id};
+      `);
+
+      return Astro.redirect(
+        `/assigned?pcName=${pcName}&area=${area}&userID=${userIDStr}`
+      );
+    } catch (e: any) {
+      console.error(`No se puede asignar un PC a ${userIDStr}\n\nError: ${e.message}`);
+      return new Response(
+        `<script>
+          alert("No se puede asignar un PC a ${userIDStr}");
+          window.location.href = "/";
+        </script>`,
+        { headers: { "Content-Type": "text/html" } }
+      );
+    }
+  }
 }
 ---
 
-<Layout title="Dashboard">
-	<div class="flex max-w-screen-xl min-h-[80vh] mx-auto px-4 md:px-8 justify-center items-center flex-col">
-		<h2 class="text-gray-800 text-4xl font-extrabold sm:text-7xl dark:text-white">
-			Welcome 
-		</h2>
-		<div class="typewriter flex justify-center items-center flex-col">
-			<h3 class="text-gray-800 text-xl font-bold sm:text-xl dark:text-gray-200 mt-5">
-				to the future of the legacy
-			</h3>
-		</div>
-		<p class="text-gray-800 text-xl sm:text-lg dark:text-gray-400 m-10 px-32 text-justify">
-			Our mission is to bring history to life by offering visitors the unique opportunity to engage in virtual conversations with important personalities of the past and provide the visitor with a connection through the lens of their MBTI personality type.
-		</p>
+<Layout title="Asignación de PC">
+  <div
+    class="flex items-center justify-center flex-col mt-36 max-w-screen-xl mx-auto px-4 md:px-8 md:flex"
+  >
+    <Form title="Asignación de PC">
+      {
+        inputs.map((inp) => (
+          <FormInput
+            name={inp.name}
+            type={inp.type}
+            isRequired
+            placeholder={inp.placeholder}
+          >
+            {inp.label}
+          </FormInput>
+        ))
+      }
+      <FormSelect title="Selecciona Sala" name="areaID">
+        <SelectOption isSelected value="">--Selecciona una Sala--</SelectOption>
+        {
+          areas?.map((area) => (
+            <SelectOption value={area.id ? area.id?.toString() : ""}>
+              {area.name}
+            </SelectOption>
+          ))
+        }
+      </FormSelect>
+      <div class="flex justify-center items-center min-w-full mt-2">
+        <SubmitBtn> Buscar </SubmitBtn>
+      </div>
+    </Form>
+    <div class="dark:text-white">
+      ¿No estas registrado? <a href="/register" class="text-LegacyBlue-600"
+        >¡Registrate!</a
+      >
+    </div>
+    <div class="dark:text-white">
+      Si eres profesor registrate <a href="/professor/add" class="text-LegacyBlue-600"
+        >¡Aquí!</a
+      >
+    </div>
   </div>
 </Layout>
-<style>
-	.typewriter h3 {
-	overflow: hidden; /* Ensures the content is not revealed until the animation */
-	border-right: .15em solid #2245e3; /* The typwriter cursor */
-	white-space: nowrap; /* Keeps the content on a single line */
-	animation: 
-		typing 3.5s steps(30, end),
-		blink-caret .5s step-end infinite;
-}
-
-/* The typing effect */
-@keyframes typing {
-	from { width: 0 }
-	to { width: 100% }
-}
-
-/* The typewriter cursor effect */
-@keyframes blink-caret {
-	from, to { border-color: transparent }
-	50% { border-color: #2245e3 }
-}
-</style>

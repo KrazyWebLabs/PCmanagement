@@ -1,0 +1,10 @@
+---
+const path = Astro.url.pathname.replace(/\/$/, "");
+---
+
+<a
+  href={`${path}/import`}
+  class="text-white inline-block px-4 py-2 duration-150 font-medium bg-emerald-500 dark:bg-emerald-200 hover:text-emerald-700 rounded-lg hover:bg-emerald-100 active:bg-emerald-700 md:text-sm capitalize"
+>
+  Import {path.replace(/\//g, "")}
+</a>
