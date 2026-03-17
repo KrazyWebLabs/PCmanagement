@@ -1,4 +1,5 @@
 ---
+import getDate from "@functions/GetDate";
 import { isDbError } from "astro:db";
 import Layout from "src/layouts/Layout.astro";
 import { turso } from "src/turso";
@@ -6,12 +7,11 @@ import { turso } from "src/turso";
 const pcName = Astro.url.searchParams.get("pcName");
 const area = Astro.url.searchParams.get("area");
 const userID = Astro.url.searchParams.get("userID");
-const fecha = new Date().toLocaleString("es-MX", {
-  timeZone: "America/Mexico_City",
-});
+const pcID = Astro.url.searchParams.get("pcID");
+const fecha = getDate();
 
 const { rows } = await turso.execute(
-  "SELECT MAX(id) as maxID FROM AssignmentRegister"
+  "SELECT MAX(id) as maxID FROM Registers"
 );
 const nextID = Number(rows[0].maxID ?? 0) + 1;
 
@@ -34,7 +34,7 @@ const { rows: areaSel } = await turso.execute(
   `SELECT * FROM Area WHERE name = '${String(area)}'`
 );
 const { rows: pc } = await turso.execute(
-  `SELECT * FROM PC WHERE name = '${String(pcName)}'`
+  `SELECT * FROM PC WHERE id = ${Number(pcID)} AND name = '${String(pcName)}'`
 );
 
 if (
@@ -45,7 +45,7 @@ if (
 ) {
   try {
     await turso.execute(`
-      INSERT INTO AssignmentRegister (id, areaID, userID, pcID, statusID, _createdAt)
+      INSERT INTO Registers (id, areaID, userID, pcID, statusID, _createdAt)
       VALUES (
         ${Number(nextID)},
         ${Number(areaSel[0].id)},
