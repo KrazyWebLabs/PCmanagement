@@ -1,24 +1,21 @@
 ---
 import getDate from "@functions/GetDate";
 import { turso } from "src/turso";
-
 const date = getDate();
-
-const pcID = Astro.url.searchParams.get("pcID");
 
 await turso.execute(`
   UPDATE PC
   SET statusID = 1,
     userID = null
-  WHERE id == ${pcID}
-`)
+  WHERE statusID != 1
+`);
 
 await turso.execute(`
   UPDATE Registers 
   SET statusID = 1,
     _updatedAt = '${date}'
-  WHERE statusID = 3 AND pcID = ${pcID};
+  WHERE statusID = 3;
 `);
 
-return Astro.redirect('/pc')
+return Astro.redirect("/pc");
 ---

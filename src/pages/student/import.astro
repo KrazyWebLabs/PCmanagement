@@ -24,7 +24,6 @@ if (Astro.request.method === "POST") {
 
   const data = await readExcelFile(excel);
 
-  console.log(typeof data);
   if (typeof data === "object") {
     // Insert data from the form to the User and upload it to the DB
     for (const item of data) {

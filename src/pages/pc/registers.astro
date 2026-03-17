@@ -1,15 +1,6 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import TrashIcon from "@icons/TrashIcon.astro";
-import EditIcon from "@icons/EditIcon.astro";
-import EditRecord from "@components/ui/Tables/EditRecord.astro";
 import ItemStatus from "@components/ui/Tables/ItemStatus.astro";
-import AddRegisterBtn from "@components/ui/Buttons/AddRegisterBtn.astro";
-import { db, PC, Status, Area, eq } from "astro:db";
-import CheckIcon from "@components/ui/icons/CheckIcon.astro";
-import ClipboardListIcon from "@components/ui/icons/ClipboardListIcon.astro";
-import { AssignmentRegister } from "astro:db";
-import { User } from "astro:db";
 import { turso } from "src/turso";
 
 const { rows: result } = await turso.execute(
@@ -35,7 +26,7 @@ const { rows: result } = await turso.execute(
     pc.id AS pc_id,
     pc.name AS pc_name
 
-  FROM AssignmentRegister ar
+  FROM Registers ar
   INNER JOIN Status st ON st.id = ar.statusID
   INNER JOIN User u ON u.id = ar.userID
   INNER JOIN Area a ON a.id = ar.areaID

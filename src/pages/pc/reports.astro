@@ -1,0 +1,200 @@
+---
+import Form from "@components/ui/Forms/Form.astro";
+import Layout from "../../layouts/Layout.astro";
+import { turso } from "src/turso";
+import FormSelect from "@components/ui/Forms/FormSelect.astro";
+import SelectOption from "@components/ui/Forms/SelectOption.astro";
+import FormInput from "@components/ui/Forms/FormInput.astro";
+import SubmitBtn from "@components/ui/Buttons/SubmitBtn.astro";
+
+// Obtener lista de PCs para el select
+const { rows: pcList } = await turso.execute(
+  "SELECT PC.id, PC.name, Area.name AS Area FROM PC JOIN Area ON PC.areaID = Area.id;",
+);
+
+const pcId = Astro.url.searchParams.get("pcId") ?? "";
+const fechaInicio = Astro.url.searchParams.get("fechaInicio") ?? "";
+const fechaFin = Astro.url.searchParams.get("fechaFin") ?? "";
+let registros: any[] = [];
+
+if (pcId && fechaInicio && fechaFin) {
+  const { rows } = await turso.execute({
+    sql: `
+    SELECT
+            r.id,
+            COALESCE(u.id, p.id)           AS matricula,
+            COALESCE(u.fullName, p.fullname) AS nombre,
+            pc.name                          AS pc,
+            a.name                           AS sala,
+            r._createdAt                     AS entrada,
+            r._updatedAt                     AS salida
+          FROM Registers r
+          LEFT JOIN User u       ON CAST(r.userID AS TEXT) = CAST(u.id AS TEXT)
+          LEFT JOIN Professors p ON CAST(r.userID AS TEXT) = CAST(p.id AS TEXT)
+          JOIN PC   pc           ON r.pcID   = pc.id
+          JOIN Area a            ON r.areaID = a.id
+    WHERE pc.id = ?
+      AND r._createdAt >= ?
+      AND r._updatedAt <= ?
+    `,
+    args: [pcId, `${fechaInicio} 00:00:00`, `${fechaFin} 23:59:59`],
+  });
+  registros = rows as any[];
+}
+---
+
+<Layout title="Reporte de Registros">
+  <div class="max-w-screen-xl mx-auto px-2 md:px-8 py-10">
+    <!-- Filtros -->
+    <Form title="Reporte de Registros" method="GET">
+      <div
+        class="grid grid-cols-4 grid-rows-1 gap-4 items-center justify-center"
+      >
+        <FormSelect name="pcId" title="PC">
+          <SelectOption value="">-- Selecciona una PC --</SelectOption>
+          {
+            pcList.map((pc: any) => (
+              <SelectOption value={pc.id}>
+                {pc.name} - {pc.Area}
+              </SelectOption>
+            ))
+          }
+        </FormSelect>
+        <FormInput
+          type="date"
+          name="fechaInicio"
+          title="Fecha Inicio"
+          value={fechaInicio}
+          isRequired
+        />
+        <FormInput
+          type="date"
+          name="fechaFin"
+          title="Fecha Fin"
+          value={fechaFin}
+          isRequired
+        />
+        <div class="flex items-center h-full w-[284px] mt-[14px]">
+          <SubmitBtn>Buscar</SubmitBtn>
+        </div>
+      </div>
+    </Form>
+
+    <!-- Tabla de resultados -->
+    {
+      pcId && fechaInicio && fechaFin && (
+        <div>
+          <div class="flex justify-between items-center mb-4">
+            <p class="dark:text-gray-300 text-sm">
+              {registros.length} registro(s) encontrado(s)
+            </p>
+            {registros.length > 0 && (
+              <button
+                id="exportBtn"
+                class="bg-green-600 hover:bg-green-700 text-white font-semibold px-5 py-2 rounded-lg transition flex items-center gap-2"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="w-4 h-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3"
+                  />
+                </svg>
+                Exportar a Excel
+              </button>
+            )}
+          </div>
+
+          {registros.length > 0 ? (
+            <div class="mt-6 shadow-sm border rounded-lg overflow-x-auto backdrop-blur-sm">
+              <table class="w-full table-auto text-sm text-left">
+                <thead class="dark:bg-gray-400/20 dark:text-white bg-gray-50 text-gray-600 font-medium border-b">
+                  <tr>
+                    <th class="px-6 py-3">#</th>
+                    <th class="px-6 py-3">Matrícula</th>
+                    <th class="px-6 py-3">Nombre</th>
+                    <th class="px-6 py-3">PC</th>
+                    <th class="px-6 py-3">Sala</th>
+                    <th class="px-6 py-3">Entrada</th>
+                    <th class="px-6 py-3">Salida</th>
+                  </tr>
+                </thead>
+                <tbody class="text-gray-600 divide-y">
+                  {registros.map((r: any, i: number) => (
+                    <tr>
+                      <td class="px-6 py-4 whitespace-nowrap dark:text-white font-medium">{r.id}</td>
+                      <td class="px-6 py-4 whitespace-nowrap dark:text-white">{r.matricula}</td>
+                      <td class="px-6 py-4 whitespace-nowrap dark:text-white">{r.nombre ?? "—"}</td>
+                      <td class="px-6 py-4 whitespace-nowrap dark:text-white">{r.pc}</td>
+                      <td class="px-6 py-4 whitespace-nowrap dark:text-white">{r.sala}</td>
+                      <td class="px-6 py-4 whitespace-nowrap dark:text-white">{r.entrada ?? "—"}</td>
+                      <td class="px-6 py-4 whitespace-nowrap dark:text-white">{r.salida ?? "—"}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div class="text-center py-16 dark:text-gray-400">
+              <p class="text-lg">
+                No se encontraron registros para los filtros seleccionados.
+              </p>
+            </div>
+          )}
+        </div>
+      )
+    }
+
+    {
+      !pcId && (
+        <div class="text-center py-16 dark:text-gray-400">
+          <p class="text-lg">
+            Selecciona una PC y un rango de fechas para generar el reporte.
+          </p>
+        </div>
+      )
+    }
+  </div>
+</Layout>
+
+<script>
+  import * as XLSX from "xlsx";
+
+  const exportBtn = document.getElementById("exportBtn");
+
+  exportBtn?.addEventListener("click", () => {
+    const table = document.getElementById("reportTable") as HTMLTableElement;
+    if (!table) return;
+
+    // Usar table_to_book directamente desde el DOM (más limpio y preciso)
+    const wb = XLSX.utils.table_to_book(table, { sheet: "Registros" });
+    const ws = wb.Sheets["Registros"];
+
+    // Ancho de columnas
+    ws["!cols"] = [
+      { wch: 6 },
+      { wch: 14 },
+      { wch: 28 },
+      { wch: 14 },
+      { wch: 18 },
+      { wch: 22 },
+      { wch: 22 },
+    ];
+
+    // Nombre del archivo usando pcId y fechas del URL
+    const params = new URLSearchParams(window.location.search);
+    const pcId = params.get("pcId") ?? "reporte";
+    const fechaInicio = params.get("fechaInicio") ?? "";
+    const fechaFin = params.get("fechaFin") ?? "";
+    const fileName = `Reporte_PC${pcId}_${fechaInicio}_a_${fechaFin}.xlsx`;
+
+    XLSX.writeFile(wb, fileName);
+  });
+</script>

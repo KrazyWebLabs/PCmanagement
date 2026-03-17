@@ -32,7 +32,6 @@ const { rows: result } = await turso.execute(`
   WHERE pc.id = ${pcID};
 `)
 
-console.log(result[0]);
 if (Astro.request.method === "POST") {
   // Parse form data
   const formData = await Astro.request.formData();

@@ -28,7 +28,7 @@ if (Astro.request.method === "POST") {
   const formData = await Astro.request.formData();
   const userIDRaw = formData.get("userID");
   const fareaID = formData.get("areaID");
-  const fecha = getDate();
+  const date = getDate();
 
   if (typeof userIDRaw === "string" && typeof fareaID === "string") {
     const userIDStr = userIDRaw.trim();
@@ -58,10 +58,10 @@ if (Astro.request.method === "POST") {
         UPDATE PC SET statusID = 1, userID = NULL WHERE userID == ${numericUserID};
       `);
       await turso.execute(`
-        UPDATE AssignmentRegister 
+        UPDATE Registers 
         SET statusID = 1,
             userID = ${numericUserID},
-            _updatedAt = '${fecha}'
+            _updatedAt = '${date}'
         WHERE userID = ${numericUserID} AND statusID = 3;
       `);
 
@@ -78,7 +78,6 @@ if (Astro.request.method === "POST") {
     try {
       const search = await searchPC(Number(fareaID));
       const { id, name, areaID } = search[0];
-      const pcName = name;
       const area = areas.find((room) => room.id === areaID)?.name;
 
       await turso.execute(`
@@ -86,7 +85,7 @@ if (Astro.request.method === "POST") {
       `);
 
       return Astro.redirect(
-        `/assigned?pcName=${pcName}&area=${area}&userID=${userIDStr}`
+        `/assigned?pcName=${name}&area=${area}&userID=${userIDStr}&pcID=${id}`
       );
     } catch (e: any) {
       console.error(`No se puede asignar un PC a ${userIDStr}\n\nError: ${e.message}`);
