@@ -91,6 +91,7 @@ if (pcId && fechaInicio && fechaFin) {
             {registros.length > 0 && (
               <button
                 id="exportBtn"
+                type="submit"
                 class="bg-green-600 hover:bg-green-700 text-white font-semibold px-5 py-2 rounded-lg transition flex items-center gap-2"
               >
                 <svg
@@ -114,7 +115,7 @@ if (pcId && fechaInicio && fechaFin) {
 
           {registros.length > 0 ? (
             <div class="mt-6 shadow-sm border rounded-lg overflow-x-auto backdrop-blur-sm">
-              <table class="w-full table-auto text-sm text-left">
+              <table class="w-full table-auto text-sm text-left" id="reportTable">
                 <thead class="dark:bg-gray-400/20 dark:text-white bg-gray-50 text-gray-600 font-medium border-b">
                   <tr>
                     <th class="px-6 py-3">#</th>
